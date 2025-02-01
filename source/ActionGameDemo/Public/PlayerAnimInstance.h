@@ -7,11 +7,14 @@
 #include "PlayerAnimInstance.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class ACTIONGAMEDEMO_API UPlayerAnimInstance : public UObject
 {
 	GENERATED_BODY()
-	
+
+protected:
+	UPROPERTY(BlueprintReadWrite, Category = "Player Anim Instance")
+	float CurrentVelocity{0.0f};
 };

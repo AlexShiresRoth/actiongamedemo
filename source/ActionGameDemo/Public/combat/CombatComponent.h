@@ -6,23 +6,31 @@
 #include "Components/ActorComponent.h"
 #include "CombatComponent.generated.h"
 
-
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class ACTIONGAMEDEMO_API UCombatComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	TArray<UAnimMontage *> AttackAnimations;
+
+	ACharacter *CharacterRef;
+
+	UPROPERTY(VisibleAnywhere, Category = "Combat")
+	int ComboCounter{0};
+
+public:
 	// Sets default values for this component's properties
 	UCombatComponent();
+
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void ComboAttack();
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-		
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 };

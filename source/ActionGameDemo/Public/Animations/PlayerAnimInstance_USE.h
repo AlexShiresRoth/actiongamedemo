@@ -16,8 +16,21 @@ class ACTIONGAMEDEMO_API UPlayerAnimInstance_USE : public UAnimInstance
 
 protected:
 	UPROPERTY(BlueprintReadWrite, Category = "Player Anim Instance")
-	float CurrentVelocity{0.0f};
+	float CurrentSpeed{0.0f};
 
 	UFUNCTION(BlueprintCallable, Category = "Player Anim Instance")
-	void UpdateVelocity();
+	void UpdateSpeed();
+
+	UPROPERTY(BlueprintReadWrite, Category = "Player Anim Instance")
+	bool bIsInCombat{false};
+
+	UPROPERTY(BlueprintReadWrite, Category = "Player Anim Instance")
+	float CurrentDirection{0.0f};
+
+public:
+	UFUNCTION(BlueprintCallable, Category = "Player Anim Instance")
+	void HandleUpdatedTarget(AActor *NewTargetActorRef);
+
+	UFUNCTION(BlueprintCallable, Category = "Player Anim Instance")
+	void UpdateDirection();
 };

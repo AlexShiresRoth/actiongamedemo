@@ -6,6 +6,10 @@
 #include "Components/ActorComponent.h"
 #include "Lockon_Component.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_OneParam(
+	FOnUpdatedTargetSignature,
+	ULockon_Component, OnUpdatedTargetDelegate, AActor *, NewTargetActorRef);
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class ACTIONGAMEDEMO_API ULockon_Component : public UActorComponent
 {
@@ -27,6 +31,9 @@ public:
 	ULockon_Component();
 
 	AActor *CurrentTargetActor;
+
+	UPROPERTY(BlueprintAssignable, Category = "Lockon")
+	FOnUpdatedTargetSignature OnUpdatedTargetDelegate;
 
 protected:
 	// Called when the game starts

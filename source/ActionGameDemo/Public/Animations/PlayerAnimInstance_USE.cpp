@@ -2,7 +2,7 @@
 
 #include "PlayerAnimInstance_USE.h"
 
-void UPlayerAnimInstance_USE::UpdateVelocity()
+void UPlayerAnimInstance_USE::UpdateSpeed()
 {
     APawn *PawnRef{TryGetPawnOwner()};
 
@@ -15,5 +15,30 @@ void UPlayerAnimInstance_USE::UpdateVelocity()
     // explicit casting is not required but is good practice
     float VectorLength{static_cast<float>(Velocity.Length())};
 
-    CurrentVelocity = VectorLength;
+    CurrentSpeed = VectorLength;
+}
+
+void UPlayerAnimInstance_USE::HandleUpdatedTarget(AActor *NewTargetActorRef)
+{
+    bIsInCombat = IsValid(NewTargetActorRef);
+}
+
+void UPlayerAnimInstance_USE::UpdateDirection()
+{
+    APawn *PawnRef{TryGetPawnOwner()};
+
+    if (!IsValid(PawnRef))
+    {
+        return;
+    }
+
+    if (!bIsInCombat)
+    {
+        return;
+    }
+
+    // this produces a result between -180 and 180
+    CurrentDirection = CalculateDirection(
+        PawnRef->GetVelocity(),
+        PawnRef->GetActorRotation());
 }

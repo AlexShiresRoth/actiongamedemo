@@ -16,6 +16,13 @@ UCombatComponent::UCombatComponent()
 
 void UCombatComponent::ComboAttack()
 {
+	if (!bCanAttack)
+	{
+		return;
+	}
+
+	bCanAttack = false;
+
 	CharacterRef->PlayAnimMontage(AttackAnimations[ComboCounter]);
 	ComboCounter++;
 
@@ -23,6 +30,11 @@ void UCombatComponent::ComboAttack()
 
 	// when wrapping around, the lib increments by 1 so setting it at -1 will make it 0 when wrapping
 	ComboCounter = UKismetMathLibrary::Wrap(ComboCounter, -1, MaxCombo - 1);
+}
+
+void UCombatComponent::HandleResetAttack()
+{
+	bCanAttack = true;
 }
 
 // Called when the game starts

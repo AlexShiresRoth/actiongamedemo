@@ -19,12 +19,18 @@ class ACTIONGAMEDEMO_API UCombatComponent : public UActorComponent
 	UPROPERTY(VisibleAnywhere, Category = "Combat")
 	int ComboCounter{0};
 
+	UPROPERTY(VisibleAnywhere, Category = "Combat")
+	bool bCanAttack{true};
+
 public:
 	// Sets default values for this component's properties
 	UCombatComponent();
 
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 	void ComboAttack();
+
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void HandleResetAttack();
 
 protected:
 	// Called when the game starts

@@ -14,28 +14,36 @@ class ACTIONGAMEDEMO_API UTraceComponent : public UActorComponent
 private:
 	USkeletalMeshComponent *SkeletalComp;
 
+	UPROPERTY(EditAnywhere, Category = "Trace")
+	FName Start;
+
+	UPROPERTY(EditAnywhere, Category = "Trace")
+	FName End;
+
+	UPROPERTY(EditAnywhere, Category = "Trace")
+	FName Rotation;
+
+	UPROPERTY(EditAnywhere, Category = "Trace")
+	double BoxCollisionLength{30.0};
+
+	UPROPERTY(EditAnywhere, Category = "Trace")
+	bool bDebugMode{false};
+
+	TArray<AActor *> TargetsToIgnore;
+
 public:
 	// Sets default values for this component's properties
 	UTraceComponent();
 
+	UFUNCTION(BlueprintCallable, Category = "Trace")
+	void HandleResetAttack();
+
+	UPROPERTY(VisibleAnywhere, Category = "Trace")
+	bool bIsAttacking{false};
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
-	FName Start;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
-	FName End;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
-	FName Rotation;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
-	double BoxCollisionLength{30.0};
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trace")
-	bool bDebugMode{false};
 
 public:
 	// Called every frame

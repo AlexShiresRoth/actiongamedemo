@@ -1,7 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "combat/TraceComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Interfaces/Fighter.h"
+#include "Engine/DamageEvents.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values for this component's properties
 UTraceComponent::UTraceComponent()
@@ -13,22 +16,112 @@ UTraceComponent::UTraceComponent()
 	// ...
 }
 
+void UTraceComponent::HandleResetAttack()
+{
+	TargetsToIgnore.Empty();
+}
 
 // Called when the game starts
 void UTraceComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+	SkeletalComp = GetOwner()->FindComponentByClass<USkeletalMeshComponent>();
 }
-
 
 // Called every frame
-void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
+
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
-}
+	if (!bIsAttacking)
+	{
+		return;
+	}
 
+	FVector StartSocketLocation{SkeletalComp->GetSocketLocation(Start)};
+	FVector EndSocketLocation{SkeletalComp->GetSocketLocation(End)};
+
+	FQuat ShapeRotation{SkeletalComp->GetSocketQuaternion(Rotation)};
+
+	TArray<FHitResult> OutResults;
+
+	double WeaponDistance{
+		FVector::Distance(StartSocketLocation, EndSocketLocation),
+	};
+
+	FVector BoxHalfExtent{
+		BoxCollisionLength,
+		BoxCollisionLength,
+		WeaponDistance,
+	};
+
+	BoxHalfExtent *= 0.5;
+
+	FCollisionShape Box{FCollisionShape::MakeBox(BoxHalfExtent)};
+
+	FCollisionQueryParams IgnoreParams{
+		FName{TEXT("Ignore Collision Params")},
+		false,
+		GetOwner(),
+	};
+
+	bool bHasFoundTargets{GetWorld()->SweepMultiByChannel(
+		OutResults,
+		StartSocketLocation,
+		EndSocketLocation,
+		ShapeRotation,
+		ECollisionChannel::ECC_GameTraceChannel1, Box, IgnoreParams)};
+
+	if (bDebugMode)
+	{
+		FVector CenterPoint{
+			UKismetMathLibrary::VLerp(
+				StartSocketLocation,
+				EndSocketLocation, 0.5f)};
+
+		UKismetSystemLibrary::DrawDebugBox(
+			GetWorld(),
+			CenterPoint,
+			Box.GetExtent(),
+			bHasFoundTargets ? FLinearColor::Green : FLinearColor::Red,
+			ShapeRotation.Rotator(),
+			1.0f,
+			2.0f);
+	}
+
+	if (OutResults.Num() == 0)
+	{
+		return;
+	};
+
+	float CharacterDamage{0.0f};
+
+	IFighter *FighterRef{Cast<IFighter>(GetOwner())};
+
+	if (FighterRef)
+	{
+		CharacterDamage = FighterRef->GetDamage();
+	};
+
+	FDamageEvent TargetAttackedEvent;
+
+	for (const FHitResult &Hit : OutResults)
+	{
+		AActor *TargetActor{Hit.GetActor()};
+
+		// only allow one attack to cause damage
+		if (TargetsToIgnore.Contains(TargetActor))
+		{
+			continue;
+		}
+
+		TargetActor->TakeDamage(CharacterDamage,
+								TargetAttackedEvent,
+								GetOwner()->GetInstigatorController(),
+								GetOwner());
+
+		TargetsToIgnore.AddUnique(TargetActor);
+	};
+}

@@ -5,16 +5,35 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interfaces/MainPlayer.h"
+#include "Interfaces/Fighter.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
-class ACTIONGAMEDEMO_API APlayerCharacter : public ACharacter, public IMainPlayer
+class ACTIONGAMEDEMO_API APlayerCharacter : public ACharacter, public IMainPlayer, public IFighter
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Stats Component")
+	class UStatsComponent *StatsComp;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Lockon Component")
+	class ULockon_Component *LockonComp;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Combat Component")
+	class UCombatComponent *CombatComp;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Trace Component")
+	class UTraceComponent *TraceComp;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Block Component")
+	class UBlockComponent *BlockComp;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Player Actions Comp")
+	class UPlayerActionsComponent *PlayerActionsComp;
 
 protected:
 	// Called when the game starts or when spawned
@@ -29,4 +48,8 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;
+
+	virtual float GetDamage() override;
+
+	virtual bool HasEnoughStamina(float Amount) override;
 };

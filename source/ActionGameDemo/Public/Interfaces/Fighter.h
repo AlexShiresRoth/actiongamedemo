@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "MainPlayer.generated.h"
+#include "Fighter.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UMainPlayer : public UInterface
+class UFighter : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -16,11 +16,12 @@ class UMainPlayer : public UInterface
 /**
  *
  */
-class ACTIONGAMEDEMO_API IMainPlayer
+class ACTIONGAMEDEMO_API IFighter
 {
 	GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual bool HasEnoughStamina(float Amount) { return true; };
+	// virtual tells c++ this function can be overridden
+	virtual float GetDamage() { return 0.0f; };
 };

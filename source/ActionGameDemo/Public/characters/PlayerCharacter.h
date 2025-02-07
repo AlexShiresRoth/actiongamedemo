@@ -17,6 +17,24 @@ public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Stats Component")
+	class UStatsComponent *StatsComp;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Lockon Component")
+	class ULockon_Component *LockonComp;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Combat Component")
+	class UCombatComponent *CombatComp;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Trace Component")
+	class UTraceComponent *TraceComp;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Block Component")
+	class UBlockComponent *BlockComp;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Player Actions Comp")
+	class UPlayerActionsComponent *PlayerActionsComp;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -32,4 +50,6 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;
 
 	virtual float GetDamage() override;
+
+	virtual bool HasEnoughStamina(float Amount) override;
 };

@@ -2,6 +2,7 @@
 
 #include "combat/CombatComponent.h"
 #include "GameFramework/Character.h"
+#include "Interfaces/MainPlayer.h"
 #include "Kismet/KismetMathLibrary.h"
 
 // Sets default values for this component's properties
@@ -16,6 +17,17 @@ UCombatComponent::UCombatComponent()
 
 void UCombatComponent::ComboAttack()
 {
+	// U is meant to validate the interface
+	if (CharacterRef->Implements<UMainPlayer>())
+	{
+		IMainPlayer *IPlayerRef{Cast<IMainPlayer>(CharacterRef)};
+
+		if (IPlayerRef && !IPlayerRef->HasEnoughStamina(StaminaCost))
+		{
+			return;
+		}
+	}
+
 	if (!bCanAttack)
 	{
 		return;
@@ -30,6 +42,8 @@ void UCombatComponent::ComboAttack()
 
 	// when wrapping around, the lib increments by 1 so setting it at -1 will make it 0 when wrapping
 	ComboCounter = UKismetMathLibrary::Wrap(ComboCounter, -1, MaxCombo - 1);
+
+	OnAttackPerformedDelegate.Broadcast(StaminaCost);
 }
 
 void UCombatComponent::HandleResetAttack()

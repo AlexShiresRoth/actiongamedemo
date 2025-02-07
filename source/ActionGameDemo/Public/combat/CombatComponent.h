@@ -6,6 +6,10 @@
 #include "Components/ActorComponent.h"
 #include "CombatComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_OneParam(
+	FOnAttackPerformedSignature,
+	UCombatComponent, OnAttackPerformedDelegate, float, Amount);
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class ACTIONGAMEDEMO_API UCombatComponent : public UActorComponent
 {
@@ -22,6 +26,9 @@ class ACTIONGAMEDEMO_API UCombatComponent : public UActorComponent
 	UPROPERTY(VisibleAnywhere, Category = "Combat")
 	bool bCanAttack{true};
 
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	float StaminaCost{5.0f};
+
 public:
 	// Sets default values for this component's properties
 	UCombatComponent();
@@ -31,6 +38,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 	void HandleResetAttack();
+
+	UPROPERTY(BlueprintAssignable, Category = "Combat")
+	FOnAttackPerformedSignature OnAttackPerformedDelegate;
 
 protected:
 	// Called when the game starts

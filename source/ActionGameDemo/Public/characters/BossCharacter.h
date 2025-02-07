@@ -19,6 +19,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Stats Component")
 	class UStatsComponent *StatsComp;
 
+	UFUNCTION(BlueprintCallable, Category = "Boss Character")
+	void DetectPawn(class APawn *PawnDetected, class APawn *OtherPawn);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

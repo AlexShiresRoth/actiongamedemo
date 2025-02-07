@@ -17,6 +17,16 @@ ABossCharacter::ABossCharacter()
 	StatsComp = CreateDefaultSubobject<UStatsComponent>(TEXT("Stats Component"));
 }
 
+void ABossCharacter::DetectPawn(class APawn *PawnDetected, class APawn *OtherPawn)
+{
+	if (PawnDetected != OtherPawn)
+	{
+		return;
+	};
+
+	UE_LOG(LogTemp, Warning, TEXT("Pawn Detected %s"), *PawnDetected->GetName());
+}
+
 // Called when the game starts or when spawned
 void ABossCharacter::BeginPlay()
 {

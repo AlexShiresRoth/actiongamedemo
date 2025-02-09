@@ -1,5 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "BossCharacter.h"
 #include "StatsComponent.h"
 #include "EStat.h"
 #include "combat/CombatComponent.h"
@@ -8,7 +9,6 @@
 #include "PlayerActionsComponent.h"
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "characters/BossCharacter.h"
 
 // Sets default values
 ABossCharacter::ABossCharacter()

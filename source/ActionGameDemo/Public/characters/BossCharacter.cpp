@@ -6,6 +6,8 @@
 #include "combat/TraceComponent.h"
 #include "combat/BlockComponent.h"
 #include "PlayerActionsComponent.h"
+#include "AIController.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "characters/BossCharacter.h"
 
 // Sets default values
@@ -19,18 +21,31 @@ ABossCharacter::ABossCharacter()
 
 void ABossCharacter::DetectPawn(class APawn *PawnDetected, class APawn *OtherPawn)
 {
-	if (PawnDetected != OtherPawn)
+
+	EEnemyState CurrentState{
+		static_cast<EEnemyState>(BlackboardComp->GetValueAsEnum(
+			TEXT("CurrentState")))};
+
+	if (PawnDetected != OtherPawn || CurrentState != EEnemyState::Idle)
 	{
 		return;
 	};
 
-	UE_LOG(LogTemp, Warning, TEXT("Pawn Detected %s"), *PawnDetected->GetName());
+	BlackboardComp->SetValueAsEnum(
+		TEXT("CurrentState"),
+		EEnemyState::Range);
 }
 
 // Called when the game starts or when spawned
 void ABossCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	BlackboardComp = GetController<AAIController>()->GetBlackboardComponent();
+
+	BlackboardComp->SetValueAsEnum(
+		TEXT("CurrentState"),
+		InitialState);
 }
 
 // Called every frame

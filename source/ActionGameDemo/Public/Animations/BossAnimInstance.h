@@ -15,6 +15,10 @@ class ACTIONGAMEDEMO_API UBossAnimInstance : public UAnimInstance
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(BlueprintReadWrite, Category = "Boss Anim Instance")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Boss Anim Instance")
 	float CurrentSpeed{0.0f};
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss Anim Instance")
+	bool bIsCharging{false};
 };

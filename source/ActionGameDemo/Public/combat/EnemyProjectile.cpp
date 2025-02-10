@@ -1,6 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "combat/EnemyProjectile.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+#include "Components/SphereComponent.h"
+#include "Engine/DamageEvents.h"
 
 // Sets default values
 AEnemyProjectile::AEnemyProjectile()
@@ -31,5 +35,26 @@ void AEnemyProjectile::HandleBeginOverlap(AActor *OtherActor)
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("EnemyProjectile::HandleBeginOverlap with player"));
+	FindComponentByClass<UParticleSystemComponent>()->SetTemplate(HitTemplate);
+
+	FindComponentByClass<UProjectileMovementComponent>()->StopMovementImmediately();
+
+	FTimerHandle DeathTimerHandle{};
+
+	GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &AEnemyProjectile::DestroyProjectile, 0.5f);
+
+	FindComponentByClass<USphereComponent>()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	FDamageEvent ProjectileAttackEvent{};
+
+	PawnRef->TakeDamage(
+		ProjectileDamage,
+		ProjectileAttackEvent,
+		PawnRef->GetController(),
+		this);
+}
+
+void AEnemyProjectile::DestroyProjectile()
+{
+	Destroy();
 }

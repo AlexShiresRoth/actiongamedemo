@@ -11,6 +11,12 @@ class ACTIONGAMEDEMO_API AEnemyProjectile : public AActor
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere, Category = "Projectile")
+	UParticleSystem *HitTemplate;
+
+	UPROPERTY(EditAnywhere, Category = "Projectile")
+	float ProjectileDamage{10.0f};
+
 public:
 	// Sets default values for this actor's properties
 	AEnemyProjectile();
@@ -25,4 +31,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void HandleBeginOverlap(AActor *OtherActor);
+
+	UFUNCTION()
+	void DestroyProjectile();
 };

@@ -5,11 +5,12 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interfaces/Enemy.h"
+#include "Interfaces/Fighter.h"
 #include "EEnemyState.h"
 #include "BossCharacter.generated.h"
 
 UCLASS()
-class ACTIONGAMEDEMO_API ABossCharacter : public ACharacter, public IEnemy
+class ACTIONGAMEDEMO_API ABossCharacter : public ACharacter, public IEnemy, public IFighter
 {
 	GENERATED_BODY()
 
@@ -27,6 +28,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Boss Character")
 	void DetectPawn(class APawn *PawnDetected, class APawn *OtherPawn);
+
+	virtual float GetDamage() override;
 
 protected:
 	// Called when the game starts or when spawned

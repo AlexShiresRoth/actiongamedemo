@@ -30,7 +30,10 @@ EBTNodeResult::Type UBTT_ChargeAttack::ExecuteTask(UBehaviorTreeComponent &Owner
     // TODO we should change IsReadyToChage to an enum
     OwnerComp.GetBlackboardComponent()->SetValueAsBool(
         TEXT("IsReadyToCharge"), false // this text value should be a key in the blackboard BB_Boss and is case sensitive
-    );                                 // also this key is used in the ABP_Boss in editor for anim notify event
+    );
+
+    bIsFinished = false;
+    // also this key is used in the ABP_Boss in editor for anim notify event
 
     return EBTNodeResult::InProgress;
 }
@@ -74,11 +77,12 @@ void UBTT_ChargeAttack::HandleMoveCompleted()
 
 void UBTT_ChargeAttack::FinishAttackTask()
 {
-    UE_LOG(LogTemp, Warning, TEXT("Attack task finished"));
+    bIsFinished = true;
 }
 
 void UBTT_ChargeAttack::TickTask(UBehaviorTreeComponent &OwnerComp, uint8 *NodeMemory, float DeltaSeconds)
 {
+
     bool bIsReadyToCharge{OwnerComp.GetBlackboardComponent()->GetValueAsBool(
         TEXT("IsReadyToCharge") // this text value should be a key in the blackboard BB_Boss and is case sensitive
         )};
@@ -88,5 +92,14 @@ void UBTT_ChargeAttack::TickTask(UBehaviorTreeComponent &OwnerComp, uint8 *NodeM
         OwnerComp.GetBlackboardComponent()->SetValueAsBool(TEXT("IsReadyToCharge"), false);
 
         ChargeAtPlayer();
-    }
+    };
+
+    if (!bIsFinished)
+    {
+        return;
+    };
+
+    ControllerRef->ReceiveMoveCompleted.Remove(MoveCompletedDelegate);
+
+    FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 }

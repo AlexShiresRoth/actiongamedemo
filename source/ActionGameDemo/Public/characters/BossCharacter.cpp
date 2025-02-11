@@ -36,6 +36,11 @@ void ABossCharacter::DetectPawn(class APawn *PawnDetected, class APawn *OtherPaw
 		EEnemyState::Range);
 }
 
+float ABossCharacter::GetDamage()
+{
+	return StatsComp->Stats[EStat::Strength];
+}
+
 // Called when the game starts or when spawned
 void ABossCharacter::BeginPlay()
 {

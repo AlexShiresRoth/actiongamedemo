@@ -29,6 +29,8 @@ class ACTIONGAMEDEMO_API UBTT_ChargeAttack : public UBTTaskNode
 	UPROPERTY(EditAnywhere)
 	float AcceptableRadius{100.0f};
 
+	bool bIsFinished{false};
+
 protected:
 	virtual void TickTask(UBehaviorTreeComponent &OwnerComp, uint8 *NodeMemory, float DeltaSeconds) override;
 

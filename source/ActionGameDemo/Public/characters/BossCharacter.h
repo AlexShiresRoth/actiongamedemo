@@ -9,6 +9,7 @@
 #include "EEnemyState.h"
 #include "BossCharacter.generated.h"
 
+// TODO figure out why repeated melee attacks don't cause damage to player
 UCLASS()
 class ACTIONGAMEDEMO_API ABossCharacter : public ACharacter, public IEnemy, public IFighter
 {

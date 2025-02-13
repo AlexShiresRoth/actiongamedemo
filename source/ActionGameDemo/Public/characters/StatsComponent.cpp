@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
+#include "StatsComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "StatsComponent.h"
 
 // Sets default values for this component's properties
 UStatsComponent::UStatsComponent()
@@ -17,6 +17,7 @@ void UStatsComponent::ReduceHealth(float Damage)
 {
 	if (Stats[EStat::Health] <= 0)
 	{
+		OnZeroHealthDelegate.Broadcast();
 		return;
 	};
 
@@ -26,6 +27,8 @@ void UStatsComponent::ReduceHealth(float Damage)
 		Stats[EStat::Health],
 		0.0f,
 		Stats[EStat::MaxHealth]);
+
+	OnHealthPercentUpdateDelegate.Broadcast(GetStatPercentage(EStat::Health, EStat::MaxHealth));
 }
 
 void UStatsComponent::ReduceStamina(float Amount)
@@ -49,6 +52,8 @@ void UStatsComponent::ReduceStamina(float Amount)
 		GetWorld(),
 		StaminaDelayDuration,
 		FunctionInfo);
+
+	OnStaminaPercentUpdateDelegate.Broadcast(GetStatPercentage(EStat::Stamina, EStat::MaxStamina));
 }
 
 void UStatsComponent::RegenStamina()
@@ -64,11 +69,18 @@ void UStatsComponent::RegenStamina()
 		Stats[EStat::MaxStamina],
 		GetWorld()->DeltaTimeSeconds,
 		StaminaRegenRate);
+
+	OnStaminaPercentUpdateDelegate.Broadcast(GetStatPercentage(EStat::Stamina, EStat::MaxStamina));
 }
 
 void UStatsComponent::EnableRegen()
 {
 	bCanRegen = true;
+}
+
+float UStatsComponent::GetStatPercentage(EStat Current, EStat Max)
+{
+	return Stats[Current] / Stats[Max];
 }
 
 // Called when the game starts

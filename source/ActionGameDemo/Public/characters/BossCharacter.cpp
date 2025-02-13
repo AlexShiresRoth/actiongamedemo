@@ -1,12 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "BossCharacter.h"
 #include "StatsComponent.h"
 #include "EStat.h"
 #include "combat/CombatComponent.h"
 #include "combat/TraceComponent.h"
 #include "combat/BlockComponent.h"
 #include "PlayerActionsComponent.h"
-#include "characters/BossCharacter.h"
+#include "AIController.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 // Sets default values
 ABossCharacter::ABossCharacter()
@@ -15,12 +17,56 @@ ABossCharacter::ABossCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	StatsComp = CreateDefaultSubobject<UStatsComponent>(TEXT("Stats Component"));
+	CombatComp = CreateDefaultSubobject<UCombatComponent>(TEXT("Combat Component"));
+}
+
+void ABossCharacter::DetectPawn(class APawn *PawnDetected, class APawn *OtherPawn)
+{
+
+	EEnemyState CurrentState{
+		static_cast<EEnemyState>(BlackboardComp->GetValueAsEnum(
+			TEXT("CurrentState")))};
+
+	if (PawnDetected != OtherPawn || CurrentState != EEnemyState::Idle)
+	{
+		return;
+	};
+
+	BlackboardComp->SetValueAsEnum(
+		TEXT("CurrentState"),
+		EEnemyState::Range);
+}
+
+float ABossCharacter::GetDamage()
+{
+	return StatsComp->Stats[EStat::Strength];
+}
+
+void ABossCharacter::Attack()
+{
+	CombatComp->RandomAttack();
+}
+
+float ABossCharacter::GetAnimDuration()
+{
+	return CombatComp->AnimDuration;
+}
+
+float ABossCharacter::GetMeleeRange()
+{
+	return StatsComp->Stats[EStat::MeleeRange];
 }
 
 // Called when the game starts or when spawned
 void ABossCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	BlackboardComp = GetController<AAIController>()->GetBlackboardComponent();
+
+	BlackboardComp->SetValueAsEnum(
+		TEXT("CurrentState"),
+		InitialState);
 }
 
 // Called every frame

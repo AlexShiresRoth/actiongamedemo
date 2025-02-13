@@ -5,12 +5,20 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interfaces/Enemy.h"
+#include "Interfaces/Fighter.h"
+#include "EEnemyState.h"
 #include "BossCharacter.generated.h"
 
+// TODO figure out why repeated melee attacks don't cause damage to player
 UCLASS()
-class ACTIONGAMEDEMO_API ABossCharacter : public ACharacter, public IEnemy
+class ACTIONGAMEDEMO_API ABossCharacter : public ACharacter, public IEnemy, public IFighter
 {
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<EEnemyState> InitialState;
+
+	class UBlackboardComponent *BlackboardComp;
 
 public:
 	// Sets default values for this character's properties
@@ -18,6 +26,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Stats Component")
 	class UStatsComponent *StatsComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UCombatComponent *CombatComp;
 
 protected:
 	// Called when the game starts or when spawned
@@ -29,4 +40,15 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;
+
+	UFUNCTION(BlueprintCallable, Category = "Boss Character")
+	void DetectPawn(class APawn *PawnDetected, class APawn *OtherPawn);
+
+	virtual float GetDamage() override;
+
+	virtual void Attack() override;
+
+	virtual float GetAnimDuration() override;
+
+	virtual float GetMeleeRange() override;
 };

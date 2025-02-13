@@ -6,6 +6,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/EEnemyState.h"
+#include "Interfaces/Fighter.h"
 
 EBTNodeResult::Type UBTT_RangeAttack::ExecuteTask(UBehaviorTreeComponent &OwnerComp, uint8 *NodeMemory)
 {
@@ -16,6 +17,23 @@ EBTNodeResult::Type UBTT_RangeAttack::ExecuteTask(UBehaviorTreeComponent &OwnerC
     {
         return EBTNodeResult::Failed;
     };
+
+    float Distance{// TODO should change this to an enum
+                   OwnerComp.GetBlackboardComponent()->GetValueAsFloat(TEXT("Distance"))};
+
+    IFighter *FighterRef{
+        Cast<IFighter>(
+            OwnerComp.GetAIOwner()->GetCharacter())};
+
+    if (Distance < FighterRef->GetMeleeRange())
+    {
+        // TODO change CurrentState to Enum
+        OwnerComp.GetBlackboardComponent()->SetValueAsEnum(TEXT("CurrentState"), EEnemyState::Melee);
+
+        AbortTask(OwnerComp, NodeMemory);
+
+        return EBTNodeResult::Aborted;
+    }
 
     CharacterRef->PlayAnimMontage(AnimMontage);
 

@@ -26,10 +26,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Stats Component")
 	class UStatsComponent *StatsComp;
 
-	UFUNCTION(BlueprintCallable, Category = "Boss Character")
-	void DetectPawn(class APawn *PawnDetected, class APawn *OtherPawn);
-
-	virtual float GetDamage() override;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UCombatComponent *CombatComp;
 
 protected:
 	// Called when the game starts or when spawned
@@ -41,4 +39,15 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;
+
+	UFUNCTION(BlueprintCallable, Category = "Boss Character")
+	void DetectPawn(class APawn *PawnDetected, class APawn *OtherPawn);
+
+	virtual float GetDamage() override;
+
+	virtual void Attack() override;
+
+	virtual float GetAnimDuration() override;
+
+	virtual float GetMeleeRange() override;
 };

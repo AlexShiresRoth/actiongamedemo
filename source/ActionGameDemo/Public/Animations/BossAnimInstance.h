@@ -18,6 +18,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Boss Anim Instance")
 	float CurrentSpeed{0.0f};
 
+	UFUNCTION(BlueprintCallable, Category = "Boss Anim Instance")
+	void UpdateSpeed();
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss Anim Instance")
 	bool bIsCharging{false};

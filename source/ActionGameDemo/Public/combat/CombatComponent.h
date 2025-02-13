@@ -42,6 +42,11 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Combat")
 	FOnAttackPerformedSignature OnAttackPerformedDelegate;
 
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void RandomAttack();
+
+	float AnimDuration;
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;

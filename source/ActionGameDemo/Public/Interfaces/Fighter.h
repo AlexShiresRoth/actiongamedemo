@@ -24,4 +24,10 @@ class ACTIONGAMEDEMO_API IFighter
 public:
 	// virtual tells c++ this function can be overridden
 	virtual float GetDamage() { return 0.0f; };
+
+	virtual void Attack() {}
+
+	virtual float GetAnimDuration() { return 0.0f; };
+
+	virtual float GetMeleeRange() { return 0.0f; };
 };

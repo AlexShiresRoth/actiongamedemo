@@ -21,4 +21,5 @@ enum EStat
 	Wisdom UMETA(DisplayName = "Wisdom"),
 	Agility UMETA(DisplayName = "Agility"),
 	Defense UMETA(DisplayName = "Defense"),
+	MeleeRange UMETA(DisplayName = "Melee Range"),
 };

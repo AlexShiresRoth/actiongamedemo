@@ -7,6 +7,18 @@
 #include "EStat.h"
 #include "StatsComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_OneParam(
+	FOnHealthPercentUpdateSignature,
+	UStatsComponent, OnHealthPercentUpdateDelegate, float, Percent);
+
+DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_OneParam(
+	FOnStaminaPercentUpdateSignature,
+	UStatsComponent, OnStaminaPercentUpdateDelegate, float, Percent);
+
+DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE(
+	FOnZeroHealthSignature,
+	UStatsComponent, OnZeroHealthDelegate);
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class ACTIONGAMEDEMO_API UStatsComponent : public UActorComponent
 {
@@ -39,6 +51,19 @@ public:
 
 	UFUNCTION()
 	void EnableRegen();
+
+	// Blueprintpure do not have execution pins and everything is read only within the function
+	UFUNCTION(BlueprintPure)
+	float GetStatPercentage(EStat Current, EStat Max);
+
+	UPROPERTY(BlueprintAssignable, Category = "Stats")
+	FOnHealthPercentUpdateSignature OnHealthPercentUpdateDelegate;
+
+	UPROPERTY(BlueprintAssignable, Category = "Stats")
+	FOnStaminaPercentUpdateSignature OnStaminaPercentUpdateDelegate;
+
+	UPROPERTY(BlueprintAssignable, Category = "Stats")
+	FOnZeroHealthSignature OnZeroHealthDelegate;
 
 protected:
 	// Called when the game starts

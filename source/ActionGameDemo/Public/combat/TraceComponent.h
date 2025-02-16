@@ -12,8 +12,7 @@ class ACTIONGAMEDEMO_API UTraceComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-private:
-	USkeletalMeshComponent *SkeletalComp;
+	USkeletalMeshComponent* SkeletalComp;
 
 	UPROPERTY(EditAnywhere, Category = "Trace")
 	TArray<FTraceSockets> Sockets;
@@ -24,7 +23,10 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Trace")
 	bool bDebugMode{false};
 
-	TArray<AActor *> TargetsToIgnore;
+	TArray<AActor*> TargetsToIgnore;
+
+	UPROPERTY(EditAnywhere, Category = "Emitter")
+	UParticleSystem* HitParticleTemplate;
 
 public:
 	// Sets default values for this component's properties
@@ -43,5 +45,5 @@ protected:
 public:
 	// Called every frame
 	virtual void
-	TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
+	TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 };

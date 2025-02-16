@@ -44,19 +44,19 @@ void APlayerCharacter::Tick(float DeltaTime)
 }
 
 // Called to bind functionality to input
-void APlayerCharacter::SetupPlayerInputComponent(UInputComponent *PlayerInputComponent)
+void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
 float APlayerCharacter::GetDamage()
 {
-	return StatsComp->Stats[EStat::Strength];
+	return StatsComp->Stats[Strength];
 }
 
 bool APlayerCharacter::HasEnoughStamina(const float Amount)
 {
-	return StatsComp->Stats[EStat::Stamina] >= Amount;
+	return StatsComp->Stats[Stamina] >= Amount;
 }
 
 void APlayerCharacter::EndLockonWithActor(class AActor* Actor)
@@ -78,12 +78,22 @@ bool APlayerCharacter::CanTakeDamage(AActor* Opponent)
 		return BlockComp->Check(Opponent);
 	}
 	
+	if (PlayerActionsComp->bIsRollActive)
+	{
+		return false;
+	}
+
 	return true;
 }
 
-void APlayerCharacter::PlayHurtAnim()
+void APlayerCharacter::PlayHurtAnim(TSubclassOf<class UCameraShakeBase> CameraShakeTemplate)
 {
 	PlayAnimMontage(HurtAnimMontage);
+
+	if (CameraShakeTemplate)
+	{
+		GetController<APlayerController>()->ClientStartCameraShake(CameraShakeTemplate);
+	}
 }
 
 void APlayerCharacter::HandleDeath()

@@ -4,6 +4,7 @@
 #include "GameFramework/Character.h"
 #include "Interfaces/MainPlayer.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values for this component's properties
 UPlayerActionsComponent::UPlayerActionsComponent()
@@ -26,13 +27,14 @@ void UPlayerActionsComponent::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Player does not implement IMainPlayer"));
 		return;
-	};
+	}
 
 	IPlayerRef = Cast<IMainPlayer>(CharacterRef);
 }
 
 // Called every frame
-void UPlayerActionsComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+void UPlayerActionsComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+                                            FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
@@ -45,12 +47,12 @@ void UPlayerActionsComponent::Sprint()
 	{
 		Walk();
 		return;
-	};
+	}
 
 	if (MovementComp->Velocity.Equals(FVector::ZeroVector, 1))
 	{
 		return;
-	};
+	}
 
 	MovementComp->MaxWalkSpeed = SprintSpeed;
 
@@ -60,4 +62,46 @@ void UPlayerActionsComponent::Sprint()
 void UPlayerActionsComponent::Walk()
 {
 	MovementComp->MaxWalkSpeed = WalkSpeed;
+}
+
+void UPlayerActionsComponent::Roll()
+{
+	if (bIsRollActive || !IPlayerRef->HasEnoughStamina(RollCost))
+	{
+		return;
+	}
+
+	bIsRollActive = true;
+
+	OnRollDelegate.Broadcast(RollCost);
+
+	// handle the direction and rotation of where the player is rolling
+	// for both from idle and moving
+	const FVector Direction{
+		CharacterRef->GetCharacterMovement()->Velocity.Length() < 1
+			? CharacterRef->GetActorForwardVector()
+			: CharacterRef->GetLastMovementInputVector()
+	};
+
+	const FRotator NewRotation{
+		UKismetMathLibrary::MakeRotFromX(Direction)
+	};
+
+
+	CharacterRef->SetActorRotation(NewRotation);
+	float Duration{CharacterRef->PlayAnimMontage(RollAnimMontage)};
+
+	FTimerHandle RollTimerHandle;
+
+	CharacterRef->GetWorldTimerManager().SetTimer(
+		RollTimerHandle,
+		this,
+		&UPlayerActionsComponent::FinishRollAnim,
+		Duration,
+		false);
+}
+
+void UPlayerActionsComponent::FinishRollAnim()
+{
+	bIsRollActive = false;
 }

@@ -40,9 +40,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	void StartLockon(float InRadius = 750.f);
-
-	void StopLockon();
-
+	
 	UFUNCTION(BlueprintCallable, Category = "Lockon")
 	void ToggleLockon(float Radius = 750.f);
 
@@ -50,6 +48,7 @@ protected:
 	double BreakDistance{1000.0};
 
 public:
+	void StopLockon();
 	// Called every frame
 	virtual void
 	TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;

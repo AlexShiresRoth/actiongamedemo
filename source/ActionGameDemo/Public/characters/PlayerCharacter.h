@@ -13,6 +13,9 @@ class ACTIONGAMEDEMO_API APlayerCharacter : public ACharacter, public IMainPlaye
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere, Category = "Player Animation")
+	UAnimMontage *DeathAnim;
+
 public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
@@ -52,4 +55,9 @@ public:
 	virtual float GetDamage() override;
 
 	virtual bool HasEnoughStamina(float Amount) override;
+
+	virtual void EndLockonWithActor(class AActor* Actor);
+
+	UFUNCTION(BlueprintCallable, Category = "Death")
+	void HandleDeath();
 };

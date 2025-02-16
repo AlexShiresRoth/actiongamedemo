@@ -54,7 +54,25 @@ float APlayerCharacter::GetDamage()
 	return StatsComp->Stats[EStat::Strength];
 }
 
-bool APlayerCharacter::HasEnoughStamina(float Amount)
+bool APlayerCharacter::HasEnoughStamina(const float Amount)
 {
 	return StatsComp->Stats[EStat::Stamina] >= Amount;
+}
+
+void APlayerCharacter::EndLockonWithActor(class AActor* Actor)
+{
+	if (Actor != LockonComp->CurrentTargetActor)
+	{
+		return;
+	}
+	if (Actor == LockonComp->CurrentTargetActor)
+	{
+		LockonComp->StopLockon();
+	}
+}
+
+void APlayerCharacter::HandleDeath()
+{
+	PlayAnimMontage(DeathAnim);
+	DisableInput(GetController<APlayerController>());
 }

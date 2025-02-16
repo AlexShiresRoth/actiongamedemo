@@ -33,4 +33,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Player Anim Instance")
 	void UpdateDirection();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Anim Instance")
+	bool bIsBlocking {false};
 };

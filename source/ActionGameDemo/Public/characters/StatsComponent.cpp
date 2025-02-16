@@ -2,6 +2,7 @@
 #include "StatsComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Interfaces/Fighter.h"
 
 // Sets default values for this component's properties
 UStatsComponent::UStatsComponent()
@@ -13,13 +14,20 @@ UStatsComponent::UStatsComponent()
 	// ...
 }
 
-void UStatsComponent::ReduceHealth(float Damage)
+void UStatsComponent::ReduceHealth(float Damage, AActor* Opponent)
 {
 	if (Stats[EStat::Health] <= 0)
 	{
 		OnZeroHealthDelegate.Broadcast();
 		return;
 	};
+
+	IFighter* FighterRef{GetOwner<IFighter>()};
+	
+	if (!FighterRef->CanTakeDamage(Opponent))
+	{
+		return;
+	}
 
 	Stats[EStat::Health] -= Damage;
 	// Clamping will make sure that the health never goes below 0

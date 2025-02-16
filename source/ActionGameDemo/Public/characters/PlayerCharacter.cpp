@@ -71,6 +71,21 @@ void APlayerCharacter::EndLockonWithActor(class AActor* Actor)
 	}
 }
 
+bool APlayerCharacter::CanTakeDamage(AActor* Opponent)
+{
+	if (PlayerAnimInstance->bIsBlocking)
+	{
+		return BlockComp->Check(Opponent);
+	}
+	
+	return true;
+}
+
+void APlayerCharacter::PlayHurtAnim()
+{
+	PlayAnimMontage(HurtAnimMontage);
+}
+
 void APlayerCharacter::HandleDeath()
 {
 	PlayAnimMontage(DeathAnim);

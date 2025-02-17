@@ -8,7 +8,11 @@
 #include "combat/BlockComponent.h"
 #include "PlayerActionsComponent.h"
 #include "AIController.h"
+#include "BrainComponent.h"
+#include "PlayerCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Interfaces/MainPlayer.h"
 
 // Sets default values
 ABossCharacter::ABossCharacter()
@@ -20,12 +24,42 @@ ABossCharacter::ABossCharacter()
 	CombatComp = CreateDefaultSubobject<UCombatComponent>(TEXT("Combat Component"));
 }
 
-void ABossCharacter::DetectPawn(class APawn *PawnDetected, class APawn *OtherPawn)
+// Called when the game starts or when spawned
+void ABossCharacter::BeginPlay()
 {
+	Super::BeginPlay();
 
+	ControllerRef = GetController<AAIController>();
+
+	BlackboardComp = ControllerRef->GetBlackboardComponent();
+
+	BlackboardComp->SetValueAsEnum(
+		TEXT("CurrentState"),
+		InitialState);
+
+	GetWorld()->GetFirstPlayerController()->GetPawn<APlayerCharacter>()->StatsComp->OnZeroHealthDelegate.AddDynamic(
+		this,
+		&ABossCharacter::HandlePlayerDeath);
+}
+
+// Called every frame
+void ABossCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
+
+// Called to bind functionality to input
+void ABossCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+void ABossCharacter::DetectPawn(class APawn* PawnDetected, class APawn* OtherPawn)
+{
 	EEnemyState CurrentState{
 		static_cast<EEnemyState>(BlackboardComp->GetValueAsEnum(
-			TEXT("CurrentState")))};
+			TEXT("CurrentState")))
+	};
 
 	if (PawnDetected != OtherPawn || CurrentState != EEnemyState::Idle)
 	{
@@ -57,26 +91,39 @@ float ABossCharacter::GetMeleeRange()
 	return StatsComp->Stats[EStat::MeleeRange];
 }
 
-// Called when the game starts or when spawned
-void ABossCharacter::BeginPlay()
+void ABossCharacter::HandlePlayerDeath()
 {
-	Super::BeginPlay();
-
-	BlackboardComp = GetController<AAIController>()->GetBlackboardComponent();
-
-	BlackboardComp->SetValueAsEnum(
+	ControllerRef->GetBlackboardComponent()->SetValueAsEnum(
 		TEXT("CurrentState"),
-		InitialState);
+		EEnemyState::GameOver);
 }
 
-// Called every frame
-void ABossCharacter::Tick(float DeltaTime)
+void ABossCharacter::HandleDeath()
 {
-	Super::Tick(DeltaTime);
+	float Duration{PlayAnimMontage(DeathAnim)};
+
+	ControllerRef->GetBrainComponent()->StopLogic("defeated");
+
+	FindComponentByClass<UCapsuleComponent>()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	FTimerHandle DestroyTimerHandle;
+	// handle timer here
+	GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandle, this, &ABossCharacter::FinishDeathAnim, Duration * 100,
+	                                       false);
+
+	IMainPlayer* PlayerRef{
+		GetWorld()->GetFirstPlayerController()->GetPawn<IMainPlayer>()
+	};
+
+	if (!PlayerRef)
+	{
+		return;
+	}
+
+	PlayerRef->EndLockonWithActor(this);
 }
 
-// Called to bind functionality to input
-void ABossCharacter::SetupPlayerInputComponent(UInputComponent *PlayerInputComponent)
+void ABossCharacter::FinishDeathAnim()
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	Destroy();
 }

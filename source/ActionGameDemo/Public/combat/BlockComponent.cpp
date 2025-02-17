@@ -2,7 +2,8 @@
 
 
 #include "combat/BlockComponent.h"
-
+#include "GameFramework/Character.h"
+#include "Interfaces/MainPlayer.h"
 // Sets default values for this component's properties
 UBlockComponent::UBlockComponent()
 {
@@ -30,5 +31,37 @@ void UBlockComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+}
+
+bool UBlockComponent::Check(AActor* Opponent)
+{
+	ACharacter *CharacterRef{GetOwner<ACharacter>()};
+
+	// true means we can't block damage
+	if (!CharacterRef->Implements<UMainPlayer>())
+	{
+		return true;
+	}
+
+	IMainPlayer *PlayerRef{Cast<IMainPlayer>(CharacterRef)};
+
+	FVector OpponentForward{Opponent->GetActorForwardVector() };
+
+	FVector PlayerForward{CharacterRef->GetActorForwardVector() };
+
+	double Result{ FVector::DotProduct(OpponentForward, PlayerForward)};
+
+	// if result is greater than 0 that means they are not looking at each other
+	if (Result > 0 || !PlayerRef->HasEnoughStamina(StaminaCost))
+	{
+		return true;
+	}
+
+	CharacterRef->PlayAnimMontage(BlockAnimMontage);
+
+	OnBlockDelegate.Broadcast(StaminaCost);
+	
+	// false will mean we can
+	return false;
 }
 

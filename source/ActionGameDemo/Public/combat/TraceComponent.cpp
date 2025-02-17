@@ -4,6 +4,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Interfaces/Fighter.h"
 #include "Engine/DamageEvents.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
 // Sets default values for this component's properties
@@ -30,21 +31,19 @@ void UTraceComponent::BeginPlay()
 }
 
 // Called every frame
-void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	if (!bIsAttacking)
 	{
 		return;
-	};
+	}
 
 	TArray<FHitResult> AllResults;
 
 	for (const FTraceSockets Socket : Sockets)
 	{
-
 		FVector StartSocketLocation{SkeletalComp->GetSocketLocation(Socket.Start)};
 		FVector EndSocketLocation{SkeletalComp->GetSocketLocation(Socket.End)};
 
@@ -72,25 +71,28 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 			GetOwner(),
 		};
 
-		bool bHasFoundTargets{GetWorld()->SweepMultiByChannel(
-			OutResults,
-			StartSocketLocation,
-			EndSocketLocation,
-			ShapeRotation,
-			ECollisionChannel::ECC_GameTraceChannel1, Box, IgnoreParams)};
+		bool bHasFoundTargets{
+			GetWorld()->SweepMultiByChannel(
+				OutResults,
+				StartSocketLocation,
+				EndSocketLocation,
+				ShapeRotation,
+				ECC_GameTraceChannel1, Box, IgnoreParams)
+		};
 
 		// Add hit results to outer array
 		for (FHitResult Hit : OutResults)
 		{
 			AllResults.Add(Hit);
-		};
+		}
 
 		if (bDebugMode)
 		{
 			FVector CenterPoint{
 				UKismetMathLibrary::VLerp(
 					StartSocketLocation,
-					EndSocketLocation, 0.5f)};
+					EndSocketLocation, 0.5f)
+			};
 
 			UKismetSystemLibrary::DrawDebugBox(
 				GetWorld(),
@@ -100,28 +102,28 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 				ShapeRotation.Rotator(),
 				1.0f,
 				2.0f);
-		};
-	};
+		}
+	}
 
 	if (AllResults.Num() == 0)
 	{
 		return;
-	};
+	}
 
 	float CharacterDamage{0.0f};
 
-	IFighter *FighterRef{Cast<IFighter>(GetOwner())};
+	IFighter* FighterRef{Cast<IFighter>(GetOwner())};
 
 	if (FighterRef)
 	{
 		CharacterDamage = FighterRef->GetDamage();
-	};
+	}
 
 	FDamageEvent TargetAttackedEvent;
 
-	for (const FHitResult &Hit : AllResults)
+	for (const FHitResult& Hit : AllResults)
 	{
-		AActor *TargetActor{Hit.GetActor()};
+		AActor* TargetActor{Hit.GetActor()};
 
 		// only allow one attack to cause damage
 		if (TargetsToIgnore.Contains(TargetActor))
@@ -130,10 +132,15 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 		}
 
 		TargetActor->TakeDamage(CharacterDamage,
-								TargetAttackedEvent,
-								GetOwner()->GetInstigatorController(),
-								GetOwner());
+		                        TargetAttackedEvent,
+		                        GetOwner()->GetInstigatorController(),
+		                        GetOwner());
 
 		TargetsToIgnore.AddUnique(TargetActor);
-	};
+
+		UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			HitParticleTemplate,
+			Hit.ImpactPoint);
+	}
 }

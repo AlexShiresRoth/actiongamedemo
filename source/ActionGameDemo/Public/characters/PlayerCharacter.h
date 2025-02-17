@@ -13,6 +13,12 @@ class ACTIONGAMEDEMO_API APlayerCharacter : public ACharacter, public IMainPlaye
 {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere, Category = "Player Animation")
+	UAnimMontage *DeathAnim;
+
+	UPROPERTY(EditAnywhere, Category = "Player Animation")
+	UAnimMontage *HurtAnimMontage;
+
 public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
@@ -52,4 +58,16 @@ public:
 	virtual float GetDamage() override;
 
 	virtual bool HasEnoughStamina(float Amount) override;
+
+	virtual void EndLockonWithActor(class AActor* Actor);
+
+	virtual bool CanTakeDamage(AActor* Opponent) override;
+
+	UFUNCTION(BlueprintCallable, Category = "Death")
+	void HandleDeath();
+
+	UFUNCTION(BlueprintCallable, Category = "Damage")
+	void PlayHurtAnim(TSubclassOf<class UCameraShakeBase> CameraShakeTemplate);
 };
+
+

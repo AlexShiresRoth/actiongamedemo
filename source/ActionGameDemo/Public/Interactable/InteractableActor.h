@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Item.h"
 #include "GameFramework/Actor.h"
 #include "Interfaces/IInteractable.h"
 #include "InteractableActor.generated.h"
@@ -23,6 +24,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsOverlapping{false};
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Items")
+	TArray<AItem*> Items;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -39,4 +43,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void HandleOnEndOverlapEvent(AActor* OverlappingActor);
+
+	UFUNCTION(BlueprintCallable)
+	void HandleItemsOnActor();
 };

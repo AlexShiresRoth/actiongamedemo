@@ -66,3 +66,14 @@ void AInteractableActor::HandleOnEndOverlapEvent(AActor* OverlappingActor)
 		bIsOverlapping = false;
 	}
 }
+
+void AInteractableActor::HandleItemsOnActor()
+{
+	if (Items.Num() > 0)
+	{
+		for (const AItem* Item : Items)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Item %s"), *Item->GetName());
+		}
+	}
+}

@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Interfaces/IInteractable.h"
 #include "InteractableActor.generated.h"
 
+//TODO need to render widget for item's inventory
 UCLASS()
-class ACTIONGAMEDEMO_API AInteractableActor : public AActor
+class ACTIONGAMEDEMO_API AInteractableActor : public AActor, public IIInteractable
 {
 	GENERATED_BODY()
 

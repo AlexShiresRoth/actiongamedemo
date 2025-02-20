@@ -4,6 +4,7 @@
 #include "GameFramework/Character.h"
 #include "Interfaces/MainPlayer.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Interfaces/IInteractable.h"
 #include "Kismet/KismetMathLibrary.h"
 
 // Sets default values for this component's properties
@@ -99,6 +100,44 @@ void UPlayerActionsComponent::Roll()
 		&UPlayerActionsComponent::FinishRollAnim,
 		Duration,
 		false);
+}
+
+void UPlayerActionsComponent::Interact(float Radius)
+{
+	FHitResult HitActor;
+
+	FVector CurrentLocation{CharacterRef->GetActorLocation()};
+
+	FCollisionShape Sphere{FCollisionShape::MakeSphere(Radius)};
+
+	FCollisionQueryParams IgnoreParams{
+		FName{TEXT("Ignore Collision Params")},
+		false,
+		CharacterRef,
+	};
+
+	bool bHasFoundTarget{
+		GetWorld()->SweepSingleByChannel(
+			HitActor,
+			CurrentLocation,
+			CurrentLocation,
+			FQuat::Identity,
+			// @note we can find the name of customn channels in the default engine.ini file ie search "Fighter"
+			ECC_GameTraceChannel2,
+			Sphere,
+			IgnoreParams),
+	};
+
+	if (bHasFoundTarget && HitActor.GetActor()->Implements<UIInteractable>())
+	{
+		AActor* InteractedActor{HitActor.GetActor()};
+
+		if (InteractedActor)
+		{
+			IIInteractable::Execute_OnSelect(InteractedActor);
+			OnInteractDelegate.Broadcast(InteractedActor);
+		}
+	}
 }
 
 void UPlayerActionsComponent::FinishRollAnim()

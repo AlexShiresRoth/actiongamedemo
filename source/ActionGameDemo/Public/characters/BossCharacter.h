@@ -9,7 +9,6 @@
 #include "EEnemyState.h"
 #include "BossCharacter.generated.h"
 
-// TODO figure out why repeated melee attacks don't cause damage to player
 UCLASS()
 class ACTIONGAMEDEMO_API ABossCharacter : public ACharacter, public IEnemy, public IFighter
 {
@@ -18,23 +17,22 @@ class ACTIONGAMEDEMO_API ABossCharacter : public ACharacter, public IEnemy, publ
 	UPROPERTY(EditAnywhere)
 	TEnumAsByte<EEnemyState> InitialState;
 
-	class UBlackboardComponent *BlackboardComp;
+	class UBlackboardComponent* BlackboardComp;
 
 	UPROPERTY(EditAnywhere)
-	UAnimMontage *DeathAnim;
+	UAnimMontage* DeathAnim;
 
-	class AAIController *ControllerRef;
-
+	class AAIController* ControllerRef;
 
 public:
 	// Sets default values for this character's properties
 	ABossCharacter();
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Stats Component")
-	class UStatsComponent *StatsComp;
+	class UStatsComponent* StatsComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UCombatComponent *CombatComp;
+	class UCombatComponent* CombatComp;
 
 protected:
 	// Called when the game starts or when spawned
@@ -45,10 +43,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Boss Character")
-	void DetectPawn(class APawn *PawnDetected, class APawn *OtherPawn);
+	void DetectPawn(class APawn* PawnDetected, class APawn* OtherPawn);
 
 	virtual float GetDamage() override;
 

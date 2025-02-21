@@ -2,8 +2,11 @@
 
 
 #include "Interactable/InteractableActor.h"
+
+#include "Characters/PlayerActionsComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/Actor.h"
+#include "UI/ItemsContainer.h"
 // Sets default values
 AInteractableActor::AInteractableActor()
 {
@@ -18,6 +21,11 @@ void AInteractableActor::BeginPlay()
 
 	CharacterRef = GetWorld()->GetFirstPlayerController()->GetCharacter();
 	PlayerRef = Cast<AActor>(CharacterRef);
+
+	if (UPlayerActionsComponent* PlayerActionsComponent = PlayerRef->FindComponentByClass<UPlayerActionsComponent>())
+	{
+		PlayerActionsComponent->OnInteractDelegate.AddDynamic(this, &AInteractableActor::HandleInteractedWith);
+	}
 }
 
 // Called every frame
@@ -67,13 +75,17 @@ void AInteractableActor::HandleOnEndOverlapEvent(AActor* OverlappingActor)
 	}
 }
 
-void AInteractableActor::HandleItemsOnActor()
+void AInteractableActor::HandleInteractedWith(AActor* InteractedActor)
 {
-	if (Items.Num() > 0)
+	if (InteractedActor == this)
 	{
-		for (const AItem* Item : Items)
+		UItemsContainer* ItemsContainer = CreateWidget<UItemsContainer>(GetWorld(), ItemsWidgetClass);
+
+		if (ItemsContainer != nullptr && !ItemsContainer->IsInViewport())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Item %s"), *Item->GetName());
+			ItemsContainer->AddToViewport();
+
+			ItemsContainer->SetItems(Items);
 		}
 	}
 }

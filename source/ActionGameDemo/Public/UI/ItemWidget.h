@@ -3,19 +3,24 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/Texture2D.h"
-#include "ItemData.generated.h"
+#include "Blueprint/UserWidget.h"
+#include "Components/Image.h"
+#include "ItemWidget.generated.h"
 
-USTRUCT(BlueprintType)
-struct FItemData
+/**
+ * 
+ */
+UCLASS(BlueprintType, Blueprintable)
+class ACTIONGAMEDEMO_API UItemWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName Name;
+	FText ItemName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName ID;
+	FText ItemID;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString Description;

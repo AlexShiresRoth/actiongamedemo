@@ -116,6 +116,8 @@ void UPlayerActionsComponent::Interact(float Radius)
 		CharacterRef,
 	};
 
+	//TODO fix this, it's triggerring multuiple calls. Need to change sweepsinglebychannel just want once
+
 	bool bHasFoundTarget{
 		GetWorld()->SweepSingleByChannel(
 			HitActor,
@@ -130,10 +132,9 @@ void UPlayerActionsComponent::Interact(float Radius)
 
 	if (bHasFoundTarget && HitActor.GetActor()->Implements<UIInteractable>())
 	{
-		AActor* InteractedActor{HitActor.GetActor()};
-
-		if (InteractedActor)
+		if (AActor* InteractedActor{HitActor.GetActor()})
 		{
+			UE_LOG(LogTemp, Warning, TEXT("Interacted Actor"));
 			IIInteractable::Execute_OnSelect(InteractedActor);
 			OnInteractDelegate.Broadcast(InteractedActor);
 		}

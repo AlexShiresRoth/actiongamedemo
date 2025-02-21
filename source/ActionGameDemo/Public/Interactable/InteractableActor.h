@@ -8,7 +8,7 @@
 #include "Interfaces/IInteractable.h"
 #include "InteractableActor.generated.h"
 
-//TODO need to render widget for item's inventory
+
 UCLASS()
 class ACTIONGAMEDEMO_API AInteractableActor : public AActor, public IIInteractable
 {
@@ -26,6 +26,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Items")
 	TArray<AItem*> Items;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Items")
+	TSubclassOf<class UItemsContainer> ItemsWidgetClass;
 
 protected:
 	// Called when the game starts or when spawned
@@ -45,5 +48,5 @@ public:
 	void HandleOnEndOverlapEvent(AActor* OverlappingActor);
 
 	UFUNCTION(BlueprintCallable)
-	void HandleItemsOnActor();
+	void HandleInteractedWith(AActor* InteractedActor);
 };

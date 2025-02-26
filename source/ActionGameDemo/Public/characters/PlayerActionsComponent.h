@@ -35,6 +35,8 @@ class ACTIONGAMEDEMO_API UPlayerActionsComponent : public UActorComponent
 
 	class UCharacterMovementComponent* MovementComp;
 
+	AActor* LastInteractedActor = nullptr;
+
 	UPROPERTY(EditAnywhere)
 	float SprintCost{0.1f};
 

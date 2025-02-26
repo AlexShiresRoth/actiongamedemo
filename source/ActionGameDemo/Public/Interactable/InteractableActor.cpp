@@ -8,6 +8,9 @@
 #include "GameFramework/Actor.h"
 #include "UI/ItemsContainer.h"
 // Sets default values
+//TODO remove some unused delegates i think on itemcontainer widget?
+// ALSO interact works, howver if the player is running. They will continuosly if they open the widget menu
+// TODO need to add clicking on items in the widget for items
 AInteractableActor::AInteractableActor()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -84,7 +87,7 @@ void AInteractableActor::HandleInteractedWith(AActor* InteractedActor)
 		if (ItemsContainer != nullptr && !ItemsContainer->IsInViewport())
 		{
 			ItemsContainer->AddToViewport();
-
+			ItemsContainer->SetContainerTitle(ContainerName);
 			ItemsContainer->SetItems(Items);
 		}
 	}

@@ -28,6 +28,9 @@ public:
 	TArray<AItem*> Items;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Items")
+	FString ContainerName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Items")
 	TSubclassOf<class UItemsContainer> ItemsWidgetClass;
 
 protected:

@@ -6,6 +6,7 @@
 #include "Interactable/Item.h"
 
 
+//TODO may have to broadcast the remove event from here to interactable actor to remove from that list as well
 void UItemsContainer::SetItems(TArray<class AItem*> Items)
 {
 	if (!ScrollContainer || !IsValid(ItemWidgetClass))
@@ -16,12 +17,16 @@ void UItemsContainer::SetItems(TArray<class AItem*> Items)
 
 	if (Items.Num() > 0)
 	{
+		ItemsList = Items;
+
 		for (AItem* Item : Items)
 		{
 			if (Item)
 			{
 				if (UItemWidget* ItemWidget = CreateWidget<UItemWidget>(this, ItemWidgetClass))
 				{
+					ItemWidget->OnAddItemToInventoryDelegate.
+					            AddDynamic(this, &UItemsContainer::RemoveItemFromContainer);
 					ItemWidget->ItemName = FText::FromName(Item->ItemData.Name);
 					ItemWidget->ItemID = FText::FromName(Item->ItemData.ID);
 					ItemWidget->ItemIcon = Item->ItemData.ItemIcon;
@@ -30,5 +35,50 @@ void UItemsContainer::SetItems(TArray<class AItem*> Items)
 				}
 			}
 		}
+	}
+}
+
+void UItemsContainer::RemoveItemFromContainer(const FText ItemID)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Item found in list %s"), *ItemID.ToString())
+}
+
+void UItemsContainer::CLoseWidget()
+{
+	OnWidgetClosed.Broadcast();
+	RemoveFromParent();
+}
+
+void UItemsContainer::SetContainerTitle(FString NewTitle)
+{
+	if (NewTitle == "")
+	{
+		Title = FString("Needs title");
+		return;
+	}
+
+	Title = NewTitle;
+}
+
+// TODO should we move this to playercontroller?
+void UItemsContainer::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+	{
+		PC->bShowMouseCursor = true;
+		PC->SetInputMode(FInputModeUIOnly());
+	}
+}
+
+void UItemsContainer::NativeDestruct()
+{
+	Super::NativeDestruct();
+
+	if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+	{
+		PC->bShowMouseCursor = false;
+		PC->SetInputMode(FInputModeGameOnly());
 	}
 }

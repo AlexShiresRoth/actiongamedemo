@@ -10,6 +10,12 @@
 /**
  * 
  */
+
+DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_OneParam(
+	FOnAddItemToInventorySignature, UItemWidget,
+	OnAddItemToInventoryDelegate, FText, ItemID
+);
+
 UCLASS(BlueprintType, Blueprintable)
 class ACTIONGAMEDEMO_API UItemWidget : public UUserWidget
 {
@@ -27,4 +33,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UTexture2D* ItemIcon;
+
+	UFUNCTION(BlueprintCallable)
+	void AddItemToInventory();
+
+	UPROPERTY(BlueprintAssignable)
+	FOnAddItemToInventorySignature OnAddItemToInventoryDelegate;
 };

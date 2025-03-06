@@ -2,6 +2,8 @@
 
 
 #include "UI/ItemsContainer.h"
+
+#include "IDetailTreeNode.h"
 #include "ItemWidget.h"
 #include "Interactable/Item.h"
 
@@ -40,7 +42,13 @@ void UItemsContainer::SetItems(TArray<class AItem*> Items)
 
 void UItemsContainer::RemoveItemFromContainer(const FText ItemID)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Item found in list %s"), *ItemID.ToString())
+	for (int32 i = 0; i < ItemsList.Num(); i++)
+	{
+		if (ItemsList[i]->ItemData.ID.ToString() == ItemID.ToString())
+		{
+			return OnRemoveItemFromObjectDelegate.Broadcast(ItemsList[i]);
+		}
+	}
 }
 
 void UItemsContainer::CLoseWidget()

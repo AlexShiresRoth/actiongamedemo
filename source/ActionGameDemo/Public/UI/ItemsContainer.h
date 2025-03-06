@@ -12,6 +12,13 @@
  */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWidgetClosed);
 
+DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_OneParam(
+	FOnRemoveItemFromObjectSignature,
+	UItemsContainer,
+	OnRemoveItemFromObjectDelegate,
+	class AItem *,
+	ItemToRemove);
+
 UCLASS()
 class ACTIONGAMEDEMO_API UItemsContainer : public UUserWidget
 {
@@ -34,6 +41,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnWidgetClosed OnWidgetClosed;
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnRemoveItemFromObjectSignature OnRemoveItemFromObjectDelegate;
 
 	UFUNCTION(BlueprintCallable)
 	void CLoseWidget();

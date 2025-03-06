@@ -51,6 +51,15 @@ void AInteractableActor::HandleInteraction()
 	}
 }
 
+void AInteractableActor::RemoveItemFromListOnActor(class AItem* Item)
+{
+	if (Item != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Removing Item %s"), *Item->GetName());
+		Items.Remove(Item);
+	}
+}
+
 void AInteractableActor::HandleOnBeginOverlapEvent(AActor* OverlappingActor)
 {
 	if (OverlappingActor == nullptr)
@@ -86,6 +95,9 @@ void AInteractableActor::HandleInteractedWith(AActor* InteractedActor)
 
 		if (ItemsContainer != nullptr && !ItemsContainer->IsInViewport())
 		{
+			// This is needed for when a user adds an item to their inventory, we listen to the event on the items widget
+			ItemsContainer->OnRemoveItemFromObjectDelegate.AddDynamic(
+				this, &AInteractableActor::RemoveItemFromListOnActor);
 			ItemsContainer->AddToViewport();
 			ItemsContainer->SetContainerTitle(ContainerName);
 			ItemsContainer->SetItems(Items);

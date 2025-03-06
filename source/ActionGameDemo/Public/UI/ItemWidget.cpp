@@ -9,6 +9,6 @@ void UItemWidget::AddItemToInventory()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ITEMWIDGET::Adding %s to inventory"), *ItemName.ToString());
 	}
-
 	OnAddItemToInventoryDelegate.Broadcast(ItemID);
+	this->RemoveFromParent();
 }

@@ -45,6 +45,9 @@ public:
 	void HandleInteraction();
 
 	UFUNCTION(BlueprintCallable)
+	void RemoveItemFromListOnActor(class AItem* Item);
+
+	UFUNCTION(BlueprintCallable)
 	void HandleOnBeginOverlapEvent(AActor* OverlappingActor);
 
 	UFUNCTION(BlueprintCallable)

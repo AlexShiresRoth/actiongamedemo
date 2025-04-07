@@ -18,6 +18,12 @@ DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_OneParam(
 	OnRollDelegate,
 	float, RollCost);
 
+DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_OneParam(
+	FOnInteractSignature,
+	UPlayerActionsComponent,
+	OnInteractDelegate,
+	AActor*, InteractableActor);
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class ACTIONGAMEDEMO_API UPlayerActionsComponent : public UActorComponent
 {
@@ -28,6 +34,8 @@ class ACTIONGAMEDEMO_API UPlayerActionsComponent : public UActorComponent
 	class IMainPlayer* IPlayerRef;
 
 	class UCharacterMovementComponent* MovementComp;
+
+	AActor* LastInteractedActor = nullptr;
 
 	UPROPERTY(EditAnywhere)
 	float SprintCost{0.1f};
@@ -54,6 +62,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Player Actions")
 	FOnRollSignature OnRollDelegate;
 
+	UPROPERTY(BlueprintAssignable, Category = "Player Actions")
+	FOnInteractSignature OnInteractDelegate;
+
 	bool bIsRollActive{false};
 
 protected:
@@ -73,6 +84,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Player Actions")
 	void Roll();
+
+	UFUNCTION(BlueprintCallable, Category = "Player Actions")
+	void Interact(float Radius = 150.f);
 
 	UFUNCTION()
 	void FinishRollAnim();

@@ -3,6 +3,7 @@
 #include "PlayerCharacter.h"
 #include "StatsComponent.h"
 #include "EStat.h"
+#include "InventoryComponent.h"
 #include "combat/CombatComponent.h"
 #include "combat/TraceComponent.h"
 #include "combat/BlockComponent.h"
@@ -27,6 +28,8 @@ APlayerCharacter::APlayerCharacter()
 	BlockComp = CreateDefaultSubobject<UBlockComponent>(TEXT("Block Component"));
 
 	PlayerActionsComp = CreateDefaultSubobject<UPlayerActionsComponent>(TEXT("Player Actions Comp"));
+
+	InventoryComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory Component"));
 }
 
 // Called when the game starts or when spawned
@@ -77,7 +80,7 @@ bool APlayerCharacter::CanTakeDamage(AActor* Opponent)
 	{
 		return BlockComp->Check(Opponent);
 	}
-	
+
 	if (PlayerActionsComp->bIsRollActive)
 	{
 		return false;

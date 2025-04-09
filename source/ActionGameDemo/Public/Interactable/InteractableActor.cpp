@@ -3,6 +3,7 @@
 
 #include "Interactable/InteractableActor.h"
 
+#include "Characters/InventoryComponent.h"
 #include "Characters/PlayerActionsComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/Actor.h"
@@ -56,7 +57,16 @@ void AInteractableActor::RemoveItemFromListOnActor(class AItem* Item)
 	if (Item != nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Removing Item %s"), *Item->GetName());
-		Items.Remove(Item);
+
+		// Add item to inventory here
+		if (PlayerRef != nullptr)
+		{
+			if (UInventoryComponent* InventoryComponent = PlayerRef->FindComponentByClass<UInventoryComponent>())
+			{
+				InventoryComponent->AddItemToInventory(Item);
+				Items.Remove(Item);
+			}
+		}
 	}
 }
 

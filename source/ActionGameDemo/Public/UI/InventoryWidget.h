@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/ScrollBox.h"
 #include "InventoryWidget.generated.h"
 
 /**
@@ -15,7 +16,12 @@ class ACTIONGAMEDEMO_API UInventoryWidget : public UUserWidget
 	GENERATED_BODY()
 
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 
+	UPROPERTY(meta = (BindWidget))
+	UScrollBox* ItemsContainer;
+
+	APlayerController* PC;
 	ACharacter* CharacterRef;
 	AActor* PlayerRef;
 
@@ -26,6 +32,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
 	TArray<class AItem*> InventoryItems;
 
-	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	void SetInventoryItems();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UItemWidget> ItemWidgetClass;
 };

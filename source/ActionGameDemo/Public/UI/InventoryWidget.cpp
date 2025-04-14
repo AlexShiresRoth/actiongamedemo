@@ -3,41 +3,62 @@
 
 #include "InventoryWidget.h"
 
+#include "ItemWidget.h"
 #include "Characters/InventoryComponent.h"
 #include "Characters/PlayerCharacter.h"
 #include "Interactable/Item.h"
 
-// TODO this works, but if I have my inventory item while adding items from a container, it doesn't get updated
+// TODO refactor this function
+// TODO Items in the inventory should have different functionality than that in an items container
+// Weshould probably pop up a menu when clicking on an item
 void UInventoryWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	CharacterRef = GetWorld()->GetFirstPlayerController()->GetCharacter();
+	PC = GetWorld()->GetFirstPlayerController();
+	CharacterRef = PC->GetCharacter();
 	PlayerRef = Cast<AActor>(CharacterRef);
 
-	if (PlayerRef)
+	if (PC && PlayerRef)
 	{
 		InventoryComponent = PlayerRef->FindComponentByClass<UInventoryComponent>();
 
 		if (InventoryComponent)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *InventoryComponent->GetName());
+			PC->bShowMouseCursor = true;
+			// TODO figure out how to allow toggling inventory and showing mouse cursor can work
+			// PC->SetInputMode(FInputModeUIOnly());
+			// Get items stored on user inventory in order to create widgets
 			InventoryItems = InventoryComponent->GetInventoryItems();
+
 			if (InventoryItems.Num() > 0)
 			{
 				for (const AItem* Item : InventoryItems)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("Item %s"), *Item->GetName());
+					if (ItemsContainer)
+					{
+						if (UItemWidget* ItemWidget = CreateWidget<UItemWidget>(this, ItemWidgetClass))
+						{
+							ItemWidget->ItemName = FText::FromName(Item->ItemData.Name);
+							ItemWidget->ItemID = FText::FromName(Item->ItemData.ID);
+							ItemWidget->ItemIcon = Item->ItemData.ItemIcon;
+							ItemWidget->Description = Item->ItemData.Description;
+							ItemsContainer->AddChild(ItemWidget);
+						}
+					}
 				}
 			}
 		}
 	}
 }
 
-void UInventoryWidget::SetInventoryItems()
+void UInventoryWidget::NativeDestruct()
 {
-	if (InventoryComponent)
+	Super::NativeDestruct();
+
+	if (PC)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Inventory component set"));
+		PC->bShowMouseCursor = false;
+		PC->SetInputMode(FInputModeGameOnly());
 	}
 }

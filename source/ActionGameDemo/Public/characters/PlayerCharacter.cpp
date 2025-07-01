@@ -10,6 +10,7 @@
 #include "combat/Lockon_Component.h"
 #include "PlayerActionsComponent.h"
 #include "Animations/PlayerAnimInstance_USE.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -97,6 +98,48 @@ void APlayerCharacter::PlayHurtAnim(TSubclassOf<class UCameraShakeBase> CameraSh
 	{
 		GetController<APlayerController>()->ClientStartCameraShake(CameraShakeTemplate);
 	}
+}
+
+void APlayerCharacter::FocusOnUI(UUserWidget* WidgetToFocus)
+{
+	if (!WidgetToFocus)
+	{
+		return;
+	}
+
+	APlayerController* PlayerController = Cast<APlayerController>(GetController<APlayerController>());
+
+	if (!PlayerController)
+	{
+		return;
+	}
+
+	PlayerController->bShowMouseCursor = true;
+
+	FInputModeUIOnly InputMode;
+	InputMode.SetWidgetToFocus(WidgetToFocus->TakeWidget());
+	InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	PlayerController->SetInputMode(InputMode);
+
+	// Pause Game
+	UGameplayStatics::SetGamePaused(GetWorld(), true);
+}
+
+void APlayerCharacter::RestoreGameInput()
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetController<APlayerController>());
+
+	if (!PlayerController)
+	{
+		return;
+	}
+
+	PlayerController->bShowMouseCursor = false;
+	PlayerController->SetInputMode(FInputModeGameOnly());
+
+	UE_LOG(LogTemp, Warning, TEXT("Game unpaused"));
+
+	UGameplayStatics::SetGamePaused(GetWorld(), false);
 }
 
 void APlayerCharacter::HandleDeath()

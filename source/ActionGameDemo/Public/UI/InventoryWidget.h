@@ -34,4 +34,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UItemWidget> ItemWidgetClass;
+
+	UFUNCTION(BlueprintCallable)
+	void CLoseInventoryWidget();
 };

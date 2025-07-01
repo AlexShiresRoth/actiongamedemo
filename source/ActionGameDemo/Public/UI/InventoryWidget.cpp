@@ -25,7 +25,7 @@ void UInventoryWidget::NativeConstruct()
 
 		if (InventoryComponent)
 		{
-			PC->bShowMouseCursor = true;
+			// PC->bShowMouseCursor = true;
 			// TODO figure out how to allow toggling inventory and showing mouse cursor can work
 			// PC->SetInputMode(FInputModeUIOnly());
 			// Get items stored on user inventory in order to create widgets
@@ -43,6 +43,7 @@ void UInventoryWidget::NativeConstruct()
 							ItemWidget->ItemID = FText::FromName(Item->ItemData.ID);
 							ItemWidget->ItemIcon = Item->ItemData.ItemIcon;
 							ItemWidget->Description = Item->ItemData.Description;
+
 							ItemsContainer->AddChild(ItemWidget);
 						}
 					}
@@ -60,5 +61,17 @@ void UInventoryWidget::NativeDestruct()
 	{
 		PC->bShowMouseCursor = false;
 		PC->SetInputMode(FInputModeGameOnly());
+	}
+}
+
+void UInventoryWidget::CLoseInventoryWidget()
+{
+	if (APlayerController* PlayerController = GetOwningPlayer())
+	{
+		if (APlayerCharacter* Character = Cast<APlayerCharacter>(PC->GetPawn()))
+		{
+			Character->RestoreGameInput();
+			this->RemoveFromParent();
+		}
 	}
 }

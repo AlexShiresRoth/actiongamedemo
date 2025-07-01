@@ -71,4 +71,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Damage")
 	void PlayHurtAnim(TSubclassOf<class UCameraShakeBase> CameraShakeTemplate);
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void FocusOnUI(UUserWidget* WidgetToFocus);
+
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void RestoreGameInput();
 };

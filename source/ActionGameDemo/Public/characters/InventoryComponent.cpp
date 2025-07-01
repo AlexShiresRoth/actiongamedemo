@@ -37,7 +37,6 @@ void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 void UInventoryComponent::AddItemToInventory(class AItem* Item)
 {
-	UE_LOG(LogTemp, Display, TEXT("Adding item to inventory %s"), *Item->GetName());
 	if (InventoryItems.Contains(Item))
 	{
 		// Increase the number of same item?

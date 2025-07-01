@@ -25,10 +25,12 @@ void AEnemyProjectile::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AEnemyProjectile::HandleBeginOverlap(AActor *OtherActor)
+// TODO I think there's an issue when the projectile overlaps either the water or interactable actor
+void AEnemyProjectile::HandleBeginOverlap(AActor* OtherActor)
 {
-	APawn *PawnRef{
-		Cast<APawn>(OtherActor)};
+	APawn* PawnRef{
+		Cast<APawn>(OtherActor)
+	};
 
 	if (!PawnRef->IsPlayerControlled())
 	{

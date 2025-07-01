@@ -3,6 +3,7 @@
 
 #include "UI/ItemWidget.h"
 
+// TODO actually add item to inventory
 void UItemWidget::AddItemToInventory()
 {
 	if (!ItemName.IsEmpty())

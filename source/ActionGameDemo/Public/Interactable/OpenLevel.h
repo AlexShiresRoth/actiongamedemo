@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Interfaces/IInteractable.h"
+#include "UObject/SoftObjectPtr.h"
 #include "OpenLevel.generated.h"
 
 UCLASS()
@@ -20,7 +21,7 @@ public:
 	AActor* PlayerRef;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Map")
-	FName LevelToOpen;
+	TSoftObjectPtr<UWorld> LevelToLoad;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Overlap")
 	bool bIsOverlapping = false;

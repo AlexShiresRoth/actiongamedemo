@@ -38,11 +38,10 @@ void AOpenLevel::Tick(float DeltaTime)
 // TODO this currently works but not when levelToOpen is a UWorld object, why?
 void AOpenLevel::HandleOpenLevel(AActor* InteractedActor)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Opening Level s"));
-	if (LevelToOpen.IsValid())
+	UE_LOG(LogTemp, Warning, TEXT("Opening Level %s"), *LevelToLoad.GetAssetName());
+	if (!LevelToLoad.IsNull())
 	{
-		// FName LevelName = FName(*LevelToOpen.GetAssetName());
-		UGameplayStatics::OpenLevel(this, LevelToOpen);
+		UGameplayStatics::OpenLevel(this, FName(LevelToLoad.GetAssetName()));
 		UE_LOG(LogTemp, Warning, TEXT("Opened Level"));
 	}
 }

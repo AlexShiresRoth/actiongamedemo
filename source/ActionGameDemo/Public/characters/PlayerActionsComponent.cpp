@@ -134,9 +134,6 @@ void UPlayerActionsComponent::Interact(float Radius)
 	{
 		if (AActor* InteractedActor{HitActor.GetActor()})
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Interacted Actor"));
-
-
 			IIInteractable::Execute_OnSelect(InteractedActor);
 			OnInteractDelegate.Broadcast(InteractedActor);
 		}

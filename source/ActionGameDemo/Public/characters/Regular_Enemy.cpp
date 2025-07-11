@@ -3,11 +3,17 @@
 
 #include "Characters/Regular_Enemy.h"
 
+#include "StatsComponent.h"
+#include "combat/CombatComponent.h"
+
 // Sets default values
 ARegular_Enemy::ARegular_Enemy()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	StatsComp = CreateDefaultSubobject<UStatsComponent>(TEXT("StatsComponent"));
+	CombatComp = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
 
 }
 
@@ -31,4 +37,14 @@ void ARegular_Enemy::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
+
+void ARegular_Enemy::DetectPawn(class APawn* PawnDetected, class APawn* OtherPawn)
+{
+	if (PawnDetected == OtherPawn)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Pawn Detected"));
+	}
+}
+
+
 

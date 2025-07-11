@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "EEnemyState.h"
 #include "GameFramework/Character.h"
 #include "Interfaces/Enemy.h"
 #include "Interfaces/Fighter.h"
@@ -12,6 +13,11 @@ UCLASS()
 class ACTIONGAMEDEMO_API ARegular_Enemy : public ACharacter, public IEnemy, public IFighter
 {
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, Category = AI)
+	TEnumAsByte<EEnemyState> InitialState;
+
+	class UBlackboardComponent* BlackboardComp;
 
 public:
 	// Sets default values for this character's properties
@@ -35,7 +41,5 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION(BlueprintCallable)
-	void DetectPawn(class APawn *PawnDetected, class APawn* OtherPawn);
-	
+	void DetectPawn(class APawn* PawnDetected, class APawn* OtherPawn);
 };
-

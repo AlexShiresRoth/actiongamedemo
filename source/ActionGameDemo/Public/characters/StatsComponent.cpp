@@ -16,37 +16,36 @@ UStatsComponent::UStatsComponent()
 
 void UStatsComponent::ReduceHealth(float Damage, AActor* Opponent)
 {
-	if (Stats[EStat::Health] <= 0)
-	{
-		OnZeroHealthDelegate.Broadcast();
-		return;
-	};
-
 	IFighter* FighterRef{GetOwner<IFighter>()};
-	
+
 	if (!FighterRef->CanTakeDamage(Opponent))
 	{
 		return;
 	}
 
-	Stats[EStat::Health] -= Damage;
+	Stats[Health] -= Damage;
 	// Clamping will make sure that the health never goes below 0
-	Stats[EStat::Health] = UKismetMathLibrary::FClamp(
-		Stats[EStat::Health],
+	Stats[Health] = UKismetMathLibrary::FClamp(
+		Stats[Health],
 		0.0f,
-		Stats[EStat::MaxHealth]);
+		Stats[MaxHealth]);
 
-	OnHealthPercentUpdateDelegate.Broadcast(GetStatPercentage(EStat::Health, EStat::MaxHealth));
+	OnHealthPercentUpdateDelegate.Broadcast(GetStatPercentage(Health, MaxHealth));
+
+	if (Stats[Health] <= 0)
+	{
+		OnZeroHealthDelegate.Broadcast();
+	}
 }
 
 void UStatsComponent::ReduceStamina(float Amount)
 {
-	Stats[EStat::Stamina] -= Amount;
+	Stats[Stamina] -= Amount;
 
-	Stats[EStat::Stamina] = UKismetMathLibrary::FClamp(
-		Stats[EStat::Stamina],
+	Stats[Stamina] = UKismetMathLibrary::FClamp(
+		Stats[Stamina],
 		0.0f,
-		Stats[EStat::MaxStamina]);
+		Stats[MaxStamina]);
 
 	bCanRegen = false;
 
@@ -54,31 +53,31 @@ void UStatsComponent::ReduceStamina(float Amount)
 		0,
 		100,
 		TEXT("EnableRegen"),
-		this};
+		this
+	};
 
 	UKismetSystemLibrary::RetriggerableDelay(
 		GetWorld(),
 		StaminaDelayDuration,
 		FunctionInfo);
 
-	OnStaminaPercentUpdateDelegate.Broadcast(GetStatPercentage(EStat::Stamina, EStat::MaxStamina));
+	OnStaminaPercentUpdateDelegate.Broadcast(GetStatPercentage(Stamina, MaxStamina));
 }
 
 void UStatsComponent::RegenStamina()
 {
-
 	if (!bCanRegen)
 	{
 		return;
 	}
 
-	Stats[EStat::Stamina] = UKismetMathLibrary::FInterpTo_Constant(
-		Stats[EStat::Stamina],
-		Stats[EStat::MaxStamina],
+	Stats[Stamina] = UKismetMathLibrary::FInterpTo_Constant(
+		Stats[Stamina],
+		Stats[MaxStamina],
 		GetWorld()->DeltaTimeSeconds,
 		StaminaRegenRate);
 
-	OnStaminaPercentUpdateDelegate.Broadcast(GetStatPercentage(EStat::Stamina, EStat::MaxStamina));
+	OnStaminaPercentUpdateDelegate.Broadcast(GetStatPercentage(Stamina, MaxStamina));
 }
 
 void UStatsComponent::EnableRegen()
@@ -98,7 +97,7 @@ void UStatsComponent::BeginPlay()
 }
 
 // Called every frame
-void UStatsComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+void UStatsComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 

@@ -32,18 +32,21 @@ void AEnemyProjectile::HandleBeginOverlap(AActor* OtherActor)
 		Cast<APawn>(OtherActor)
 	};
 
+
+	// If hitting static object just destroy projectile
+	if (!PawnRef)
+	{
+		EndProjectileMovement(2.f);
+		return;
+	}
+
 	if (!PawnRef->IsPlayerControlled())
 	{
 		return;
 	}
 
-	FindComponentByClass<UParticleSystemComponent>()->SetTemplate(HitTemplate);
 
-	FindComponentByClass<UProjectileMovementComponent>()->StopMovementImmediately();
-
-	FTimerHandle DeathTimerHandle{};
-
-	GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &AEnemyProjectile::DestroyProjectile, 0.5f);
+	EndProjectileMovement(.5f);
 
 	FindComponentByClass<USphereComponent>()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
@@ -59,4 +62,14 @@ void AEnemyProjectile::HandleBeginOverlap(AActor* OtherActor)
 void AEnemyProjectile::DestroyProjectile()
 {
 	Destroy();
+}
+
+void AEnemyProjectile::EndProjectileMovement(const float TimeDelay)
+{
+	FTimerHandle DeathTimerHandle{};
+
+	FindComponentByClass<UParticleSystemComponent>()->SetTemplate(HitTemplate);
+	FindComponentByClass<UProjectileMovementComponent>()->StopMovementImmediately();
+
+	GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &AEnemyProjectile::DestroyProjectile, TimeDelay);
 }

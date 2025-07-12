@@ -13,9 +13,8 @@ UCLASS()
 class ACTIONGAMEDEMO_API UEnemyAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
-	
-	protected:
-	UPROPERTY(BlueprintReadWrite)
+
+protected:
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float CurrentSpeed{0.0f};
-	
 };

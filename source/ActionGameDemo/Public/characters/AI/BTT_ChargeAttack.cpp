@@ -8,6 +8,7 @@
 #include "Navigation/PathFollowingComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Characters/EEnemyState.h"
+#include "Interfaces/Enemy.h"
 
 UBTT_ChargeAttack::UBTT_ChargeAttack()
 {
@@ -23,22 +24,23 @@ EBTNodeResult::Type UBTT_ChargeAttack::ExecuteTask(UBehaviorTreeComponent& Owner
 	ControllerRef = OwnerComp.GetAIOwner();
 	CharacterRef = ControllerRef->GetCharacter();
 
-	// anim instance lives on the mesh
-	BossAnim = Cast<UBossAnimInstance>(CharacterRef->GetMesh()->GetAnimInstance());
+	if (UAnimInstance* AnimInstance = CharacterRef->GetMesh()->GetAnimInstance())
+	{
+		if (AnimInstance->GetClass()->ImplementsInterface(UIChargeAttack::StaticClass()))
+		{
+			IIChargeAttack::Execute_SetIsCharging(AnimInstance, true);
 
-	if (!BossAnim) { return EBTNodeResult::Failed; }
-	BossAnim->bIsCharging = true;
+			OwnerComp.GetBlackboardComponent()->SetValueAsBool(
+				TEXT("IsReadyToCharge"),
+				false // this text value should be a key in the blackboard BB_Boss and is case sensitive
+			);
 
-	// TODO we should change IsReadyToChage to an enum
-	OwnerComp.GetBlackboardComponent()->SetValueAsBool(
-		TEXT("IsReadyToCharge"),
-		false // this text value should be a key in the blackboard BB_Boss and is case sensitive
-	);
+			bIsFinished = false;
 
-	bIsFinished = false;
-	// also this key is used in the ABP_Boss in editor for anim notify event
-
-	return EBTNodeResult::InProgress;
+			return EBTNodeResult::InProgress;
+		}
+	}
+	return EBTNodeResult::Failed;
 }
 
 void UBTT_ChargeAttack::ChargeAtPlayer()
@@ -65,17 +67,23 @@ void UBTT_ChargeAttack::ChargeAtPlayer()
 
 void UBTT_ChargeAttack::HandleMoveCompleted()
 {
-	BossAnim->bIsCharging = false;
+	if (UAnimInstance* AnimInstance = CharacterRef->GetMesh()->GetAnimInstance())
+	{
+		if (AnimInstance->GetClass()->ImplementsInterface(UIChargeAttack::StaticClass()))
+		{
+			IIChargeAttack::Execute_SetIsCharging(AnimInstance, false);
 
-	FTimerHandle AttackTimerHandle;
+			FTimerHandle AttackTimerHandle;
 
-	CharacterRef->GetWorldTimerManager().SetTimer(
-		AttackTimerHandle,
-		this,
-		&UBTT_ChargeAttack::FinishAttackTask, 1.0f, false);
+			CharacterRef->GetWorldTimerManager().SetTimer(
+				AttackTimerHandle,
+				this,
+				&UBTT_ChargeAttack::FinishAttackTask, 1.0f, false);
 
-	// Reset charge speed
-	CharacterRef->GetCharacterMovement()->MaxWalkSpeed = OriginalWalkSpeed;
+			// Reset charge speed
+			CharacterRef->GetCharacterMovement()->MaxWalkSpeed = OriginalWalkSpeed;
+		}
+	}
 }
 
 void UBTT_ChargeAttack::FinishAttackTask()

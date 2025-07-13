@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "Interfaces/IChargeAttack.h"
 #include "BossAnimInstance.generated.h"
 
 /**
  *
  */
 UCLASS()
-class ACTIONGAMEDEMO_API UBossAnimInstance : public UAnimInstance
+class ACTIONGAMEDEMO_API UBossAnimInstance : public UAnimInstance, public IIChargeAttack
 {
 	GENERATED_BODY()
 
@@ -24,4 +25,9 @@ protected:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss Anim Instance")
 	bool bIsCharging{false};
+
+	virtual void SetIsCharging_Implementation(bool bCharging) override
+	{
+		bIsCharging = bCharging;
+	}
 };

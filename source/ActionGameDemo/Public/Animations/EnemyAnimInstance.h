@@ -19,6 +19,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float CurrentSpeed{0.0f};
 
+	UFUNCTION(BlueprintCallable, Category= Animation)
+	void UpdateSpeed();
+
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bIsCharging{false};

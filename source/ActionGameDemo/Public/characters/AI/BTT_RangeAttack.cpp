@@ -8,46 +8,48 @@
 #include "Characters/EEnemyState.h"
 #include "Interfaces/Fighter.h"
 
-EBTNodeResult::Type UBTT_RangeAttack::ExecuteTask(UBehaviorTreeComponent &OwnerComp, uint8 *NodeMemory)
+EBTNodeResult::Type UBTT_RangeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
+	ACharacter* CharacterRef{OwnerComp.GetAIOwner()->GetPawn<ACharacter>()};
 
-    ACharacter *CharacterRef{OwnerComp.GetAIOwner()->GetPawn<ACharacter>()};
+	if (!IsValid(CharacterRef))
+	{
+		return EBTNodeResult::Failed;
+	}
 
-    if (!IsValid(CharacterRef))
-    {
-        return EBTNodeResult::Failed;
-    };
+	float Distance{
+		// TODO should change this to an enum
+		OwnerComp.GetBlackboardComponent()->GetValueAsFloat(TEXT("Distance"))
+	};
 
-    float Distance{// TODO should change this to an enum
-                   OwnerComp.GetBlackboardComponent()->GetValueAsFloat(TEXT("Distance"))};
+	IFighter* FighterRef{
+		Cast<IFighter>(
+			OwnerComp.GetAIOwner()->GetCharacter())
+	};
 
-    IFighter *FighterRef{
-        Cast<IFighter>(
-            OwnerComp.GetAIOwner()->GetCharacter())};
+	if (Distance < FighterRef->GetMeleeRange())
+	{
+		// TODO change CurrentState to Enum
+		OwnerComp.GetBlackboardComponent()->SetValueAsEnum(TEXT("CurrentState"), Melee);
+		UE_LOG(LogTemp, Warning, TEXT("Enemy in melee range"))
+		AbortTask(OwnerComp, NodeMemory);
 
-    if (Distance < FighterRef->GetMeleeRange())
-    {
-        // TODO change CurrentState to Enum
-        OwnerComp.GetBlackboardComponent()->SetValueAsEnum(TEXT("CurrentState"), EEnemyState::Melee);
+		return EBTNodeResult::Aborted;
+	}
 
-        AbortTask(OwnerComp, NodeMemory);
+	CharacterRef->PlayAnimMontage(AnimMontage);
 
-        return EBTNodeResult::Aborted;
-    }
+	double RandomValue{UKismetMathLibrary::RandomFloat()};
 
-    CharacterRef->PlayAnimMontage(AnimMontage);
+	if (RandomValue > Threshold)
+	{
+		Threshold = 0.9;
+		OwnerComp.GetBlackboardComponent()->SetValueAsEnum(TEXT("CurrentState"), Charge);
+	}
+	else
+	{
+		Threshold -= 0.1;
+	}
 
-    double RandomValue{UKismetMathLibrary::RandomFloat()};
-
-    if (RandomValue > Threshold)
-    {
-        Threshold = 0.9;
-        OwnerComp.GetBlackboardComponent()->SetValueAsEnum(TEXT("CurrentState"), EEnemyState::Charge);
-    }
-    else
-    {
-        Threshold -= 0.1;
-    };
-
-    return EBTNodeResult::Succeeded;
+	return EBTNodeResult::Succeeded;
 }

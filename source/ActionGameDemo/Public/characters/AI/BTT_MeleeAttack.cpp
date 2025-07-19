@@ -8,103 +8,108 @@
 #include "GameFramework/Character.h"
 #include "Characters/EEnemyState.h"
 
-EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent &OwnerComp, uint8 *NodeMemory)
+EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
+	bIsFinished = false;
 
-    bIsFinished = false;
+	float Distance{
+		// TODO change this to an enum
+		OwnerComp.GetBlackboardComponent()->GetValueAsFloat(TEXT("Distance"))
+	};
 
-    float Distance{
-        // TODO change this to an enum
-        OwnerComp.GetBlackboardComponent()->GetValueAsFloat(TEXT("Distance"))};
+	AAIController* AIRef{OwnerComp.GetAIOwner()};
 
-    AAIController *AIRef{OwnerComp.GetAIOwner()};
+	if (Distance > AttackRadius)
+	{
+		APawn* PlayerRef{GetWorld()->GetFirstPlayerController()->GetPawn()};
 
-    if (Distance > AttackRadius)
-    {
-        APawn *PlayerRef{GetWorld()->GetFirstPlayerController()->GetPawn()};
+		FAIMoveRequest MoveRequest{PlayerRef};
+		MoveRequest.SetUsePathfinding(true);
+		MoveRequest.SetAcceptanceRadius(AcceptableRadius);
 
-        FAIMoveRequest MoveRequest{PlayerRef};
-        MoveRequest.SetUsePathfinding(true);
-        MoveRequest.SetAcceptanceRadius(AcceptableRadius);
+		AIRef->ReceiveMoveCompleted.AddUnique(
+			MoveDelegate);
 
-        AIRef->ReceiveMoveCompleted.AddUnique(
-            MoveDelegate);
+		AIRef->MoveTo(MoveRequest);
+		AIRef->SetFocus(PlayerRef);
+	}
+	else
+	{
+		IFighter* FighterRef{
+			Cast<IFighter>(
+				AIRef->GetCharacter())
+		};
 
-        AIRef->MoveTo(MoveRequest);
-        AIRef->SetFocus(PlayerRef);
-    }
-    else
-    {
-        IFighter *FighterRef{
-            Cast<IFighter>(
-                AIRef->GetCharacter())};
+		FighterRef->Attack();
 
-        FighterRef->Attack();
+		FTimerHandle AttackTimerHandle;
 
-        FTimerHandle AttackTimerHandle;
+		AIRef->GetCharacter()->GetWorldTimerManager().SetTimer(
+			AttackTimerHandle,
+			this,
+			&UBTT_MeleeAttack::FinishAttackTask,
+			FighterRef->GetAnimDuration(),
+			false);
+	}
 
-        AIRef->GetCharacter()->GetWorldTimerManager().SetTimer(
-            AttackTimerHandle,
-            this,
-            &UBTT_MeleeAttack::FinishAttackTask,
-            FighterRef->GetAnimDuration(),
-            false);
-    }
-
-    return EBTNodeResult::InProgress;
+	return EBTNodeResult::InProgress;
 }
 
-void UBTT_MeleeAttack::TickTask(UBehaviorTreeComponent &OwnerComp, uint8 *NodeMemory, float DeltaSeconds)
+void UBTT_MeleeAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
+	float Distance{
+		OwnerComp.GetBlackboardComponent()->GetValueAsFloat(TEXT("Distance"))
+	};
 
-    float Distance{
-        OwnerComp.GetBlackboardComponent()->GetValueAsFloat(TEXT("Distance"))};
+	AAIController* AIRef{OwnerComp.GetAIOwner()};
 
-    AAIController *AIRef{OwnerComp.GetAIOwner()};
+	IFighter* FighterRef{
+		Cast<IFighter>(
+			AIRef->GetCharacter())
+	};
 
-    IFighter *FighterRef{
-        Cast<IFighter>(
-            AIRef->GetCharacter())};
+	if (Distance > FighterRef->GetMeleeRange())
+	{
+		OwnerComp.GetBlackboardComponent()->SetValueAsEnum(
+			TEXT("CurrentState"),
+			Range);
 
-    if (Distance > FighterRef->GetMeleeRange())
-    {
-        OwnerComp.GetBlackboardComponent()->SetValueAsEnum(
-            TEXT("CurrentState"),
-            EEnemyState::Range);
+		AbortTask(OwnerComp, NodeMemory);
 
-        AbortTask(OwnerComp, NodeMemory);
+		FinishLatentTask(OwnerComp, EBTNodeResult::Aborted);
 
-        FinishLatentTask(OwnerComp, EBTNodeResult::Aborted);
+		AIRef->StopMovement();
 
-        AIRef->StopMovement();
+		AIRef->ClearFocus(EAIFocusPriority::Gameplay);
 
-        AIRef->ClearFocus(EAIFocusPriority::Gameplay);
+		AIRef->ReceiveMoveCompleted.Remove(MoveDelegate);
 
-        AIRef->ReceiveMoveCompleted.Remove(MoveDelegate);
-    };
+		UE_LOG(LogTemp, Warning, TEXT("Aborting early Distance:%f PlayerRange:%f"), Distance,
+		       FighterRef->GetMeleeRange());
+	}
 
-    if (!bIsFinished)
-    {
-        return;
-    }
+	if (!bIsFinished)
+	{
+		return;
+	}
 
-    OwnerComp.GetAIOwner()->ReceiveMoveCompleted.Remove(MoveDelegate);
+	OwnerComp.GetAIOwner()->ReceiveMoveCompleted.Remove(MoveDelegate);
 
-    FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 }
 
 UBTT_MeleeAttack::UBTT_MeleeAttack()
 {
-    bNotifyTick = true;
+	bNotifyTick = true;
 
-    // so each enemy has their own attack instance
-    // will need to add this property to each task
-    bCreateNodeInstance = true;
+	// so each enemy has their own attack instance
+	// will need to add this property to each task
+	bCreateNodeInstance = true;
 
-    MoveDelegate.BindUFunction(this, "FinishAttackTask");
+	MoveDelegate.BindUFunction(this, "FinishAttackTask");
 }
 
 void UBTT_MeleeAttack::FinishAttackTask()
 {
-    bIsFinished = true;
+	bIsFinished = true;
 }

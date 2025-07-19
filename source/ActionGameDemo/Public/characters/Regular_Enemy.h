@@ -19,6 +19,11 @@ class ACTIONGAMEDEMO_API ARegular_Enemy : public ACharacter, public IEnemy, publ
 
 	class UBlackboardComponent* BlackboardComp;
 
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* DeathAnim;
+
+	class AAIController* ControllerRef;
+
 public:
 	// Sets default values for this character's properties
 	ARegular_Enemy();
@@ -40,6 +45,23 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION()
+	void HandlePlayerDeath();
+
 	UFUNCTION(BlueprintCallable)
 	void DetectPawn(class APawn* PawnDetected, class APawn* OtherPawn);
+
+	UFUNCTION(BlueprintCallable, Category= "Enemy Death")
+	void HandleDeath();
+
+	virtual float GetMeleeRange() override;
+
+	virtual float GetDamage() override;
+
+	virtual void Attack() override;
+
+	virtual float GetAnimDuration() override;
+
+	UFUNCTION()
+	void FinishDeathAnim();
 };

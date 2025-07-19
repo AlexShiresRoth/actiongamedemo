@@ -111,6 +111,8 @@ void UBTT_ChargeAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 		return;
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("GOing in to melee state"));
+
 	OwnerComp.GetBlackboardComponent()->SetValueAsEnum(TEXT("CurrentState"), Melee);
 
 	ControllerRef->ReceiveMoveCompleted.Remove(MoveCompletedDelegate);

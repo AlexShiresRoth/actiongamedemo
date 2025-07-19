@@ -4,31 +4,56 @@
 #include "Combat/TraceComponent.h"
 
 // This can be refactored if we want
-void UToggleTraceNotifyState::NotifyBegin(USkeletalMeshComponent *MeshComp,
-                                          UAnimSequenceBase *Animation,
+void UToggleTraceNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp,
+                                          UAnimSequenceBase* Animation,
                                           float TotalDuration,
-                                          const FAnimNotifyEventReference &EventReference)
+                                          const FAnimNotifyEventReference& EventReference)
 {
-    UTraceComponent *TraceComp = MeshComp->GetOwner()->FindComponentByClass<UTraceComponent>();
+	// Without these conditions, opening the animation in editor can cause a crash
+	if (!MeshComp || !Animation)
+	{
+		return;
+	}
 
-    if (!IsValid(TraceComp))
-    {
-        return;
-    };
+	AActor* Owner = MeshComp->GetOwner();
 
-    TraceComp->bIsAttacking = true;
+	if (!Owner)
+	{
+		return;
+	}
+
+	UTraceComponent* TraceComp = Owner->FindComponentByClass<UTraceComponent>();
+
+	if (!IsValid(TraceComp))
+	{
+		return;
+	}
+
+	TraceComp->bIsAttacking = true;
 }
 
-void UToggleTraceNotifyState::NotifyEnd(USkeletalMeshComponent *MeshComp,
-                                        UAnimSequenceBase *Animation,
-                                        const FAnimNotifyEventReference &EventReference)
+void UToggleTraceNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp,
+                                        UAnimSequenceBase* Animation,
+                                        const FAnimNotifyEventReference& EventReference)
 {
-    UTraceComponent *TraceComp = MeshComp->GetOwner()->FindComponentByClass<UTraceComponent>();
+	if (!MeshComp || !Animation)
+	{
+		return;
+	}
 
-    if (!IsValid(TraceComp))
-    {
-        return;
-    };
+	AActor* Owner = MeshComp->GetOwner();
 
-    TraceComp->bIsAttacking = false;
+	if (!Owner)
+	{
+		return;
+	}
+
+	UTraceComponent* TraceComp = Owner->FindComponentByClass<UTraceComponent>();
+
+	if (!IsValid(TraceComp))
+	{
+		return;
+	}
+
+	TraceComp->bIsAttacking = false;
 }

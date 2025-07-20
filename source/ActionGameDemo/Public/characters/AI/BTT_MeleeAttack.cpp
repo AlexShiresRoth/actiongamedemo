@@ -7,6 +7,7 @@
 #include "Interfaces/Fighter.h"
 #include "GameFramework/Character.h"
 #include "Characters/EEnemyState.h"
+#include "Interfaces/Enemy.h"
 
 EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
@@ -68,6 +69,8 @@ void UBTT_MeleeAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 			AIRef->GetCharacter())
 	};
 
+	if (!FighterRef) { return FinishLatentTask(OwnerComp, EBTNodeResult::Aborted); }
+
 	if (Distance > FighterRef->GetMeleeRange())
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsEnum(
@@ -83,15 +86,14 @@ void UBTT_MeleeAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 		AIRef->ClearFocus(EAIFocusPriority::Gameplay);
 
 		AIRef->ReceiveMoveCompleted.Remove(MoveDelegate);
-
-		UE_LOG(LogTemp, Warning, TEXT("Aborting early Distance:%f PlayerRange:%f"), Distance,
-		       FighterRef->GetMeleeRange());
 	}
+
 
 	if (!bIsFinished)
 	{
 		return;
 	}
+
 
 	OwnerComp.GetAIOwner()->ReceiveMoveCompleted.Remove(MoveDelegate);
 

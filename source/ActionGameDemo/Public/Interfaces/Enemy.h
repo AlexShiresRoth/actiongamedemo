@@ -27,4 +27,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnDeselect();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Enemy")
+	bool IsDead() const;
+
+	virtual bool IsDead_Implementation() const { return false; }
 };

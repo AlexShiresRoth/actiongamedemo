@@ -22,6 +22,9 @@ class ACTIONGAMEDEMO_API ARegular_Enemy : public ACharacter, public IEnemy, publ
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* DeathAnim;
 
+	UPROPERTY(EditAnywhere, Category = "Hurt Animation")
+	UAnimMontage* HurtAnimMontage;
+
 	class AAIController* ControllerRef;
 
 public:
@@ -33,6 +36,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UCombatComponent* CombatComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsDead{false};
+
+	UFUNCTION(BlueprintCallable)
+	void PlayHurtAnimation();
 
 protected:
 	// Called when the game starts or when spawned
@@ -61,6 +70,8 @@ public:
 	virtual void Attack() override;
 
 	virtual float GetAnimDuration() override;
+
+	virtual bool IsDead_Implementation() const override;
 
 	UFUNCTION()
 	void FinishDeathAnim();

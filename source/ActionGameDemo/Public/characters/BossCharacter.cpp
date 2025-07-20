@@ -32,7 +32,7 @@ void ABossCharacter::BeginPlay()
 	ControllerRef = GetController<AAIController>();
 
 	BlackboardComp = ControllerRef->GetBlackboardComponent();
-
+	
 	BlackboardComp->SetValueAsEnum(
 		TEXT("CurrentState"),
 		InitialState);
@@ -61,19 +61,19 @@ void ABossCharacter::DetectPawn(class APawn* PawnDetected, class APawn* OtherPaw
 			TEXT("CurrentState")))
 	};
 
-	if (PawnDetected != OtherPawn || CurrentState != EEnemyState::Idle)
+	if (PawnDetected != OtherPawn || CurrentState != Idle)
 	{
 		return;
-	};
+	}
 
 	BlackboardComp->SetValueAsEnum(
 		TEXT("CurrentState"),
-		EEnemyState::Range);
+		Range);
 }
 
 float ABossCharacter::GetDamage()
 {
-	return StatsComp->Stats[EStat::Strength];
+	return StatsComp->Stats[Strength];
 }
 
 void ABossCharacter::Attack()
@@ -88,14 +88,14 @@ float ABossCharacter::GetAnimDuration()
 
 float ABossCharacter::GetMeleeRange()
 {
-	return StatsComp->Stats[EStat::MeleeRange];
+	return StatsComp->Stats[MeleeRange];
 }
 
 void ABossCharacter::HandlePlayerDeath()
 {
 	ControllerRef->GetBlackboardComponent()->SetValueAsEnum(
 		TEXT("CurrentState"),
-		EEnemyState::GameOver);
+		GameOver);
 }
 
 void ABossCharacter::HandleDeath()
@@ -121,6 +121,8 @@ void ABossCharacter::HandleDeath()
 	}
 
 	PlayerRef->EndLockonWithActor(this);
+
+	bIsDead = true;
 }
 
 void ABossCharacter::FinishDeathAnim()

@@ -11,12 +11,13 @@
 #include "AIController.h"
 #include "BrainComponent.h"
 #include "PlayerCharacter.h"
+#include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "HLSLTree/HLSLTreeEmit.h"
 #include "Interfaces/MainPlayer.h"
 
-// TODO figure out why damage is not happening on player
-// Sets default values
+
 ARegular_Enemy::ARegular_Enemy()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -26,21 +27,29 @@ ARegular_Enemy::ARegular_Enemy()
 	CombatComp = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
 }
 
+void ARegular_Enemy::PlayHurtAnimation()
+{
+	if (!HurtAnimMontage) { return; }
+	
+	float AnimDuration{PlayAnimMontage(HurtAnimMontage)};
+}
+
 // Called when the game starts or when spawned
 void ARegular_Enemy::BeginPlay()
 {
 	Super::BeginPlay();
 
-	BlackboardComp = GetController<AAIController>()->GetBlackboardComponent();
-
-	BlackboardComp->SetValueAsEnum(
-		TEXT("CurrentState"),
-		InitialState);
 
 	ControllerRef = GetController<AAIController>();
 
 	BlackboardComp = ControllerRef->GetBlackboardComponent();
 
+	BlackboardComp->SetValueAsEnum(
+		TEXT("CurrentState"),
+		InitialState);
+
+
+	BlackboardComp = ControllerRef->GetBlackboardComponent();
 
 	GetWorld()->GetFirstPlayerController()->GetPawn<APlayerCharacter>()->StatsComp->OnZeroHealthDelegate.AddDynamic(
 		this,
@@ -50,6 +59,8 @@ void ARegular_Enemy::BeginPlay()
 // Called every frame
 void ARegular_Enemy::Tick(float DeltaTime)
 {
+	if (bIsDead) { return; }
+
 	Super::Tick(DeltaTime);
 }
 
@@ -69,6 +80,8 @@ void ARegular_Enemy::HandlePlayerDeath()
 
 void ARegular_Enemy::DetectPawn(class APawn* PawnDetected, class APawn* OtherPawn)
 {
+	if (bIsDead) { return; }
+
 	EEnemyState CurrentState{
 		static_cast<EEnemyState>(BlackboardComp->GetValueAsEnum(TEXT("CurrentState")))
 	};
@@ -76,7 +89,6 @@ void ARegular_Enemy::DetectPawn(class APawn* PawnDetected, class APawn* OtherPaw
 	// detect only player
 	if (PawnDetected != OtherPawn || CurrentState != Idle) { return; }
 
-	UE_LOG(LogTemp, Display, TEXT("Pawn Detected"));
 
 	BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), Range);
 }
@@ -85,7 +97,23 @@ void ARegular_Enemy::HandleDeath()
 {
 	float Duration{PlayAnimMontage(DeathAnim)};
 
+	bIsDead = true;
+
+	BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), Death);
+
+	ControllerRef->StopMovement();
+
 	ControllerRef->GetBrainComponent()->StopLogic("defeated");
+
+	ControllerRef->ClearFocus(EAIFocusPriority::Gameplay);
+
+	SetActorTickEnabled(false);
+
+	if (UBehaviorTreeComponent* BTComp = Cast<UBehaviorTreeComponent>(ControllerRef->BrainComponent))
+	{
+		// @note - Editor may still show enemy bt is running
+		BTComp->StopTree(EBTStopMode::Forced);
+	}
 
 	FindComponentByClass<UCapsuleComponent>()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
@@ -125,6 +153,12 @@ float ARegular_Enemy::GetAnimDuration()
 {
 	return CombatComp->AnimDuration;
 }
+
+bool ARegular_Enemy::IsDead_Implementation() const
+{
+	return bIsDead;
+}
+
 
 void ARegular_Enemy::FinishDeathAnim()
 {

@@ -6,6 +6,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/EEnemyState.h"
+#include "Interfaces/Enemy.h"
 #include "Interfaces/Fighter.h"
 
 EBTNodeResult::Type UBTT_RangeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -27,11 +28,12 @@ EBTNodeResult::Type UBTT_RangeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 			OwnerComp.GetAIOwner()->GetCharacter())
 	};
 
+
 	if (Distance < FighterRef->GetMeleeRange())
 	{
 		// TODO change CurrentState to Enum
 		OwnerComp.GetBlackboardComponent()->SetValueAsEnum(TEXT("CurrentState"), Melee);
-		UE_LOG(LogTemp, Warning, TEXT("Enemy in melee range"))
+		
 		AbortTask(OwnerComp, NodeMemory);
 
 		return EBTNodeResult::Aborted;

@@ -13,6 +13,7 @@
 UBTT_ChargeAttack::UBTT_ChargeAttack()
 {
 	bNotifyTick = true;
+	bCreateNodeInstance = true;
 
 	MoveCompletedDelegate.BindUFunction(
 		this,

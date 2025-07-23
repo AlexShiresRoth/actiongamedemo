@@ -14,6 +14,7 @@
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "HLSLTree/HLSLTreeEmit.h"
 #include "Interfaces/MainPlayer.h"
 
@@ -30,8 +31,26 @@ ARegular_Enemy::ARegular_Enemy()
 void ARegular_Enemy::PlayHurtAnimation()
 {
 	if (!HurtAnimMontage) { return; }
-	
+
 	float AnimDuration{PlayAnimMontage(HurtAnimMontage)};
+}
+
+void ARegular_Enemy::Knockback(AActor* Attacker)
+{
+	if (bIsDead) { return; }
+	if (!Attacker) { return; }
+	ACharacter* EnemyRef = ControllerRef->GetCharacter();
+	if (!EnemyRef) { return; }
+
+	FVector KnockbackDirection = EnemyRef->GetActorLocation() - Attacker->GetActorLocation();
+	KnockbackDirection.Z = 0.f;
+	KnockbackDirection.Normalize();
+
+	float KnockbackStrength = 600.f; // TODO might want to make this a uprop
+
+	FVector LaunchVelocity = KnockbackDirection * KnockbackStrength + FVector(0, 0, 250);
+
+	EnemyRef->LaunchCharacter(LaunchVelocity, true, true);
 }
 
 // Called when the game starts or when spawned
@@ -109,13 +128,14 @@ void ARegular_Enemy::HandleDeath()
 
 	SetActorTickEnabled(false);
 
+
 	if (UBehaviorTreeComponent* BTComp = Cast<UBehaviorTreeComponent>(ControllerRef->BrainComponent))
 	{
 		// @note - Editor may still show enemy bt is running
 		BTComp->StopTree(EBTStopMode::Forced);
 	}
 
-	FindComponentByClass<UCapsuleComponent>()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	HandleDisableCollisionOnDeath();
 
 	FTimerHandle DestroyTimerHandle;
 	// handle timer here
@@ -157,6 +177,11 @@ float ARegular_Enemy::GetAnimDuration()
 bool ARegular_Enemy::IsDead_Implementation() const
 {
 	return bIsDead;
+}
+
+void ARegular_Enemy::HandleDisableCollisionOnDeath()
+{
+	FindComponentByClass<UCapsuleComponent>()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 

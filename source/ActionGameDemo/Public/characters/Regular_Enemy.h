@@ -40,9 +40,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsDead{false};
 
-	UFUNCTION(BlueprintCallable)
-	void PlayHurtAnimation();
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -63,6 +60,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category= "Enemy Death")
 	void HandleDeath();
 
+	UFUNCTION(BlueprintCallable)
+	void PlayHurtAnimation();
+
+	UFUNCTION(BlueprintCallable)
+	void Knockback(AActor* Attacker);
+
 	virtual float GetMeleeRange() override;
 
 	virtual float GetDamage() override;
@@ -73,6 +76,8 @@ public:
 
 	virtual bool IsDead_Implementation() const override;
 
+	void HandleDisableCollisionOnDeath();
+	
 	UFUNCTION()
 	void FinishDeathAnim();
 };

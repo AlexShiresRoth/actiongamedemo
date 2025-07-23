@@ -4,6 +4,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Interfaces/Fighter.h"
 #include "Engine/DamageEvents.h"
+#include "Interfaces/Enemy.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -70,6 +71,14 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 			false,
 			GetOwner(),
 		};
+
+		// ignore other enemies creating the trace
+		if (GetOwner()->GetClass()->ImplementsInterface(UEnemy::StaticClass()))
+		{
+			IgnoreParams.AddIgnoredActor(GetOwner());
+		}
+
+		// ECC_GameTraceChannel4
 
 		bool bHasFoundTargets{
 			GetWorld()->SweepMultiByChannel(

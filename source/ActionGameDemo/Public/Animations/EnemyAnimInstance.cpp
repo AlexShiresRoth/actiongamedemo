@@ -3,6 +3,8 @@
 
 #include "Animations/EnemyAnimInstance.h"
 
+#include "AIController.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/Regular_Enemy.h"
 #include "Interfaces/Enemy.h"
 
@@ -14,7 +16,6 @@ void UEnemyAnimInstance::UpdateSpeed()
 	{
 		return;
 	}
-
 
 	// curly braces only work with newly declared variables
 	FVector Velocity{PawnRef->GetVelocity()};

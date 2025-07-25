@@ -11,6 +11,7 @@
 #include "AIController.h"
 #include "BrainComponent.h"
 #include "PlayerCharacter.h"
+#include "Animations/EnemyAnimInstance.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -57,7 +58,6 @@ void ARegular_Enemy::Knockback(AActor* Attacker)
 void ARegular_Enemy::BeginPlay()
 {
 	Super::BeginPlay();
-
 
 	ControllerRef = GetController<AAIController>();
 
@@ -113,8 +113,6 @@ void ARegular_Enemy::DetectPawn(class APawn* PawnDetected, class APawn* OtherPaw
 
 void ARegular_Enemy::HandleDeath()
 {
-	float Duration{PlayAnimMontage(DeathAnim)};
-
 	bIsDead = true;
 
 	BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), Death);
@@ -134,9 +132,18 @@ void ARegular_Enemy::HandleDeath()
 
 	HandleDisableCollisionOnDeath();
 
+	if (USkeletalMeshComponent* EnemyMesh = GetMesh())
+	{
+		if (UEnemyAnimInstance* EnemyAnim = Cast<UEnemyAnimInstance>(EnemyMesh->GetAnimInstance()))
+		{
+			EnemyAnim->bIsDead = true;
+			UE_LOG(LogTemp, Display, TEXT("Dead"));
+		}
+	}
+
 	FTimerHandle DestroyTimerHandle;
 	// handle timer here
-	GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandle, this, &ARegular_Enemy::FinishDeathAnim, Duration * 50,
+	GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandle, this, &ARegular_Enemy::FinishDeathAnim, 10,
 	                                       false);
 
 	IMainPlayer* PlayerRef{

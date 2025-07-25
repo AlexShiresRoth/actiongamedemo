@@ -26,6 +26,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bIsCharging{false};
 
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsDead{false};
+
 	virtual void SetIsCharging_Implementation(bool bCharging) override
 	{
 		bIsCharging = bCharging;

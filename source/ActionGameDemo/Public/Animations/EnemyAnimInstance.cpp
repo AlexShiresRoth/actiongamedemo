@@ -3,6 +3,9 @@
 
 #include "Animations/EnemyAnimInstance.h"
 
+#include "Characters/Regular_Enemy.h"
+#include "Interfaces/Enemy.h"
+
 void UEnemyAnimInstance::UpdateSpeed()
 {
 	APawn* PawnRef{TryGetPawnOwner()};
@@ -11,6 +14,8 @@ void UEnemyAnimInstance::UpdateSpeed()
 	{
 		return;
 	}
+
+
 	// curly braces only work with newly declared variables
 	FVector Velocity{PawnRef->GetVelocity()};
 	// explicit casting is not required but is good practice

@@ -30,7 +30,7 @@ ARegular_Enemy::ARegular_Enemy()
 
 void ARegular_Enemy::PlayHurtAnimation()
 {
-	if (!HurtAnimMontage) { return; }
+	if (!HurtAnimMontage || bIsDead) { return; }
 
 	float AnimDuration{PlayAnimMontage(HurtAnimMontage)};
 }
@@ -79,7 +79,6 @@ void ARegular_Enemy::BeginPlay()
 void ARegular_Enemy::Tick(float DeltaTime)
 {
 	if (bIsDead) { return; }
-
 	Super::Tick(DeltaTime);
 }
 
@@ -126,8 +125,6 @@ void ARegular_Enemy::HandleDeath()
 
 	ControllerRef->ClearFocus(EAIFocusPriority::Gameplay);
 
-	SetActorTickEnabled(false);
-
 
 	if (UBehaviorTreeComponent* BTComp = Cast<UBehaviorTreeComponent>(ControllerRef->BrainComponent))
 	{
@@ -139,7 +136,7 @@ void ARegular_Enemy::HandleDeath()
 
 	FTimerHandle DestroyTimerHandle;
 	// handle timer here
-	GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandle, this, &ARegular_Enemy::FinishDeathAnim, Duration * 100,
+	GetWorld()->GetTimerManager().SetTimer(DestroyTimerHandle, this, &ARegular_Enemy::FinishDeathAnim, Duration * 50,
 	                                       false);
 
 	IMainPlayer* PlayerRef{

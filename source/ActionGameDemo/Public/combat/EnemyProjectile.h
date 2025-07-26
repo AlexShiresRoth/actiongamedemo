@@ -12,7 +12,7 @@ class ACTIONGAMEDEMO_API AEnemyProjectile : public AActor
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, Category = "Projectile")
-	UParticleSystem *HitTemplate;
+	UParticleSystem* HitTemplate;
 
 	UPROPERTY(EditAnywhere, Category = "Projectile")
 	float ProjectileDamage{10.0f};
@@ -30,8 +30,11 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable)
-	void HandleBeginOverlap(AActor *OtherActor);
+	void HandleBeginOverlap(AActor* OtherActor);
 
 	UFUNCTION()
 	void DestroyProjectile();
+
+	UFUNCTION()
+	void EndProjectileMovement(const float TimeDelay);
 };

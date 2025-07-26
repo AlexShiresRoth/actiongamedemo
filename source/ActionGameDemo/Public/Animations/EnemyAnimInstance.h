@@ -5,26 +5,29 @@
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
 #include "Interfaces/IChargeAttack.h"
-#include "BossAnimInstance.generated.h"
+#include "EnemyAnimInstance.generated.h"
 
 /**
- *
+ * 
  */
 UCLASS()
-class ACTIONGAMEDEMO_API UBossAnimInstance : public UAnimInstance, public IIChargeAttack
+class ACTIONGAMEDEMO_API UEnemyAnimInstance : public UAnimInstance, public IIChargeAttack
 {
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Boss Anim Instance")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	float CurrentSpeed{0.0f};
 
-	UFUNCTION(BlueprintCallable, Category = "Boss Anim Instance")
+	UFUNCTION(BlueprintCallable, Category= Animation)
 	void UpdateSpeed();
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss Anim Instance")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bIsCharging{false};
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsDead{false};
 
 	virtual void SetIsCharging_Implementation(bool bCharging) override
 	{

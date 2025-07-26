@@ -4,32 +4,24 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "Enemy.generated.h"
+#include "IChargeAttack.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UEnemy : public UInterface
+class UIChargeAttack : public UInterface
 {
 	GENERATED_BODY()
 };
 
 /**
- *
+ * 
  */
-class ACTIONGAMEDEMO_API IEnemy
+class ACTIONGAMEDEMO_API IIChargeAttack
 {
 	GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnSelect();
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnDeselect();
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Enemy")
-	bool IsDead() const;
-
-	virtual bool IsDead_Implementation() const { return false; }
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SetIsCharging(bool bCharging);
 };

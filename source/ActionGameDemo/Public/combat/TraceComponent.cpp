@@ -4,6 +4,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Interfaces/Fighter.h"
 #include "Engine/DamageEvents.h"
+#include "Interfaces/Enemy.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -71,6 +72,14 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 			GetOwner(),
 		};
 
+		// ignore other enemies creating the trace
+		if (GetOwner()->GetClass()->ImplementsInterface(UEnemy::StaticClass()))
+		{
+			IgnoreParams.AddIgnoredActor(GetOwner());
+		}
+
+		// ECC_GameTraceChannel4
+
 		bool bHasFoundTargets{
 			GetWorld()->SweepMultiByChannel(
 				OutResults,
@@ -128,6 +137,7 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 		// only allow one attack to cause damage
 		if (TargetsToIgnore.Contains(TargetActor))
 		{
+			UE_LOG(LogTemp, Warning, TEXT("Actor hit to be ignored is %s"), *TargetActor->GetName());
 			continue;
 		}
 
@@ -135,6 +145,7 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 		                        TargetAttackedEvent,
 		                        GetOwner()->GetInstigatorController(),
 		                        GetOwner());
+		UE_LOG(LogTemp, Display, TEXT("Enemy char damage %f"), CharacterDamage);
 
 		TargetsToIgnore.AddUnique(TargetActor);
 

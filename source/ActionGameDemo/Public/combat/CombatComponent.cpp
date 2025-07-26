@@ -20,8 +20,8 @@ void UCombatComponent::ComboAttack()
 	// U is meant to validate the interface
 	if (CharacterRef->Implements<UMainPlayer>())
 	{
-		IMainPlayer *IPlayerRef{Cast<IMainPlayer>(CharacterRef)};
-
+		IMainPlayer* IPlayerRef{Cast<IMainPlayer>(CharacterRef)};
+		
 		if (IPlayerRef && !IPlayerRef->HasEnoughStamina(StaminaCost))
 		{
 			return;
@@ -54,7 +54,8 @@ void UCombatComponent::HandleResetAttack()
 void UCombatComponent::RandomAttack()
 {
 	int RandomIndex{
-		FMath::RandRange(0, AttackAnimations.Num() - 1)};
+		FMath::RandRange(0, AttackAnimations.Num() - 1)
+	};
 
 	AnimDuration = CharacterRef->PlayAnimMontage(AttackAnimations[RandomIndex]);
 }
@@ -68,7 +69,8 @@ void UCombatComponent::BeginPlay()
 }
 
 // Called every frame
-void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+                                     FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 

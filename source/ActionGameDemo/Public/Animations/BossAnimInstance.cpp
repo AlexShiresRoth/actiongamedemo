@@ -16,4 +16,5 @@ void UBossAnimInstance::UpdateSpeed()
     float VectorLength{static_cast<float>(Velocity.Length())};
 
     CurrentSpeed = VectorLength;
+    
 }

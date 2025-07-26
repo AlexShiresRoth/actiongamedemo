@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Characters/LookAtPlayerComponent.h"
+
+#include "Interfaces/Enemy.h"
 #include "Kismet/KismetMathLibrary.h"
 
 // Sets default values for this component's properties
@@ -22,37 +24,52 @@ void ULookAtPlayerComponent::BeginPlay()
 }
 
 // Called every frame
-void ULookAtPlayerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+void ULookAtPlayerComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+                                           FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	if (!bCanRotate)
 	{
 		return;
-	};
+	}
 
-	AActor *OwnerRef{GetOwner()};
+	AActor* OwnerRef{GetOwner()};
+
+	// TODO this worked momentarily, probably because I added the notify state for can rotate
+
+	if (OwnerRef->GetClass()->ImplementsInterface(UEnemy::StaticClass()))
+	{
+		// TODO this is never reached
+		if (IEnemy::Execute_IsDead(OwnerRef))
+		{
+			return;
+		}
+	}
 
 	FVector OwnerLocation{OwnerRef->GetActorLocation()};
 
-	APlayerController *PlayerController{GetWorld()->GetFirstPlayerController()};
+	APlayerController* PlayerController{GetWorld()->GetFirstPlayerController()};
 
-	APawn *PlayerPawn{PlayerController->GetPawn()};
+	APawn* PlayerPawn{PlayerController->GetPawn()};
 
 	FVector PlayerLocation{PlayerPawn->GetActorLocation()};
 
 	FRotator DesiredRotation{
-		UKismetMathLibrary::FindLookAtRotation(OwnerLocation, PlayerLocation)};
+		UKismetMathLibrary::FindLookAtRotation(OwnerLocation, PlayerLocation)
+	};
 
 	FRotator CurrentRotation{OwnerRef->GetActorRotation()};
 
 	FRotator NewRotation{
-		UKismetMathLibrary::RInterpTo_Constant(CurrentRotation, DesiredRotation, DeltaTime, Speed)};
+		UKismetMathLibrary::RInterpTo_Constant(CurrentRotation, DesiredRotation, DeltaTime, Speed)
+	};
 
 	FRotator NewYawOnlyRotation{
 		CurrentRotation.Pitch,
 		NewRotation.Yaw,
-		CurrentRotation.Roll};
+		CurrentRotation.Roll
+	};
 
 	OwnerRef->SetActorRotation(NewYawOnlyRotation);
 };

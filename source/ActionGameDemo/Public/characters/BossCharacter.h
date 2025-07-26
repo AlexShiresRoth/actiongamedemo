@@ -34,6 +34,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UCombatComponent* CombatComp;
 
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsDead{false};
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

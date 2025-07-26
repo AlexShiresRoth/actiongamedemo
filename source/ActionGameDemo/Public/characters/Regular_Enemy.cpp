@@ -27,6 +27,8 @@ ARegular_Enemy::ARegular_Enemy()
 
 	StatsComp = CreateDefaultSubobject<UStatsComponent>(TEXT("StatsComponent"));
 	CombatComp = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
+
+	SetGenericTeamId(FGenericTeamId(TeamID));
 }
 
 void ARegular_Enemy::PlayHurtAnimation()
@@ -63,6 +65,9 @@ void ARegular_Enemy::BeginPlay()
 
 	BlackboardComp = ControllerRef->GetBlackboardComponent();
 
+	// TODO - need to move enemy back to original location aFTER losing sight of the player
+	OriginalLocation = GetActorLocation();
+
 	BlackboardComp->SetValueAsEnum(
 		TEXT("CurrentState"),
 		InitialState);
@@ -96,7 +101,7 @@ void ARegular_Enemy::HandlePlayerDeath()
 }
 
 
-void ARegular_Enemy::DetectPawn(class APawn* PawnDetected, class APawn* OtherPawn)
+void ARegular_Enemy::DetectPlayer(class AActor* ActorDetected, class APawn* OtherPawn)
 {
 	if (bIsDead) { return; }
 
@@ -104,11 +109,19 @@ void ARegular_Enemy::DetectPawn(class APawn* PawnDetected, class APawn* OtherPaw
 		static_cast<EEnemyState>(BlackboardComp->GetValueAsEnum(TEXT("CurrentState")))
 	};
 
+	const APawn* DetectedPawn = Cast<APawn>(ActorDetected);
 	// detect only player
-	if (PawnDetected != OtherPawn || CurrentState != Idle) { return; }
+	if (DetectedPawn != OtherPawn || CurrentState != Idle) { return; }
 
 
 	BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), Range);
+}
+
+void ARegular_Enemy::LosePlayer()
+{
+	if (bIsDead) { return; }
+
+	BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), Idle);
 }
 
 void ARegular_Enemy::HandleDeath()

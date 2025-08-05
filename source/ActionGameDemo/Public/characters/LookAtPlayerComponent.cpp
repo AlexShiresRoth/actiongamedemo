@@ -37,7 +37,6 @@ void ULookAtPlayerComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	AActor* OwnerRef{GetOwner()};
 
 	// TODO this worked momentarily, probably because I added the notify state for can rotate
-
 	if (OwnerRef->GetClass()->ImplementsInterface(UEnemy::StaticClass()))
 	{
 		// TODO this is never reached
@@ -46,6 +45,7 @@ void ULookAtPlayerComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 			return;
 		}
 	}
+
 
 	FVector OwnerLocation{OwnerRef->GetActorLocation()};
 

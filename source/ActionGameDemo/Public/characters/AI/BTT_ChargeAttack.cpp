@@ -104,6 +104,7 @@ void UBTT_ChargeAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool(TEXT("IsReadyToCharge"), false);
 
+		UE_LOG(LogTemp, Warning, TEXT("FUCKING CHARGE AT PLAYER"));
 		ChargeAtPlayer();
 	}
 
@@ -111,8 +112,6 @@ void UBTT_ChargeAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 	{
 		return;
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("GOing in to melee state"));
 
 	OwnerComp.GetBlackboardComponent()->SetValueAsEnum(TEXT("CurrentState"), Melee);
 

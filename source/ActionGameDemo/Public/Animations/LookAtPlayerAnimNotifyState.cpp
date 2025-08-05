@@ -3,45 +3,46 @@
 #include "Animations/LookAtPlayerAnimNotifyState.h"
 #include "Characters/LookAtPlayerComponent.h"
 
-void ULookAtPlayerAnimNotifyState::NotifyBegin(USkeletalMeshComponent *MeshComp,
-                                               UAnimSequenceBase *Animation,
+void ULookAtPlayerAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp,
+                                               UAnimSequenceBase* Animation,
                                                float TotalDuration,
-                                               const FAnimNotifyEventReference &EventReference)
+                                               const FAnimNotifyEventReference& EventReference)
 {
-    AActor *OwnerRef{MeshComp->GetOwner()};
+	AActor* OwnerRef{MeshComp->GetOwner()};
 
-    if (!IsValid(OwnerRef))
-    {
-        return;
-    };
+	if (!IsValid(OwnerRef))
+	{
+		return;
+	}
 
-    ULookAtPlayerComponent *RotationComponent{OwnerRef->FindComponentByClass<ULookAtPlayerComponent>()};
 
-    if (!IsValid(RotationComponent))
-    {
-        return;
-    };
+	ULookAtPlayerComponent* RotationComponent{OwnerRef->FindComponentByClass<ULookAtPlayerComponent>()};
 
-    RotationComponent->bCanRotate = true;
+	if (!IsValid(RotationComponent))
+	{
+		return;
+	}
+
+	RotationComponent->bCanRotate = true;
 }
 
-void ULookAtPlayerAnimNotifyState::NotifyEnd(USkeletalMeshComponent *MeshComp,
-                                             UAnimSequenceBase *Animation,
-                                             const FAnimNotifyEventReference &EventReference)
+void ULookAtPlayerAnimNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp,
+                                             UAnimSequenceBase* Animation,
+                                             const FAnimNotifyEventReference& EventReference)
 {
-    AActor *OwnerRef{MeshComp->GetOwner()};
+	AActor* OwnerRef{MeshComp->GetOwner()};
 
-    if (!IsValid(OwnerRef))
-    {
-        return;
-    };
+	if (!IsValid(OwnerRef))
+	{
+		return;
+	}
 
-    ULookAtPlayerComponent *RotationComponent{OwnerRef->FindComponentByClass<ULookAtPlayerComponent>()};
+	ULookAtPlayerComponent* RotationComponent{OwnerRef->FindComponentByClass<ULookAtPlayerComponent>()};
 
-    if (!IsValid(RotationComponent))
-    {
-        return;
-    };
+	if (!IsValid(RotationComponent))
+	{
+		return;
+	}
 
-    RotationComponent->bCanRotate = false;
+	RotationComponent->bCanRotate = false;
 }

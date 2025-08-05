@@ -15,6 +15,7 @@ EBTNodeResult::Type UBTT_RangeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 
 	if (!IsValid(CharacterRef))
 	{
+		UE_LOG(LogTemp, Error, TEXT("Character is invalid"));
 		return EBTNodeResult::Failed;
 	}
 
@@ -23,17 +24,28 @@ EBTNodeResult::Type UBTT_RangeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 		OwnerComp.GetBlackboardComponent()->GetValueAsFloat(TEXT("Distance"))
 	};
 
+	// bool bIsPlayerVisible{
+	// 	OwnerComp.GetBlackboardComponent()->GetValueAsBool(TEXT("IsPlayerVisible"))
+	// };
+
 	IFighter* FighterRef{
 		Cast<IFighter>(
 			OwnerComp.GetAIOwner()->GetCharacter())
 	};
 
+	if (!FighterRef)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Fighter is invalid"));
+		return EBTNodeResult::Failed;
+	}
+
 
 	if (Distance < FighterRef->GetMeleeRange())
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Going to melee u"));
 		// TODO change CurrentState to Enum
 		OwnerComp.GetBlackboardComponent()->SetValueAsEnum(TEXT("CurrentState"), Melee);
-		
+
 		AbortTask(OwnerComp, NodeMemory);
 
 		return EBTNodeResult::Aborted;

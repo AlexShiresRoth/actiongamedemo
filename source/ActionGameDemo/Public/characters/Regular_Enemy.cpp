@@ -19,7 +19,8 @@
 #include "HLSLTree/HLSLTreeEmit.h"
 #include "Interfaces/MainPlayer.h"
 
-
+// TODO we need to move player distance to tasks and not on every tick as a service
+// TODO we need to also configure ignoring the projectile in ai perception comp
 ARegular_Enemy::ARegular_Enemy()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -27,6 +28,8 @@ ARegular_Enemy::ARegular_Enemy()
 
 	StatsComp = CreateDefaultSubobject<UStatsComponent>(TEXT("StatsComponent"));
 	CombatComp = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
+
+	AIPerceptionComp = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerceptionComponent"));
 
 	SetGenericTeamId(FGenericTeamId(TeamID));
 }
@@ -65,12 +68,14 @@ void ARegular_Enemy::BeginPlay()
 
 	BlackboardComp = ControllerRef->GetBlackboardComponent();
 
-	// TODO - need to move enemy back to original location aFTER losing sight of the player
 	OriginalLocation = GetActorLocation();
+	OriginalRotation = GetActorRotation();
 
 	BlackboardComp->SetValueAsEnum(
 		TEXT("CurrentState"),
 		InitialState);
+
+	BlackboardComp->SetValueAsVector("StartLocation", OriginalLocation);
 
 
 	BlackboardComp = ControllerRef->GetBlackboardComponent();
@@ -78,6 +83,12 @@ void ARegular_Enemy::BeginPlay()
 	GetWorld()->GetFirstPlayerController()->GetPawn<APlayerCharacter>()->StatsComp->OnZeroHealthDelegate.AddDynamic(
 		this,
 		&ARegular_Enemy::HandlePlayerDeath);
+
+	if (AIPerceptionComp)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Perception comp"));
+		AIPerceptionComp->OnTargetPerceptionUpdated.AddDynamic(this, &ARegular_Enemy::OnTargetPerceptionUpdated);
+	}
 }
 
 // Called every frame
@@ -91,6 +102,14 @@ void ARegular_Enemy::Tick(float DeltaTime)
 void ARegular_Enemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+void ARegular_Enemy::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
+{
+	if (Actor)
+	{
+		UE_LOG(LogTemp, Display, TEXT("OnTargetPerceptionUpdated actor: %s"), *Actor->GetName());
+	}
 }
 
 void ARegular_Enemy::HandlePlayerDeath()
@@ -109,10 +128,18 @@ void ARegular_Enemy::DetectPlayer(class AActor* ActorDetected, class APawn* Othe
 		static_cast<EEnemyState>(BlackboardComp->GetValueAsEnum(TEXT("CurrentState")))
 	};
 
+	// TODO idk if we need this variable still
+	bCanSeePlayer = true;
+
+
 	const APawn* DetectedPawn = Cast<APawn>(ActorDetected);
 	// detect only player
-	if (DetectedPawn != OtherPawn || CurrentState != Idle) { return; }
+	if (DetectedPawn != OtherPawn)
+	{
+		return;
+	}
 
+	BlackboardComp->SetValueAsBool(TEXT("IsPlayerVisible"), true);
 
 	BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), Range);
 }
@@ -121,7 +148,11 @@ void ARegular_Enemy::LosePlayer()
 {
 	if (bIsDead) { return; }
 
-	BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), Idle);
+	bCanSeePlayer = false;
+
+	FTimerHandle TimerHandle;
+
+	HandleSetPlayerVisibility();
 }
 
 void ARegular_Enemy::HandleDeath()
@@ -199,6 +230,12 @@ bool ARegular_Enemy::IsDead_Implementation() const
 void ARegular_Enemy::HandleDisableCollisionOnDeath()
 {
 	FindComponentByClass<UCapsuleComponent>()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+void ARegular_Enemy::HandleSetPlayerVisibility()
+{
+	UE_LOG(LogTemp, Display, TEXT("Player Visibility"));
+	BlackboardComp->SetValueAsBool(TEXT("IsPlayerVisible"), false);
 }
 
 

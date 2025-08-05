@@ -8,6 +8,7 @@
 #include "GameFramework/Character.h"
 #include "Interfaces/Enemy.h"
 #include "Interfaces/Fighter.h"
+#include "Perception/AIPerceptionComponent.h"
 #include "Regular_Enemy.generated.h"
 
 UCLASS()
@@ -52,6 +53,15 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Location")
 	FVector OriginalLocation;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Location")
+	FRotator OriginalRotation;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = AI)
+	UAIPerceptionComponent* AIPerceptionComp;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Location")
+	bool bCanSeePlayer{false};
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -62,6 +72,9 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION(BlueprintCallable)
+	void OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 
 	UFUNCTION()
 	void HandlePlayerDeath();
@@ -92,6 +105,8 @@ public:
 	virtual bool IsDead_Implementation() const override;
 
 	void HandleDisableCollisionOnDeath();
+
+	void HandleSetPlayerVisibility();
 
 	UFUNCTION()
 	void FinishDeathAnim();

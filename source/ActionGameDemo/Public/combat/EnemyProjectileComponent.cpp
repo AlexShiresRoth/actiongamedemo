@@ -22,7 +22,8 @@ void UEnemyProjectileComponent::BeginPlay()
 }
 
 // Called every frame
-void UEnemyProjectileComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+void UEnemyProjectileComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+                                              FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
@@ -31,7 +32,7 @@ void UEnemyProjectileComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 
 void UEnemyProjectileComponent::SpawnProjectile(FName ComponentName, TSubclassOf<AActor> ProjectileClass)
 {
-	USceneComponent *SpawnPointComp{Cast<USceneComponent>(GetOwner()->GetDefaultSubobjectByName(ComponentName))};
+	USceneComponent* SpawnPointComp{Cast<USceneComponent>(GetOwner()->GetDefaultSubobjectByName(ComponentName))};
 
 	FVector SpawnLocation{SpawnPointComp->GetComponentLocation()};
 

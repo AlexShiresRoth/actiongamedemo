@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "EnemyProjectile.generated.h"
 
+
 UCLASS()
 class ACTIONGAMEDEMO_API AEnemyProjectile : public AActor
 {
@@ -16,6 +17,7 @@ class ACTIONGAMEDEMO_API AEnemyProjectile : public AActor
 
 	UPROPERTY(EditAnywhere, Category = "Projectile")
 	float ProjectileDamage{10.0f};
+
 
 public:
 	// Sets default values for this actor's properties

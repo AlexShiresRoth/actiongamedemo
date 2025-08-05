@@ -64,6 +64,8 @@ void UBTT_MeleeAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 
 	AAIController* AIRef{OwnerComp.GetAIOwner()};
 
+	// bool bIsPlayerVisible{OwnerComp.GetBlackboardComponent()->GetValueAsBool(TEXT("IsPlayerVisible"))};
+
 	IFighter* FighterRef{
 		Cast<IFighter>(
 			AIRef->GetCharacter())

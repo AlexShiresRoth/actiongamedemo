@@ -21,6 +21,9 @@
 
 // TODO we need to move player distance to tasks and not on every tick as a service
 // TODO we need to also configure ignoring the projectile in ai perception comp
+// TODO FUCK THIS FUCKING FUCK THIS SHIT FUCKING SUCKS
+// GOD DAMNIT WHY THE FUCK IS CHARGING NOT RUNNING
+// isReady tro charge never fires!@@!!@#$#$Q@@#$!@#ER QRFW QASDFASED FDas fcfzvhdzfgWE QADSFZD FSVXZSADC  
 ARegular_Enemy::ARegular_Enemy()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -150,9 +153,14 @@ void ARegular_Enemy::LosePlayer()
 
 	bCanSeePlayer = false;
 
-	FTimerHandle TimerHandle;
-
-	HandleSetPlayerVisibility();
+	FTimerHandle VisibilityLossTimer;
+	GetWorld()->GetTimerManager().SetTimer(
+		VisibilityLossTimer,
+		this,
+		&ARegular_Enemy::HandleSetPlayerVisibility,
+		0.2f, // delay a bit
+		false
+	);
 }
 
 void ARegular_Enemy::HandleDeath()
@@ -234,8 +242,9 @@ void ARegular_Enemy::HandleDisableCollisionOnDeath()
 
 void ARegular_Enemy::HandleSetPlayerVisibility()
 {
-	UE_LOG(LogTemp, Display, TEXT("Player Visibility"));
+	UE_LOG(LogTemp, Display, TEXT("Player lost"));
 	BlackboardComp->SetValueAsBool(TEXT("IsPlayerVisible"), false);
+	BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), Idle);
 }
 
 

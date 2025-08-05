@@ -41,6 +41,7 @@ EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 				AIRef->GetCharacter())
 		};
 
+		UE_LOG(LogTemp, Error, TEXT("Attacking!!!!!!! %f"), Distance);
 		FighterRef->Attack();
 
 		FTimerHandle AttackTimerHandle;

@@ -79,9 +79,7 @@ void ARegular_Enemy::BeginPlay()
 		InitialState);
 
 	BlackboardComp->SetValueAsVector("StartLocation", OriginalLocation);
-
-
-	BlackboardComp = ControllerRef->GetBlackboardComponent();
+	BlackboardComp->SetValueAsRotator("StartRotation", OriginalRotation);
 
 	GetWorld()->GetFirstPlayerController()->GetPawn<APlayerCharacter>()->StatsComp->OnZeroHealthDelegate.AddDynamic(
 		this,
@@ -89,7 +87,6 @@ void ARegular_Enemy::BeginPlay()
 
 	if (AIPerceptionComp)
 	{
-		UE_LOG(LogTemp, Display, TEXT("Perception comp"));
 		AIPerceptionComp->OnTargetPerceptionUpdated.AddDynamic(this, &ARegular_Enemy::OnTargetPerceptionUpdated);
 	}
 }
@@ -240,11 +237,19 @@ void ARegular_Enemy::HandleDisableCollisionOnDeath()
 	FindComponentByClass<UCapsuleComponent>()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
+// TODO handling what enemy should do should not be handled here
 void ARegular_Enemy::HandleSetPlayerVisibility()
 {
-	UE_LOG(LogTemp, Display, TEXT("Player lost"));
 	BlackboardComp->SetValueAsBool(TEXT("IsPlayerVisible"), false);
-	BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), Idle);
+
+	if (GetActorLocation() != OriginalLocation)
+	{
+		BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), ReturnToStart);
+	}
+	else
+	{
+		BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), Idle);
+	}
 }
 
 

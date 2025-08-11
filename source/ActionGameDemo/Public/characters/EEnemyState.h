@@ -12,5 +12,6 @@ enum EEnemyState
 	Charge UMETA(DisplayName = "Charge"),
 	Melee UMETA(DisplayName = "Melee"),
 	Death UMETA(DisplayName = "Death"),
-	GameOver UMETA(DisplayName = "Game Over")
+	GameOver UMETA(DisplayName = "Game Over"),
+	ReturnToStart UMETA(DisplayName = "Return to Start")
 };

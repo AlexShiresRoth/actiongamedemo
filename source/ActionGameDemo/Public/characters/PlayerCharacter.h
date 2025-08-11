@@ -3,13 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GenericTeamAgentInterface.h"
 #include "GameFramework/Character.h"
 #include "Interfaces/MainPlayer.h"
 #include "Interfaces/Fighter.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
-class ACTIONGAMEDEMO_API APlayerCharacter : public ACharacter, public IMainPlayer, public IFighter
+class ACTIONGAMEDEMO_API APlayerCharacter : public ACharacter, public IMainPlayer, public IFighter,
+                                            public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -20,6 +22,11 @@ class ACTIONGAMEDEMO_API APlayerCharacter : public ACharacter, public IMainPlaye
 	UAnimMontage* HurtAnimMontage;
 
 public:
+	virtual FGenericTeamId GetGenericTeamId() const override
+	{
+		return FGenericTeamId(0);
+	}
+
 	// Sets default values for this character's properties
 	APlayerCharacter();
 

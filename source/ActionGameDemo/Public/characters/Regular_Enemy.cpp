@@ -27,6 +27,10 @@ ARegular_Enemy::ARegular_Enemy()
 
 	StatsComp = CreateDefaultSubobject<UStatsComponent>(TEXT("StatsComponent"));
 	CombatComp = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
+
+	AIPerceptionComp = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerceptionComponent"));
+
+	SetGenericTeamId(FGenericTeamId(TeamID));
 }
 
 void ARegular_Enemy::PlayHurtAnimation()
@@ -63,16 +67,24 @@ void ARegular_Enemy::BeginPlay()
 
 	BlackboardComp = ControllerRef->GetBlackboardComponent();
 
+	OriginalLocation = GetActorLocation();
+	OriginalRotation = GetActorRotation();
+
 	BlackboardComp->SetValueAsEnum(
 		TEXT("CurrentState"),
 		InitialState);
 
-
-	BlackboardComp = ControllerRef->GetBlackboardComponent();
+	BlackboardComp->SetValueAsVector("StartLocation", OriginalLocation);
+	BlackboardComp->SetValueAsRotator("StartRotation", OriginalRotation);
 
 	GetWorld()->GetFirstPlayerController()->GetPawn<APlayerCharacter>()->StatsComp->OnZeroHealthDelegate.AddDynamic(
 		this,
 		&ARegular_Enemy::HandlePlayerDeath);
+
+	if (AIPerceptionComp)
+	{
+		AIPerceptionComp->OnTargetPerceptionUpdated.AddDynamic(this, &ARegular_Enemy::OnTargetPerceptionUpdated);
+	}
 }
 
 // Called every frame
@@ -88,6 +100,15 @@ void ARegular_Enemy::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+// TODO should we just handle this in BP?
+void ARegular_Enemy::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
+{
+	if (Actor)
+	{
+		UE_LOG(LogTemp, Display, TEXT("OnTargetPerceptionUpdated actor: %s"), *Actor->GetName());
+	}
+}
+
 void ARegular_Enemy::HandlePlayerDeath()
 {
 	ControllerRef->GetBlackboardComponent()->SetValueAsEnum(
@@ -96,7 +117,7 @@ void ARegular_Enemy::HandlePlayerDeath()
 }
 
 
-void ARegular_Enemy::DetectPawn(class APawn* PawnDetected, class APawn* OtherPawn)
+void ARegular_Enemy::DetectPlayer(class AActor* ActorDetected, class APawn* OtherPawn)
 {
 	if (bIsDead) { return; }
 
@@ -104,11 +125,36 @@ void ARegular_Enemy::DetectPawn(class APawn* PawnDetected, class APawn* OtherPaw
 		static_cast<EEnemyState>(BlackboardComp->GetValueAsEnum(TEXT("CurrentState")))
 	};
 
-	// detect only player
-	if (PawnDetected != OtherPawn || CurrentState != Idle) { return; }
+	// TODO idk if we need this variable still
+	bCanSeePlayer = true;
 
+
+	const APawn* DetectedPawn = Cast<APawn>(ActorDetected);
+	// detect only player
+	if (DetectedPawn != OtherPawn)
+	{
+		return;
+	}
+
+	BlackboardComp->SetValueAsBool(TEXT("IsPlayerVisible"), true);
 
 	BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), Range);
+}
+
+void ARegular_Enemy::LosePlayer()
+{
+	if (bIsDead) { return; }
+
+	bCanSeePlayer = false;
+
+	FTimerHandle VisibilityLossTimer;
+	GetWorld()->GetTimerManager().SetTimer(
+		VisibilityLossTimer,
+		this,
+		&ARegular_Enemy::HandleSetPlayerVisibility,
+		.2f, // delay a bit
+		false
+	);
 }
 
 void ARegular_Enemy::HandleDeath()
@@ -186,6 +232,20 @@ bool ARegular_Enemy::IsDead_Implementation() const
 void ARegular_Enemy::HandleDisableCollisionOnDeath()
 {
 	FindComponentByClass<UCapsuleComponent>()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+// TODO handling what enemy should do should not be handled here
+void ARegular_Enemy::HandleSetPlayerVisibility()
+{
+	ControllerRef->ClearFocus(EAIFocusPriority::Gameplay);
+
+	ControllerRef->StopMovement();
+
+	BlackboardComp->SetValueAsBool(TEXT("IsPlayerVisible"), false);
+
+	BlackboardComp->SetValueAsBool(TEXT("IsReadyToCharge"), false);
+	// We can set return to start here and set idle in return to start task
+	BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), ReturnToStart);
 }
 
 

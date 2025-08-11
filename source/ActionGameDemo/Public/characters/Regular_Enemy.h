@@ -4,13 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "EEnemyState.h"
+#include "GenericTeamAgentInterface.h"
 #include "GameFramework/Character.h"
 #include "Interfaces/Enemy.h"
 #include "Interfaces/Fighter.h"
+#include "Perception/AIPerceptionComponent.h"
 #include "Regular_Enemy.generated.h"
 
 UCLASS()
-class ACTIONGAMEDEMO_API ARegular_Enemy : public ACharacter, public IEnemy, public IFighter
+class ACTIONGAMEDEMO_API ARegular_Enemy : public ACharacter, public IEnemy, public IFighter,
+                                          public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -31,6 +34,10 @@ public:
 	// Sets default values for this character's properties
 	ARegular_Enemy();
 
+	uint8 TeamID = 1;
+
+	virtual FGenericTeamId GetGenericTeamId() const override { return FGenericTeamId(TeamID); }
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Stats Component")
 	class UStatsComponent* StatsComp;
 
@@ -39,6 +46,24 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsDead{false};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsPlayerDetected{false};
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Location")
+	FVector OriginalLocation;
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Location")
+	FRotator OriginalRotation;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = AI)
+	UAIPerceptionComponent* AIPerceptionComp;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Sense Config")
+	float LoseSightDelay{5.f};
+
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Location")
+	bool bCanSeePlayer{false};
 
 protected:
 	// Called when the game starts or when spawned
@@ -51,11 +76,17 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(BlueprintCallable)
+	void OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
+
 	UFUNCTION()
 	void HandlePlayerDeath();
 
 	UFUNCTION(BlueprintCallable)
-	void DetectPawn(class APawn* PawnDetected, class APawn* OtherPawn);
+	void DetectPlayer(class AActor* ActorDetected, class APawn* OtherPawn);
+
+	UFUNCTION(BlueprintCallable)
+	void LosePlayer();
 
 	UFUNCTION(BlueprintCallable, Category= "Enemy Death")
 	void HandleDeath();
@@ -77,7 +108,9 @@ public:
 	virtual bool IsDead_Implementation() const override;
 
 	void HandleDisableCollisionOnDeath();
-	
+
+	void HandleSetPlayerVisibility();
+
 	UFUNCTION()
 	void FinishDeathAnim();
 };

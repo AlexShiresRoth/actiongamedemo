@@ -19,11 +19,7 @@
 #include "HLSLTree/HLSLTreeEmit.h"
 #include "Interfaces/MainPlayer.h"
 
-// TODO we need to move player distance to tasks and not on every tick as a service
-// TODO we need to also configure ignoring the projectile in ai perception comp
-// TODO FUCK THIS FUCKING FUCK THIS SHIT FUCKING SUCKS
-// GOD DAMNIT WHY THE FUCK IS CHARGING NOT RUNNING
-// isReady tro charge never fires!@@!!@#$#$Q@@#$!@#ER QRFW QASDFASED FDas fcfzvhdzfgWE QADSFZD FSVXZSADC  
+
 ARegular_Enemy::ARegular_Enemy()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -104,6 +100,7 @@ void ARegular_Enemy::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+// TODO should we just handle this in BP?
 void ARegular_Enemy::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
 	if (Actor)
@@ -155,7 +152,7 @@ void ARegular_Enemy::LosePlayer()
 		VisibilityLossTimer,
 		this,
 		&ARegular_Enemy::HandleSetPlayerVisibility,
-		0.2f, // delay a bit
+		.2f, // delay a bit
 		false
 	);
 }
@@ -240,16 +237,15 @@ void ARegular_Enemy::HandleDisableCollisionOnDeath()
 // TODO handling what enemy should do should not be handled here
 void ARegular_Enemy::HandleSetPlayerVisibility()
 {
+	ControllerRef->ClearFocus(EAIFocusPriority::Gameplay);
+
+	ControllerRef->StopMovement();
+
 	BlackboardComp->SetValueAsBool(TEXT("IsPlayerVisible"), false);
 
-	if (GetActorLocation() != OriginalLocation)
-	{
-		BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), ReturnToStart);
-	}
-	else
-	{
-		BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), Idle);
-	}
+	BlackboardComp->SetValueAsBool(TEXT("IsReadyToCharge"), false);
+	// We can set return to start here and set idle in return to start task
+	BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), ReturnToStart);
 }
 
 

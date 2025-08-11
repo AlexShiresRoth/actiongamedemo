@@ -6,6 +6,9 @@
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/EEnemyState.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/PawnMovementComponent.h"
 #include "Interfaces/Fighter.h"
 #include "Navigation/PathFollowingComponent.h"
 
@@ -14,12 +17,13 @@ UBTT_Return_To_Start::UBTT_Return_To_Start()
 	NodeName = "Return_To_Start";
 }
 
-// TODO need to set rotation to where the actor is headed 
 EBTNodeResult::Type UBTT_Return_To_Start::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	AAIController* AIController = OwnerComp.GetAIOwner();
+
 	if (!AIController)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed return to start"));
 		return EBTNodeResult::Failed;
 	}
 
@@ -27,6 +31,7 @@ EBTNodeResult::Type UBTT_Return_To_Start::ExecuteTask(UBehaviorTreeComponent& Ow
 
 	if (!AIPawn)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed return to start"));
 		return EBTNodeResult::Failed;
 	}
 
@@ -38,7 +43,6 @@ EBTNodeResult::Type UBTT_Return_To_Start::ExecuteTask(UBehaviorTreeComponent& Ow
 	FAIMoveRequest MoveRequest;
 	MoveRequest.SetGoalLocation(StartLocation);
 	MoveRequest.SetAcceptanceRadius(AcceptableDistance);
-
 
 	FNavPathSharedPtr NavPath;
 	AIController->MoveTo(MoveRequest, &NavPath);

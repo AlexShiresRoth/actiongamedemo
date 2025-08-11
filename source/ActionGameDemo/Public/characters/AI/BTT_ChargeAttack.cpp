@@ -104,7 +104,6 @@ void UBTT_ChargeAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool(TEXT("IsReadyToCharge"), false);
 
-		UE_LOG(LogTemp, Warning, TEXT("FUCKING CHARGE AT PLAYER"));
 		ChargeAtPlayer();
 	}
 

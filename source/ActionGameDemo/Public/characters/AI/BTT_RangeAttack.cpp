@@ -24,9 +24,6 @@ EBTNodeResult::Type UBTT_RangeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 		OwnerComp.GetBlackboardComponent()->GetValueAsFloat(TEXT("Distance"))
 	};
 
-	// bool bIsPlayerVisible{
-	// 	OwnerComp.GetBlackboardComponent()->GetValueAsBool(TEXT("IsPlayerVisible"))
-	// };
 
 	IFighter* FighterRef{
 		Cast<IFighter>(
@@ -42,7 +39,6 @@ EBTNodeResult::Type UBTT_RangeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 
 	if (Distance < FighterRef->GetMeleeRange())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Going to melee u"));
 		// TODO change CurrentState to Enum
 		OwnerComp.GetBlackboardComponent()->SetValueAsEnum(TEXT("CurrentState"), Melee);
 

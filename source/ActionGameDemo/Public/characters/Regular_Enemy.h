@@ -59,6 +59,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = AI)
 	UAIPerceptionComponent* AIPerceptionComp;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Sense Config")
+	float LoseSightDelay{5.f};
+
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Location")
 	bool bCanSeePlayer{false};
 

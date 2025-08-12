@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/Texture2D.h"
+#include "Enums/ItemTypes.h"
 #include "ItemData.generated.h"
 
 USTRUCT(BlueprintType)
@@ -22,4 +23,7 @@ struct FItemData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UTexture2D* ItemIcon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TMap<TEnumAsByte<EItemTypes>, float> ItemType;
 };

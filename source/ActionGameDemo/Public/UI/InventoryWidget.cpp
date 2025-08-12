@@ -43,7 +43,7 @@ void UInventoryWidget::NativeConstruct()
 							ItemWidget->ItemID = FText::FromName(Item->ItemData.ID);
 							ItemWidget->ItemIcon = Item->ItemData.ItemIcon;
 							ItemWidget->Description = Item->ItemData.Description;
-
+							ItemWidget->ItemLocation = Inventory;
 							ItemsContainer->AddChild(ItemWidget);
 						}
 					}

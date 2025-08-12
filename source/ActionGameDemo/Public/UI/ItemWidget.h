@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Image.h"
+#include "Enums/ItemContext.h"
 #include "ItemWidget.generated.h"
 
 /**
@@ -36,6 +37,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AddItemToInventory();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TEnumAsByte<EItemContextType> ItemLocation;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnAddItemToInventorySignature OnAddItemToInventoryDelegate;

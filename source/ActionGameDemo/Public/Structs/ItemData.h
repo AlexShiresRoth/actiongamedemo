@@ -4,7 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "Engine/Texture2D.h"
+#include "Enums/ItemTypes.h"
 #include "ItemData.generated.h"
+
+USTRUCT(BlueprintType)
+struct FItemTypeKVPair
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TEnumAsByte<EItemTypes> ItemType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float TypeValue;
+};
 
 USTRUCT(BlueprintType)
 struct FItemData
@@ -12,14 +25,17 @@ struct FItemData
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName Name;
+	FText Name;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName ID;
+	FString ID;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString Description;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UTexture2D* ItemIcon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FItemTypeKVPair TypePair;
 };

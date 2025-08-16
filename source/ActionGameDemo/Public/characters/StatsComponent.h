@@ -41,7 +41,10 @@ public:
 	TMap<TEnumAsByte<EStat>, float> Stats;
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-	void ReduceHealth(float Damage, AActor* Opponent);
+	void ReduceHealth(const float Damage, AActor* Opponent);
+
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+	void AddHealth(const float HealAmt);
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 	void ReduceStamina(float Amount);

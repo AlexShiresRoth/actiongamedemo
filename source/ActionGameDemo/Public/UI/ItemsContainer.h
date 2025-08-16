@@ -51,7 +51,7 @@ public:
 	void SetContainerTitle(FString NewTitle);
 
 	UFUNCTION()
-	void RemoveItemFromContainer(const FText ItemID);
+	void RemoveItemFromContainer(const FString ItemID);
 
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;

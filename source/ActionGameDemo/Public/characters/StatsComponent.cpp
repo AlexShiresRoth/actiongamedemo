@@ -14,7 +14,7 @@ UStatsComponent::UStatsComponent()
 	// ...
 }
 
-void UStatsComponent::ReduceHealth(float Damage, AActor* Opponent)
+void UStatsComponent::ReduceHealth(const float Damage, AActor* Opponent)
 {
 	IFighter* FighterRef{GetOwner<IFighter>()};
 
@@ -35,6 +35,22 @@ void UStatsComponent::ReduceHealth(float Damage, AActor* Opponent)
 	if (Stats[Health] <= 0)
 	{
 		OnZeroHealthDelegate.Broadcast();
+	}
+}
+
+void UStatsComponent::AddHealth(const float HealAmt)
+{
+	if (Stats[Health] < Stats[MaxHealth])
+	{
+		Stats[Health] = UKismetMathLibrary::FClamp(
+			Stats[Health] + HealAmt,
+			0.f,
+			Stats[MaxHealth]);
+		OnHealthPercentUpdateDelegate.Broadcast(GetStatPercentage(Health, MaxHealth));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Health is max"));
 	}
 }
 

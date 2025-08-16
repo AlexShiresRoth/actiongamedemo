@@ -46,7 +46,6 @@ void UStatsComponent::AddHealth(const float HealAmt)
 			Stats[Health] + HealAmt,
 			0.f,
 			Stats[MaxHealth]);
-		UE_LOG(LogTemp, Warning, TEXT("Updating health %f"), Stats[Health]);
 		OnHealthPercentUpdateDelegate.Broadcast(GetStatPercentage(Health, MaxHealth));
 	}
 	else

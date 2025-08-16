@@ -8,5 +8,7 @@
 UENUM(BlueprintType)
 enum EItemTypes
 {
-	Healing UMETA(DisplayName = "Healing")
+	Healing UMETA(DisplayName = "Healing"),
+	StaminaBoost UMETA(DisplayName = "Stamina"),
+	Ability UMETA(DisplayName = "Ability"),
 };

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/ScrollBox.h"
+#include "Structs/ItemData.h"
 #include "InventoryWidget.generated.h"
 
 /**
@@ -35,6 +36,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UItemWidget> ItemWidgetClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FItemData SelectedItem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString SelectedItemCategory;
+
 	UFUNCTION(BlueprintCallable)
 	void CLoseInventoryWidget();
+
+	UFUNCTION()
+	void HandleItemActions(FItemData Item);
+
+	UFUNCTION(BlueprintCallable)
+	void UseItem(FItemData Item);
 };

@@ -6,6 +6,7 @@
 #include "ItemWidget.h"
 #include "Characters/InventoryComponent.h"
 #include "Characters/PlayerCharacter.h"
+#include "Characters/StatsComponent.h"
 #include "Interactable/Item.h"
 
 // TODO refactor this function
@@ -39,11 +40,10 @@ void UInventoryWidget::NativeConstruct()
 					{
 						if (UItemWidget* ItemWidget = CreateWidget<UItemWidget>(this, ItemWidgetClass))
 						{
-							ItemWidget->ItemName = FText::FromName(Item->ItemData.Name);
-							ItemWidget->ItemID = FText::FromName(Item->ItemData.ID);
-							ItemWidget->ItemIcon = Item->ItemData.ItemIcon;
-							ItemWidget->Description = Item->ItemData.Description;
 							ItemWidget->ItemLocation = Inventory;
+							ItemWidget->ItemData = Item->ItemData;
+							ItemWidget->OnItemActionsMenuDelegate.
+							            AddDynamic(this, &UInventoryWidget::HandleItemActions);
 							ItemsContainer->AddChild(ItemWidget);
 						}
 					}
@@ -74,4 +74,45 @@ void UInventoryWidget::CLoseInventoryWidget()
 			this->RemoveFromParent();
 		}
 	}
+}
+
+void UInventoryWidget::HandleItemActions(FItemData Item)
+{
+	if (Item.ID.IsEmpty())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Item Actions delegate::Missing Item Data"));
+		return;
+	}
+
+	SelectedItem = Item;
+	SelectedItemCategory = UEnum::GetValueAsString(Item.TypePair.ItemType.GetValue());
+}
+
+void UInventoryWidget::UseItem(FItemData Item)
+{
+	if (Item.ID.IsEmpty())
+	{
+		return;
+	}
+	switch (Item.TypePair.ItemType)
+	{
+	case Healing:
+		if (UStatsComponent* StatsComp = PlayerRef->FindComponentByClass<UStatsComponent>())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Trying to add health"));
+			// apply the affect to the character
+			StatsComp->AddHealth(Item.TypePair.TypeValue);
+
+			InventoryItems.RemoveAll([&](AItem* InventoryItem)
+			{
+				return InventoryItem && InventoryItem->ItemData.ID == Item.ID;
+			});
+
+			InventoryComponent->InventoryItems = InventoryItems;
+		}
+		break;
+	default:
+		UE_LOG(LogTemp, Warning, TEXT("Item Is not a Healing type::UseItem"));
+	}
+	// 4. remove the item from the inventory
 }

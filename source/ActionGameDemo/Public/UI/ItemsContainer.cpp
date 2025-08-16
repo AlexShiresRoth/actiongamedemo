@@ -29,10 +29,7 @@ void UItemsContainer::SetItems(TArray<class AItem*> Items)
 				{
 					ItemWidget->OnAddItemToInventoryDelegate.
 					            AddDynamic(this, &UItemsContainer::RemoveItemFromContainer);
-					ItemWidget->ItemName = FText::FromName(Item->ItemData.Name);
-					ItemWidget->ItemID = FText::FromName(Item->ItemData.ID);
-					ItemWidget->ItemIcon = Item->ItemData.ItemIcon;
-					ItemWidget->Description = Item->ItemData.Description;
+					ItemWidget->ItemData = Item->ItemData;
 					ScrollContainer->AddChild(ItemWidget);
 				}
 			}
@@ -40,11 +37,11 @@ void UItemsContainer::SetItems(TArray<class AItem*> Items)
 	}
 }
 
-void UItemsContainer::RemoveItemFromContainer(const FText ItemID)
+void UItemsContainer::RemoveItemFromContainer(const FString ItemID)
 {
 	for (int32 i = 0; i < ItemsList.Num(); i++)
 	{
-		if (ItemsList[i]->ItemData.ID.ToString() == ItemID.ToString())
+		if (ItemsList[i]->ItemData.ID == ItemID)
 		{
 			return OnRemoveItemFromObjectDelegate.Broadcast(ItemsList[i]);
 		}

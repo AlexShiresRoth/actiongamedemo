@@ -8,15 +8,27 @@
 #include "ItemData.generated.h"
 
 USTRUCT(BlueprintType)
+struct FItemTypeKVPair
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TEnumAsByte<EItemTypes> ItemType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float TypeValue;
+};
+
+USTRUCT(BlueprintType)
 struct FItemData
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName Name;
+	FText Name;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName ID;
+	FString ID;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString Description;
@@ -25,5 +37,5 @@ struct FItemData
 	UTexture2D* ItemIcon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TMap<TEnumAsByte<EItemTypes>, float> ItemType;
+	FItemTypeKVPair TypePair;
 };

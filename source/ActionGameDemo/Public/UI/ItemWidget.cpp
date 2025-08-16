@@ -3,14 +3,24 @@
 
 #include "UI/ItemWidget.h"
 
-// TODO i added item context location, we need to dynamically use this to tell it to be in the inventory component
 void UItemWidget::AddItemToInventory()
 {
-	if (ItemName.IsEmpty() || ItemLocation == Inventory)
+	if (ItemData.ID.IsEmpty())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ITEMWIDGET::Adding %s to inventory"), *ItemName.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("Item data not provided"));
 		return;
 	}
-	OnAddItemToInventoryDelegate.Broadcast(ItemID);
-	this->RemoveFromParent();
+	switch (ItemLocation)
+	{
+	case Inventory:
+		UE_LOG(LogTemp, Warning, TEXT("Item data provided %s"), *ItemData.ID);
+		OnItemActionsMenuDelegate.Broadcast(ItemData);
+		break;
+	case ItemContainer:
+		OnAddItemToInventoryDelegate.Broadcast(ItemData.ID);
+		this->RemoveFromParent();
+		break;
+	default:
+		return;
+	}
 }

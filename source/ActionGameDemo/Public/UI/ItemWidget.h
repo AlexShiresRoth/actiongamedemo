@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Blueprint/IUserObjectListEntry.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Image.h"
 #include "Enums/ItemContext.h"
+#include "Structs/ItemData.h"
 #include "ItemWidget.generated.h"
 
 /**
@@ -14,26 +16,20 @@
 
 DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_OneParam(
 	FOnAddItemToInventorySignature, UItemWidget,
-	OnAddItemToInventoryDelegate, FText, ItemID
+	OnAddItemToInventoryDelegate, FString, ItemID
 );
 
+DECLARE_DYNAMIC_MULTICAST_SPARSE_DELEGATE_OneParam(FOnItemActionsMenuTriggerSignature, UItemWidget,
+                                                   OnItemActionsMenuDelegate, FItemData, Item);
+
 UCLASS(BlueprintType, Blueprintable)
-class ACTIONGAMEDEMO_API UItemWidget : public UUserWidget
+class ACTIONGAMEDEMO_API UItemWidget : public UUserWidget, public IUserObjectListEntry
 {
 	GENERATED_BODY()
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FText ItemName;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FText ItemID;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString Description;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UTexture2D* ItemIcon;
+	FItemData ItemData;
 
 	UFUNCTION(BlueprintCallable)
 	void AddItemToInventory();
@@ -43,4 +39,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnAddItemToInventorySignature OnAddItemToInventoryDelegate;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnItemActionsMenuTriggerSignature OnItemActionsMenuDelegate;
 };

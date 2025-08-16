@@ -45,6 +45,7 @@ void UInventoryWidget::NativeConstruct()
 							ItemWidget->OnItemActionsMenuDelegate.
 							            AddDynamic(this, &UInventoryWidget::HandleItemActions);
 							ItemsContainer->AddChild(ItemWidget);
+							ItemWidgets.Add(ItemWidget);
 						}
 					}
 				}
@@ -99,7 +100,6 @@ void UInventoryWidget::UseItem(FItemData Item)
 	case Healing:
 		if (UStatsComponent* StatsComp = PlayerRef->FindComponentByClass<UStatsComponent>())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Trying to add health"));
 			// apply the affect to the character
 			StatsComp->AddHealth(Item.TypePair.TypeValue);
 
@@ -109,7 +109,20 @@ void UInventoryWidget::UseItem(FItemData Item)
 			});
 
 			InventoryComponent->InventoryItems = InventoryItems;
+			// Reset selected Item
+			SelectedItem = FItemData();
+
+			// Remove the widget associated with the id
+			for (int32 i = ItemWidgets.Num() - 1; i >= 0; i--)
+			{
+				if (ItemWidgets[i] && ItemWidgets[i]->ItemData.ID.Equals(Item.ID))
+				{
+					ItemWidgets[i]->RemoveFromParent();
+					ItemWidgets.RemoveAt(i);
+				}
+			}
 		}
+
 		break;
 	default:
 		UE_LOG(LogTemp, Warning, TEXT("Item Is not a Healing type::UseItem"));

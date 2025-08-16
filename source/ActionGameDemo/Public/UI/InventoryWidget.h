@@ -33,6 +33,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
 	TArray<class AItem*> InventoryItems;
 
+	UPROPERTY(VisibleAnywhere)
+	TArray<class UItemWidget*> ItemWidgets;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UItemWidget> ItemWidgetClass;
 

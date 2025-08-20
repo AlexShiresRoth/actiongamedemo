@@ -20,7 +20,7 @@ class ACTIONGAMEDEMO_API ARegular_Enemy : public ACharacter, public IEnemy, publ
 	UPROPERTY(EditAnywhere, Category = AI)
 	TEnumAsByte<EEnemyState> InitialState;
 
-	class UBlackboardComponent* BlackboardComp;
+	UBlackboardComponent* BlackboardComp;
 
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* DeathAnim;
@@ -28,7 +28,7 @@ class ACTIONGAMEDEMO_API ARegular_Enemy : public ACharacter, public IEnemy, publ
 	UPROPERTY(EditAnywhere, Category = "Hurt Animation")
 	UAnimMontage* HurtAnimMontage;
 
-	class AAIController* ControllerRef;
+	AAIController* ControllerRef;
 
 public:
 	// Sets default values for this character's properties

@@ -14,5 +14,14 @@ class ACTIONGAMEDEMO_API UBTT_FollowPlayer : public UBTTaskNode
 {
 	GENERATED_BODY()
 
-	AAIController *AIController;
+	AAIController* AIController;
+
+	FScriptDelegate MoveCompleteDelegate;
+
+protected:
+	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AcceptableRadius{400.f};
 };

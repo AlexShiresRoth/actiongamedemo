@@ -7,6 +7,7 @@
 #include "combat/CombatComponent.h"
 #include "AIController.h"
 #include "BrainComponent.h"
+#include "PlayerCharacter.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
@@ -31,10 +32,19 @@ void ACompanionCharacter::BeginPlay()
 
 	BlackboardComp = AIControllerRef->GetBlackboardComponent();
 
+	ACharacter* PlayerRef = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+
+
 	if (!BlackboardComp)
 	{
 		UE_LOG(LogTemp, Error, TEXT("BlackboardComponent is null"));
 		return;
+	}
+
+	if (PlayerRef)
+	{
+		BlackboardComp->SetValueAsObject("Player", PlayerRef);
+		UE_LOG(LogTemp, Display, TEXT("Player value is %s"), *PlayerRef->GetName());
 	}
 
 	BlackboardComp->SetValueAsEnum(

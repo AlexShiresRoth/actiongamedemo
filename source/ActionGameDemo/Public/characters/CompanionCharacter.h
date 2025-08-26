@@ -23,6 +23,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AI)
 	TEnumAsByte<ECompanionState> InitialState;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Companion)
+	bool bIsInParty{false};
+
 	AAIController* AIControllerRef;
 
 protected:

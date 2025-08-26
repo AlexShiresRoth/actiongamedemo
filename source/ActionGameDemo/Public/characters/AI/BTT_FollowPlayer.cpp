@@ -28,3 +28,5 @@ void UBTT_FollowPlayer::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 	AIController->ReceiveMoveCompleted.AddUnique(
 		MoveCompleteDelegate);
 }
+
+

@@ -24,4 +24,5 @@ protected:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float AcceptableRadius{400.f};
+
 };

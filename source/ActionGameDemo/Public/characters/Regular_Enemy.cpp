@@ -17,6 +17,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Interfaces/MainPlayer.h"
+#include "Kismet/GameplayStatics.h"
 
 
 ARegular_Enemy::ARegular_Enemy()
@@ -75,6 +76,8 @@ void ARegular_Enemy::BeginPlay()
 
 	BlackboardComp->SetValueAsVector("StartLocation", OriginalLocation);
 	BlackboardComp->SetValueAsRotator("StartRotation", OriginalRotation);
+
+	CombatManager = Cast<ACombatManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACombatManager::StaticClass()));
 
 	GetWorld()->GetFirstPlayerController()->GetPawn<APlayerCharacter>()->StatsComp->OnZeroHealthDelegate.AddDynamic(
 		this,
@@ -135,16 +138,34 @@ void ARegular_Enemy::DetectPlayer(class AActor* ActorDetected, class APawn* Othe
 		return;
 	}
 
+	if (CombatManager != nullptr)
+	{
+		CombatManager->AddCombatTarget(ControllerRef->GetCharacter());
+	}
+
+
 	BlackboardComp->SetValueAsBool(TEXT("IsPlayerVisible"), true);
 
 	BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), Range);
 }
 
-void ARegular_Enemy::LosePlayer()
+void ARegular_Enemy::LosePlayer(AActor* LostActor)
 {
-	if (bIsDead) { return; }
+	AActor* MainPlayer = GetWorld()->GetFirstPlayerController()->GetCharacter();
+
+	if (bIsDead || LostActor != MainPlayer)
+	{
+		UE_LOG(LogTemp, Display, TEXT("LosePlayer::Enemy is either dead or character is companion::%s"),
+		       *LostActor->GetName());
+		return;
+	}
 
 	bCanSeePlayer = false;
+
+	if (CombatManager != nullptr)
+	{
+		CombatManager->RemoveCombatTarget(ControllerRef->GetCharacter());
+	}
 
 	FTimerHandle VisibilityLossTimer;
 	GetWorld()->GetTimerManager().SetTimer(
@@ -184,6 +205,11 @@ void ARegular_Enemy::HandleDeath()
 			EnemyAnim->bIsDead = true;
 			UE_LOG(LogTemp, Display, TEXT("Dead"));
 		}
+	}
+
+	if (CombatManager != nullptr)
+	{
+		CombatManager->RemoveCombatTarget(ControllerRef->GetCharacter());
 	}
 
 	FTimerHandle DestroyTimerHandle;

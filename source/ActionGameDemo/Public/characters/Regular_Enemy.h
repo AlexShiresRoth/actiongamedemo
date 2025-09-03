@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "EEnemyState.h"
 #include "GenericTeamAgentInterface.h"
+#include "combat/CombatManager.h"
 #include "GameFramework/Character.h"
 #include "Interfaces/Enemy.h"
 #include "Interfaces/Fighter.h"
@@ -29,6 +30,8 @@ class ACTIONGAMEDEMO_API ARegular_Enemy : public ACharacter, public IEnemy, publ
 	UAnimMontage* HurtAnimMontage;
 
 	AAIController* ControllerRef;
+
+	ACombatManager* CombatManager;
 
 public:
 	// Sets default values for this character's properties
@@ -86,7 +89,7 @@ public:
 	void DetectPlayer(class AActor* ActorDetected, class APawn* OtherPawn);
 
 	UFUNCTION(BlueprintCallable)
-	void LosePlayer();
+	void LosePlayer(AActor* LostActor);
 
 	UFUNCTION(BlueprintCallable, Category= "Enemy Death")
 	void HandleDeath();

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "combat/CombatManager.h"
 #include "Enums/ECompanionState.h"
 #include "GameFramework/Character.h"
 #include "Interfaces/Fighter.h"
@@ -13,6 +14,8 @@ UCLASS()
 class ACTIONGAMEDEMO_API ACompanionCharacter : public ACharacter, public IFighter, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
+
+	ACombatManager* CombatManager;
 
 public:
 	// Sets default values for this character's properties
@@ -51,7 +54,4 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	UFUNCTION(BlueprintCallable)
-	void DetectEnemy(class AActor* ActorDetected, class APawn* OtherPawn);
 };

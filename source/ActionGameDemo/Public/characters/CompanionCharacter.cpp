@@ -10,6 +10,8 @@
 #include "PlayerCharacter.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "combat/CombatManager.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ACompanionCharacter::ACompanionCharacter()
@@ -20,7 +22,7 @@ ACompanionCharacter::ACompanionCharacter()
 	StatsComp = CreateDefaultSubobject<UStatsComponent>(TEXT("StatsComponent"));
 	CombatComp = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
 
-	AIPerceptionComp = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerceptionComponent"));
+	// AIPerceptionComp = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerceptionComponent"));
 }
 
 // Called when the game starts or when spawned
@@ -34,6 +36,7 @@ void ACompanionCharacter::BeginPlay()
 
 	ACharacter* PlayerRef = Cast<APlayerCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
 
+	CombatManager = Cast<ACombatManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACombatManager::StaticClass()));
 
 	if (!BlackboardComp)
 	{
@@ -56,16 +59,22 @@ void ACompanionCharacter::BeginPlay()
 void ACompanionCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (CombatManager)
+	{
+		if (CombatManager->bIsInCombat)
+		{
+			BlackboardComp->SetValueAsEnum("CurrentState", Companion_Range);
+		}
+		else
+		{
+			BlackboardComp->SetValueAsEnum("CurrentState", Companion_Following);
+		}
+	}
 }
 
 // Called to bind functionality to input
 void ACompanionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
-
-void ACompanionCharacter::DetectEnemy(class AActor* ActorDetected, class APawn* OtherPawn)
-{
-	// TODO handle detecting enemy and changing current state to attack state
-	BlackboardComp->SetValueAsEnum("CurrentState", Companion_Range);
 }

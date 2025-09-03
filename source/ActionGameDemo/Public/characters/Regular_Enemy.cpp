@@ -16,7 +16,6 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "HLSLTree/HLSLTreeEmit.h"
 #include "Interfaces/MainPlayer.h"
 
 
@@ -234,7 +233,6 @@ void ARegular_Enemy::HandleDisableCollisionOnDeath()
 	FindComponentByClass<UCapsuleComponent>()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
-// TODO handling what enemy should do should not be handled here
 void ARegular_Enemy::HandleSetPlayerVisibility()
 {
 	ControllerRef->ClearFocus(EAIFocusPriority::Gameplay);

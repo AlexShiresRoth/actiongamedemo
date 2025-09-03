@@ -37,12 +37,16 @@ void UBTS_InterpolateFollowPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, u
 		return;
 	}
 
+	int Side = 1;
+
 	FVector CurrentFollow = BB->GetValueAsVector(FollowLocationKey);
 	FVector PlayerLocation = PlayerPawn->GetActorLocation();
-	FVector Offset = CurrentFollow - PlayerLocation;
+	FVector PlayerForward = PlayerPawn->GetActorForwardVector();
+	FVector PlayerRight = PlayerPawn->GetActorRightVector();
+	FVector Offset = PlayerRight * (Side * FollowRadius);
 
 	static bool bInitialized = false;
-	if (!bInitialized || CurrentFollow.IsNearlyZero())
+	if (!bInitialized || !BB->IsVectorValueSet(FollowLocationKey))
 	{
 		float Angle = FMath::FRandRange(0.f, 2 * PI);
 		CurrentFollow = PlayerLocation + FVector(FMath::Cos(Angle), FMath::Sin(Angle), 0.f) * FollowRadius;
@@ -51,20 +55,7 @@ void UBTS_InterpolateFollowPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, u
 		return;
 	}
 
-	if (Offset.IsNearlyZero())
-	{
-		float Angle = FMath::FRandRange(0.f, 2 * PI);
-		Offset = FVector(FMath::Cos(Angle), FMath::Sin(Angle), 0.f) * FollowRadius;
-	}
-	else
-	{
-		Offset = Offset.GetSafeNormal() * FollowRadius;
-	}
-
-	float RandomOffset = FMath::FRandRange(-50.f, 50.f);
-	FVector TargetLocation = PlayerLocation + Offset + FVector(RandomOffset, RandomOffset, 0.f);
-
-	// TODO - fix companion constantly rotating!
+	FVector TargetLocation = PlayerLocation + Offset;
 	if (!CurrentFollow.Equals(TargetLocation, 1.0f)) // 1 unit tolerance
 	{
 		FRotator CurrentRotation = CompanionPawn->GetActorRotation();

@@ -63,3 +63,9 @@ void ACompanionCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
+
+void ACompanionCharacter::DetectEnemy(class AActor* ActorDetected, class APawn* OtherPawn)
+{
+	// TODO handle detecting enemy and changing current state to attack state
+	BlackboardComp->SetValueAsEnum("CurrentState", Companion_Range);
+}

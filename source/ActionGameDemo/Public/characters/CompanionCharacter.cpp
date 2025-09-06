@@ -8,6 +8,7 @@
 #include "AIController.h"
 #include "BrainComponent.h"
 #include "PlayerCharacter.h"
+#include "Animations/CompanionAnimInstance.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "combat/CombatManager.h"
@@ -60,15 +61,36 @@ void ACompanionCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	USkeletalMeshComponent* CompanionMesh = GetMesh();
+	if (!CompanionMesh)
+	{
+		UE_LOG(LogTemp, Error, TEXT("CompanionMesh is null"));
+		return;
+	}
+	UCompanionAnimInstance* CompanionAnimInstance = Cast<UCompanionAnimInstance>(CompanionMesh->GetAnimInstance());
+
 	if (CombatManager)
 	{
 		if (CombatManager->bIsInCombat)
 		{
-			BlackboardComp->SetValueAsEnum("CurrentState", Companion_Range);
+			if (CompanionAnimInstance)
+			{
+				BlackboardComp->SetValueAsEnum("CurrentState", Companion_Combat);
+				// Need to change state machines here
+				CompanionAnimInstance->bIsInCombat = true;
+
+				// TODO Remove this - I need to create an EQS service to run to find enemy to attack
+				// TODO also need to fix enemy, they seem to be still in charge mode even if losing sight of player
+				CompanionAnimInstance->SetIsGettingReadyToFire_Implementation(true);
+			}
 		}
 		else
 		{
-			BlackboardComp->SetValueAsEnum("CurrentState", Companion_Following);
+			if (CompanionAnimInstance)
+			{
+				BlackboardComp->SetValueAsEnum("CurrentState", Companion_Following);
+				CompanionAnimInstance->bIsInCombat = false;
+			}
 		}
 	}
 }

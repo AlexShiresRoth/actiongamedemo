@@ -153,6 +153,7 @@ void ARegular_Enemy::LosePlayer(AActor* LostActor)
 {
 	AActor* MainPlayer = GetWorld()->GetFirstPlayerController()->GetCharacter();
 
+	// TODO - maybe this is breaking enemies by shorting out of this if losing sight but of the companion
 	if (bIsDead || LostActor != MainPlayer)
 	{
 		UE_LOG(LogTemp, Display, TEXT("LosePlayer::Enemy is either dead or character is companion::%s"),
@@ -162,7 +163,7 @@ void ARegular_Enemy::LosePlayer(AActor* LostActor)
 
 	bCanSeePlayer = false;
 
-	if (CombatManager != nullptr)
+	if (CombatManager)
 	{
 		CombatManager->RemoveCombatTarget(ControllerRef->GetCharacter());
 	}

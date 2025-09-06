@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "Interfaces/IIsGettingReadyToFire.h"
 #include "CompanionAnimInstance.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ACTIONGAMEDEMO_API UCompanionAnimInstance : public UAnimInstance
+class ACTIONGAMEDEMO_API UCompanionAnimInstance : public UAnimInstance, public IIIsGettingReadyToFire
 {
 	GENERATED_BODY()
 
@@ -20,4 +21,16 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category= Animation)
 	void UpdateSpeed();
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsInCombat{false};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsGettingReadyToFire{false};
+
+	virtual void SetIsGettingReadyToFire_Implementation(const bool bShouldGetReadyToFire) override
+	{
+		bIsGettingReadyToFire = bShouldGetReadyToFire;
+	}
 };

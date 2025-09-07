@@ -7,11 +7,13 @@
 #include "Enums/ECompanionState.h"
 #include "GameFramework/Character.h"
 #include "Interfaces/Fighter.h"
+#include "Interfaces/IIsGettingReadyToFire.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "CompanionCharacter.generated.h"
 
 UCLASS()
-class ACTIONGAMEDEMO_API ACompanionCharacter : public ACharacter, public IFighter, public IGenericTeamAgentInterface
+class ACTIONGAMEDEMO_API ACompanionCharacter : public ACharacter, public IFighter, public IGenericTeamAgentInterface,
+                                               public IIIsGettingReadyToFire
 {
 	GENERATED_BODY()
 

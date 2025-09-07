@@ -78,10 +78,6 @@ void ACompanionCharacter::Tick(float DeltaTime)
 				BlackboardComp->SetValueAsEnum("CurrentState", Companion_Combat);
 				// Need to change state machines here
 				CompanionAnimInstance->bIsInCombat = true;
-
-				// TODO Remove this - I need to create an EQS service to run to find enemy to attack
-				// TODO also need to fix enemy, they seem to be still in charge mode even if losing sight of player
-				CompanionAnimInstance->SetIsGettingReadyToFire_Implementation(true);
 			}
 		}
 		else

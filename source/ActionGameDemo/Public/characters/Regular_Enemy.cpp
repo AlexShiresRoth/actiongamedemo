@@ -121,7 +121,14 @@ void ARegular_Enemy::HandlePlayerDeath()
 
 void ARegular_Enemy::DetectPlayer(class AActor* ActorDetected, class APawn* OtherPawn)
 {
-	if (bIsDead) { return; }
+	const APawn* DetectedPawn = Cast<APawn>(ActorDetected);
+	const AActor* MainPlayer = GetWorld()->GetFirstPlayerController()->GetCharacter();
+	// detect only player
+	if (DetectedPawn != OtherPawn)
+	{
+		return;
+	}
+	if (bIsDead || DetectedPawn != MainPlayer) { return; }
 
 	EEnemyState CurrentState{
 		static_cast<EEnemyState>(BlackboardComp->GetValueAsEnum(TEXT("CurrentState")))
@@ -130,15 +137,7 @@ void ARegular_Enemy::DetectPlayer(class AActor* ActorDetected, class APawn* Othe
 	// TODO idk if we need this variable still
 	bCanSeePlayer = true;
 
-
-	const APawn* DetectedPawn = Cast<APawn>(ActorDetected);
-	// detect only player
-	if (DetectedPawn != OtherPawn)
-	{
-		return;
-	}
-
-	if (CombatManager != nullptr)
+	if (CombatManager)
 	{
 		CombatManager->AddCombatTarget(ControllerRef->GetCharacter());
 	}

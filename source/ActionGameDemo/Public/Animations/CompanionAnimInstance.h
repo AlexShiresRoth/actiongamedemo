@@ -29,6 +29,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsGettingReadyToFire{false};
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsReadyToFire{false};
+
 	virtual void SetIsGettingReadyToFire_Implementation(const bool bShouldGetReadyToFire) override
 	{
 		bIsGettingReadyToFire = bShouldGetReadyToFire;

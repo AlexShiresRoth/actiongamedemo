@@ -14,6 +14,7 @@
 #include "combat/CombatManager.h"
 #include "Kismet/GameplayStatics.h"
 
+// TODO set up companion projectile components and use arrows not fire balls lol
 // Sets default values
 ACompanionCharacter::ACompanionCharacter()
 {

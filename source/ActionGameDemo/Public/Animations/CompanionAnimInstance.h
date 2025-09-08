@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "Enums/CompanionAttackState.h"
 #include "Interfaces/IIsGettingReadyToFire.h"
 #include "CompanionAnimInstance.generated.h"
 
@@ -30,10 +31,21 @@ public:
 	bool bIsGettingReadyToFire{false};
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TEnumAsByte<ECompanionAttackState> AttackState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsReadyToFire{false};
+
+	UFUNCTION(BlueprintCallable, Category= Attack)
+	void ResetAttack();
 
 	virtual void SetIsGettingReadyToFire_Implementation(const bool bShouldGetReadyToFire) override
 	{
 		bIsGettingReadyToFire = bShouldGetReadyToFire;
+	}
+
+	virtual void SetCanFire_Implementation(const bool bCanFire) override
+	{
+		bIsReadyToFire = bCanFire;
 	}
 };

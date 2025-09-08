@@ -24,4 +24,7 @@ class ACTIONGAMEDEMO_API IIIsGettingReadyToFire
 public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void SetIsGettingReadyToFire(bool bIsGettingReadyToFire);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SetCanFire(bool bCanFire);
 };

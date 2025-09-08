@@ -18,3 +18,9 @@ void UCompanionAnimInstance::UpdateSpeed()
 
 	CurrentSpeed = VectorLength;
 }
+
+void UCompanionAnimInstance::ResetAttack()
+{
+	bIsReadyToFire = false;
+	bIsGettingReadyToFire = false;
+}

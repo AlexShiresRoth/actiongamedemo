@@ -30,6 +30,7 @@ void UEnemyProjectileComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 	// ...
 }
 
+// TODO firing projectile works, however it just blows up on the companion
 void UEnemyProjectileComponent::SpawnProjectile(FName ComponentName, TSubclassOf<AActor> ProjectileClass)
 {
 	USceneComponent* SpawnPointComp{Cast<USceneComponent>(GetOwner()->GetDefaultSubobjectByName(ComponentName))};

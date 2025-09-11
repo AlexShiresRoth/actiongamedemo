@@ -12,7 +12,7 @@
 #include "CompanionCharacter.generated.h"
 
 UCLASS()
-class ACTIONGAMEDEMO_API ACompanionCharacter : public ACharacter, public IFighter, public IGenericTeamAgentInterface,
+class ACTIONGAMEDEMO_API ACompanionCharacter : public ACharacter, public IFighter,
                                                public IIIsGettingReadyToFire
 {
 	GENERATED_BODY()
@@ -22,11 +22,6 @@ class ACTIONGAMEDEMO_API ACompanionCharacter : public ACharacter, public IFighte
 public:
 	// Sets default values for this character's properties
 	ACompanionCharacter();
-
-	virtual FGenericTeamId GetGenericTeamId() const override
-	{
-		return FGenericTeamId(0);
-	}
 
 	UBlackboardComponent* BlackboardComp;
 

@@ -32,6 +32,7 @@ void ACompanionProjectile::HandleBeginOverlap(AActor* OtherActor)
 	APawn* PawnRef{
 		Cast<APawn>(OtherActor)
 	};
+
 	// If hitting static object just destroy projectile
 	if (!PawnRef)
 	{
@@ -39,10 +40,11 @@ void ACompanionProjectile::HandleBeginOverlap(AActor* OtherActor)
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Overlapping::%s"), *PawnRef->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("Companion Projectile Overlapping::%s"), *PawnRef->GetName());
 
-	if (PawnRef->IsPlayerControlled())
+	if (PawnRef->IsPlayerControlled() || PawnRef == Owner)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Pawn ref is companion or player 1"))
 		return;
 	}
 

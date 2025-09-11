@@ -40,8 +40,6 @@ void UAllyProjectileComponent::SpawnProjectile(FName ComponentName, TSubclassOf<
 
 	FVector SpawnLocation{SpawnPointComp->GetComponentLocation()};
 
-	FVector PlayerLocation{GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation()};
-
 	FRotator SpawnRotation{FRotator::ZeroRotator};
 
 	if (APawn* CompanionPawn = Cast<APawn>(GetOwner()))
@@ -50,14 +48,13 @@ void UAllyProjectileComponent::SpawnProjectile(FName ComponentName, TSubclassOf<
 		{
 			if (UBlackboardComponent* BB = CompanionController->GetBlackboardComponent())
 			{
-				const FVector EnemyLocation = BB->GetValueAsVector("EnemyLocation");
-				if (!EnemyLocation.ContainsNaN())
+				if (const AActor* Enemy = Cast<AActor>(BB->GetValueAsObject(FName("Enemy"))))
 				{
-					SpawnRotation = UKismetMathLibrary::FindLookAtRotation(SpawnLocation, EnemyLocation);
+					FVector ActorLocation = Enemy->GetActorLocation();
+					SpawnRotation = UKismetMathLibrary::FindLookAtRotation(SpawnLocation, ActorLocation);
+					GetWorld()->SpawnActor(ProjectileClass, &SpawnLocation, &SpawnRotation);
 				}
 			}
 		}
 	}
-
-	GetWorld()->SpawnActor(ProjectileClass, &SpawnLocation, &SpawnRotation);
 }

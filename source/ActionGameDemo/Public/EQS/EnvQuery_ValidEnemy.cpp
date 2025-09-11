@@ -28,6 +28,5 @@ void UEnvQuery_ValidEnemy::ProvideContext(FEnvQueryInstance& QueryInstance, FEnv
 
 	const TArray<AActor*>& ValidEnemies = CombatManager->CombatTargets;
 
-
 	UEnvQueryItemType_Actor::SetContextHelper(ContextData, ValidEnemies);
 }

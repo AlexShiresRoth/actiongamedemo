@@ -14,8 +14,8 @@
 #include "combat/CombatManager.h"
 #include "Kismet/GameplayStatics.h"
 
-// TODO set up companion projectile components and use arrows not fire balls lol
-// Sets default values
+// TODO - need to somehow set actor as a blackboard key for valid enemy
+// Idk why setting the actor in the eqs doesn't work at the moment
 ACompanionCharacter::ACompanionCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.

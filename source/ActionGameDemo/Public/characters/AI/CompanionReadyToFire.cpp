@@ -12,13 +12,6 @@
 #include "Kismet/GameplayStatics.h"
 
 
-// TODO BT needs to be fixed up
-// TODO need to reset after firing, also need to handle firing
-// TODO enemy location needs to be reset after no valid enemies visible - maybe we can do that in the combat manager
-// TODO need another task to actually fire, do we need companion combat state enum and keys?
-// TODO need a companion projectile
-// TODO companion moiving to enemy doesn't really show walking normally
-
 EBTNodeResult::Type UCompanionReadyToFire::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	USkeletalMeshComponent* MeshComp = OwnerComp.GetAIOwner()->GetCharacter()->GetMesh();
@@ -34,9 +27,7 @@ EBTNodeResult::Type UCompanionReadyToFire::ExecuteTask(UBehaviorTreeComponent& O
 
 	if (AnimInstance->GetClass()->ImplementsInterface(UIIsGettingReadyToFire::StaticClass()))
 	{
-		FVector EnemyLocation = BlackboardComp->GetValueAsVector("EnemyLocation");
-
-		if (!EnemyLocation.ContainsNaN())
+		if (const AActor* Enemy = Cast<AActor>(BlackboardComp->GetValueAsObject(FName("Enemy"))))
 		{
 			IIIsGettingReadyToFire::Execute_SetIsGettingReadyToFire(AnimInstance, true);
 		}

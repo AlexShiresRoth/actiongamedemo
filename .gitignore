@@ -1,12 +1,11 @@
 /.vscode
-/Content
 /Intermediate
 /Saved
 /ActionGameDemo.code-workspace
 /ActionGameDemo.sln
-/ActionGameDemo.uproject
 /Binaries
 /Config/
-/Content/
 /Intermediate/
 /Saved/
+/DerivedDataCache/
+/Content/

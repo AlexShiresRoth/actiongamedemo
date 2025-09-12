@@ -122,7 +122,6 @@ void UInventoryWidget::UseItem(FItemData Item)
 				}
 			}
 		}
-
 		break;
 	default:
 		UE_LOG(LogTemp, Warning, TEXT("Item Is not a Healing type::UseItem"));

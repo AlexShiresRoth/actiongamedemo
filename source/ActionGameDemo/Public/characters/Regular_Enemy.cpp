@@ -16,8 +16,8 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "HLSLTree/HLSLTreeEmit.h"
 #include "Interfaces/MainPlayer.h"
+#include "Kismet/GameplayStatics.h"
 
 
 ARegular_Enemy::ARegular_Enemy()
@@ -77,6 +77,8 @@ void ARegular_Enemy::BeginPlay()
 	BlackboardComp->SetValueAsVector("StartLocation", OriginalLocation);
 	BlackboardComp->SetValueAsRotator("StartRotation", OriginalRotation);
 
+	CombatManager = Cast<ACombatManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACombatManager::StaticClass()));
+
 	GetWorld()->GetFirstPlayerController()->GetPawn<APlayerCharacter>()->StatsComp->OnZeroHealthDelegate.AddDynamic(
 		this,
 		&ARegular_Enemy::HandlePlayerDeath);
@@ -119,7 +121,14 @@ void ARegular_Enemy::HandlePlayerDeath()
 
 void ARegular_Enemy::DetectPlayer(class AActor* ActorDetected, class APawn* OtherPawn)
 {
-	if (bIsDead) { return; }
+	const APawn* DetectedPawn = Cast<APawn>(ActorDetected);
+	const AActor* MainPlayer = GetWorld()->GetFirstPlayerController()->GetCharacter();
+	// detect only player
+	if (DetectedPawn != OtherPawn)
+	{
+		return;
+	}
+	if (bIsDead || DetectedPawn != MainPlayer) { return; }
 
 	EEnemyState CurrentState{
 		static_cast<EEnemyState>(BlackboardComp->GetValueAsEnum(TEXT("CurrentState")))
@@ -128,24 +137,35 @@ void ARegular_Enemy::DetectPlayer(class AActor* ActorDetected, class APawn* Othe
 	// TODO idk if we need this variable still
 	bCanSeePlayer = true;
 
-
-	const APawn* DetectedPawn = Cast<APawn>(ActorDetected);
-	// detect only player
-	if (DetectedPawn != OtherPawn)
+	if (CombatManager)
 	{
-		return;
+		CombatManager->AddCombatTarget(ControllerRef->GetCharacter());
 	}
+
 
 	BlackboardComp->SetValueAsBool(TEXT("IsPlayerVisible"), true);
 
 	BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), Range);
 }
 
-void ARegular_Enemy::LosePlayer()
+void ARegular_Enemy::LosePlayer(AActor* LostActor)
 {
-	if (bIsDead) { return; }
+	AActor* MainPlayer = GetWorld()->GetFirstPlayerController()->GetCharacter();
+
+	// TODO - maybe this is breaking enemies by shorting out of this if losing sight but of the companion
+	if (bIsDead || LostActor != MainPlayer)
+	{
+		UE_LOG(LogTemp, Display, TEXT("LosePlayer::Enemy is either dead or character is companion::%s"),
+		       *LostActor->GetName());
+		return;
+	}
 
 	bCanSeePlayer = false;
+
+	if (CombatManager)
+	{
+		CombatManager->RemoveCombatTarget(ControllerRef->GetCharacter());
+	}
 
 	FTimerHandle VisibilityLossTimer;
 	GetWorld()->GetTimerManager().SetTimer(
@@ -185,6 +205,11 @@ void ARegular_Enemy::HandleDeath()
 			EnemyAnim->bIsDead = true;
 			UE_LOG(LogTemp, Display, TEXT("Dead"));
 		}
+	}
+
+	if (CombatManager != nullptr)
+	{
+		CombatManager->RemoveCombatTarget(ControllerRef->GetCharacter());
 	}
 
 	FTimerHandle DestroyTimerHandle;
@@ -234,7 +259,6 @@ void ARegular_Enemy::HandleDisableCollisionOnDeath()
 	FindComponentByClass<UCapsuleComponent>()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
-// TODO handling what enemy should do should not be handled here
 void ARegular_Enemy::HandleSetPlayerVisibility()
 {
 	ControllerRef->ClearFocus(EAIFocusPriority::Gameplay);

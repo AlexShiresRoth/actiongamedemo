@@ -1,36 +1,38 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "combat/EnemyProjectile.h"
+
+#include "combat/CompanionProjectile.h"
+
 #include "Particles/ParticleSystemComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
 #include "Engine/DamageEvents.h"
 
 // Sets default values
-AEnemyProjectile::AEnemyProjectile()
+ACompanionProjectile::ACompanionProjectile()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 }
 
 // Called when the game starts or when spawned
-void AEnemyProjectile::BeginPlay()
+void ACompanionProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
 // Called every frame
-void AEnemyProjectile::Tick(float DeltaTime)
+void ACompanionProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-// TODO I think there's an issue when the projectile overlaps either the water or interactable actor
-void AEnemyProjectile::HandleBeginOverlap(AActor* OtherActor)
+void ACompanionProjectile::HandleBeginOverlap(AActor* OtherActor)
 {
 	APawn* PawnRef{
 		Cast<APawn>(OtherActor)
 	};
+
 	// If hitting static object just destroy projectile
 	if (!PawnRef)
 	{
@@ -38,11 +40,14 @@ void AEnemyProjectile::HandleBeginOverlap(AActor* OtherActor)
 		return;
 	}
 
-	if (!PawnRef->IsPlayerControlled())
+	UE_LOG(LogTemp, Warning, TEXT("Companion Projectile Overlapping::%s"), *PawnRef->GetName());
+
+	if (PawnRef->IsPlayerControlled() || PawnRef == Owner)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Pawn ref is companion or player 1"))
 		return;
 	}
-	
+
 	EndProjectileMovement(.5f);
 
 	FindComponentByClass<USphereComponent>()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -56,17 +61,17 @@ void AEnemyProjectile::HandleBeginOverlap(AActor* OtherActor)
 		this);
 }
 
-void AEnemyProjectile::DestroyProjectile()
+void ACompanionProjectile::DestroyProjectile()
 {
 	Destroy();
 }
 
-void AEnemyProjectile::EndProjectileMovement(const float TimeDelay)
+void ACompanionProjectile::EndProjectileMovement(const float TimeDelay)
 {
 	FTimerHandle DeathTimerHandle{};
 
 	FindComponentByClass<UParticleSystemComponent>()->SetTemplate(HitTemplate);
 	FindComponentByClass<UProjectileMovementComponent>()->StopMovementImmediately();
 
-	GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &AEnemyProjectile::DestroyProjectile, TimeDelay);
+	GetWorldTimerManager().SetTimer(DeathTimerHandle, this, &ACompanionProjectile::DestroyProjectile, TimeDelay);
 }

@@ -32,6 +32,7 @@ void UInventoryWidget::NativeConstruct()
 			// Get items stored on user inventory in order to create widgets
 			InventoryItems = InventoryComponent->GetInventoryItems();
 
+			// TODO need to do the same for equipment items but make this code modular
 			if (InventoryItems.Num() > 0)
 			{
 				for (const AItem* Item : InventoryItems)

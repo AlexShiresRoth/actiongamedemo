@@ -51,6 +51,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Inventory")
 	class UInventoryComponent* InventoryComp;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Equipment")
+	class UEquipmentComponent* EquipmentComp;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

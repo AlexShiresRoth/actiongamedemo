@@ -38,6 +38,7 @@ void ACombatManager::AddCombatTarget(AActor* Target)
 {
 	if (Target != nullptr)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Player combat target: %s"), *Target->GetName());
 		CombatTargets.Add(Target);
 		UpdateCombatState();
 	}

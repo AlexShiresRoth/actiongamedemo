@@ -10,6 +10,7 @@
 #include "combat/Lockon_Component.h"
 #include "PlayerActionsComponent.h"
 #include "Animations/PlayerAnimInstance_USE.h"
+#include "combat/EquipmentComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -31,6 +32,8 @@ APlayerCharacter::APlayerCharacter()
 	PlayerActionsComp = CreateDefaultSubobject<UPlayerActionsComponent>(TEXT("Player Actions Comp"));
 
 	InventoryComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory Component"));
+
+	EquipmentComp = CreateDefaultSubobject<UEquipmentComponent>(TEXT("Equipment Component"));
 }
 
 // Called when the game starts or when spawned
@@ -55,6 +58,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 float APlayerCharacter::GetDamage()
 {
+	// How can we make this dynamic
+	// We need buffs and other stats
 	return StatsComp->Stats[Strength];
 }
 

@@ -13,7 +13,9 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Interfaces/MainPlayer.h"
+#include "Kismet/GameplayStatics.h"
 
+// TODO need to handle lost sight of player for Boss
 // Sets default values
 ABossCharacter::ABossCharacter()
 {
@@ -32,10 +34,12 @@ void ABossCharacter::BeginPlay()
 	ControllerRef = GetController<AAIController>();
 
 	BlackboardComp = ControllerRef->GetBlackboardComponent();
-	
+
 	BlackboardComp->SetValueAsEnum(
 		TEXT("CurrentState"),
 		InitialState);
+
+	CombatManager = Cast<ACombatManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACombatManager::StaticClass()));
 
 	GetWorld()->GetFirstPlayerController()->GetPawn<APlayerCharacter>()->StatsComp->OnZeroHealthDelegate.AddDynamic(
 		this,
@@ -64,6 +68,11 @@ void ABossCharacter::DetectPawn(class APawn* PawnDetected, class APawn* OtherPaw
 	if (PawnDetected != OtherPawn || CurrentState != Idle)
 	{
 		return;
+	}
+
+	if (CombatManager)
+	{
+		CombatManager->AddCombatTarget(ControllerRef->GetCharacter());
 	}
 
 	BlackboardComp->SetValueAsEnum(
@@ -114,6 +123,11 @@ void ABossCharacter::HandleDeath()
 	IMainPlayer* PlayerRef{
 		GetWorld()->GetFirstPlayerController()->GetPawn<IMainPlayer>()
 	};
+
+	if (CombatManager)
+	{
+		CombatManager->RemoveCombatTarget(ControllerRef->GetCharacter());
+	}
 
 	if (!PlayerRef)
 	{

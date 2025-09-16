@@ -11,4 +11,8 @@ enum EItemTypes
 	Healing UMETA(DisplayName = "Healing"),
 	StaminaBoost UMETA(DisplayName = "Stamina"),
 	Ability UMETA(DisplayName = "Ability"),
+	WeaponType UMETA(DisplayName = "Weapon"),
+	ArmorType UMETA(DisplayName = "Armor"),
+	ShieldType UMETA(DisplayName = "Shield"),
+	SpecialType UMETA(DisplayName = "Special"),
 };

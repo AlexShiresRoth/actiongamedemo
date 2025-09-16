@@ -137,7 +137,6 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 		// only allow one attack to cause damage
 		if (TargetsToIgnore.Contains(TargetActor))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Actor hit to be ignored is %s"), *TargetActor->GetName());
 			continue;
 		}
 

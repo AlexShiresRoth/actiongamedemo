@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Enums/EEQuipmentSlot.h"
 #include "UI/InventoryWidget.h"
 #include "InventoryComponent.generated.h"
 
@@ -19,6 +20,12 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TArray<class AItem*> InventoryItems;
+
+	UPROPERTY(EditAnywhere)
+	TArray<class AItem*> EquipmentItems;
+
+	UPROPERTY(EditAnywhere)
+	TMap<TEnumAsByte<EEQuipmentSlot>, FItemData> EquippedItems;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UInventoryWidget> InventoryWidgetClass;
@@ -38,4 +45,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	TArray<AItem*> GetInventoryItems() { return InventoryItems; };
+
+	UFUNCTION(BlueprintCallable)
+	TArray<AItem*> GetEquipmentItems() { return EquipmentItems; };
 };

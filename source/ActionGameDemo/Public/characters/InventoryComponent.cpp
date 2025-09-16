@@ -41,8 +41,12 @@ void UInventoryComponent::AddItemToInventory(class AItem* Item)
 	{
 		// Increase the number of same item?
 	}
-	if (!InventoryItems.Contains(Item))
+	if (Item->ItemData.ItemTypeMacro == EItemTypeMacro::Consumable)
 	{
 		InventoryItems.Add(Item);
+	}
+	if (Item->ItemData.ItemTypeMacro == EItemTypeMacro::Equipable)
+	{
+		EquipmentItems.Add(Item);
 	}
 }

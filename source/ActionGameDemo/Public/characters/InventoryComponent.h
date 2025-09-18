@@ -48,4 +48,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	TArray<AItem*> GetEquipmentItems() { return EquipmentItems; };
+
+	UFUNCTION(BlueprintCallable)
+	const TMap<TEnumAsByte<EEQuipmentSlot>, FItemData>& GetEquippedItems() const { return EquippedItems; }
 };

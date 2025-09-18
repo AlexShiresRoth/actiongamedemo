@@ -5,13 +5,17 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/ScrollBox.h"
+#include "Enums/EEQuipmentSlot.h"
+#include "Interactable/Item.h"
 #include "Structs/ItemData.h"
 #include "InventoryWidget.generated.h"
 
 /**
  * 
  */
-UCLASS()
+
+
+UCLASS(BlueprintType, Blueprintable)
 class ACTIONGAMEDEMO_API UInventoryWidget : public UUserWidget
 {
 	GENERATED_BODY()
@@ -22,9 +26,15 @@ class ACTIONGAMEDEMO_API UInventoryWidget : public UUserWidget
 	UPROPERTY(meta = (BindWidget))
 	UScrollBox* ItemsContainer;
 
+	UPROPERTY(meta = (BindWidget))
+	UScrollBox* EquipmentContainer;
+
 	APlayerController* PC;
 	ACharacter* CharacterRef;
 	AActor* PlayerRef;
+
+protected:
+	void RenderItemsToWidget(UScrollBox* Container, TArray<AItem*>& Items);
 
 public:
 	UPROPERTY()
@@ -33,8 +43,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
 	TArray<class AItem*> InventoryItems;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
+	TArray<class AItem*> EquipmentItems;
+
 	UPROPERTY(VisibleAnywhere)
 	TArray<class UItemWidget*> ItemWidgets;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	TMap<TEnumAsByte<EItemTypes>, FItemData> EquippedItems;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UItemWidget> ItemWidgetClass;
@@ -52,5 +68,11 @@ public:
 	void HandleItemActions(FItemData Item);
 
 	UFUNCTION(BlueprintCallable)
+	void EquipItem(FItemData Item);
+
+	UFUNCTION(BlueprintCallable)
 	void UseItem(FItemData Item);
+
+	UFUNCTION(BlueprintCallable)
+	void ResetSelectedItem() { SelectedItem = FItemData(); }
 };

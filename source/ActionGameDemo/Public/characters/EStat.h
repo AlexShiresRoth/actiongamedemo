@@ -22,4 +22,6 @@ enum EStat
 	Agility UMETA(DisplayName = "Agility"),
 	Defense UMETA(DisplayName = "Defense"),
 	MeleeRange UMETA(DisplayName = "Melee Range"),
+	CritChance UMETA(DisplayName = "CritChance"),
+	CritMultiplier UMETA(DisplayName = "CritMultiplier"),
 };

@@ -76,6 +76,9 @@ public:
 
 	virtual bool CanTakeDamage(AActor* Opponent) override;
 
+	UFUNCTION(BlueprintCallable)
+	void GetEquipment();
+
 	UFUNCTION(BlueprintCallable, Category = "Death")
 	void HandleDeath();
 

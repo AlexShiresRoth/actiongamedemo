@@ -43,6 +43,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddItemToInventory(class AItem* Item);
 
+	UFUNCTION()
+	void AddEquippedItems(TEnumAsByte<EEQuipmentSlot> SlotKey, FItemData ItemData);
+
 	UFUNCTION(BlueprintCallable)
 	TArray<AItem*> GetInventoryItems() { return InventoryItems; };
 

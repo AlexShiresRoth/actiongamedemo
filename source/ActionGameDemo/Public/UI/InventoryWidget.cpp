@@ -107,16 +107,16 @@ void UInventoryWidget::EquipItem(FItemData Item)
 	switch (Item.TypePair.ItemType)
 	{
 	case ArmorType:
-		InventoryComponent->EquippedItems.Add(Armor, Item);
+		InventoryComponent->AddEquippedItems(Armor, Item);
 		break;
 	case WeaponType:
-		InventoryComponent->EquippedItems.Add(Sword, Item);
+		InventoryComponent->AddEquippedItems(Sword, Item);
 		break;
 	case ShieldType:
-		InventoryComponent->EquippedItems.Add(Shield, Item);
+		InventoryComponent->AddEquippedItems(Shield, Item);
 		break;
 	case SpecialType:
-		InventoryComponent->EquippedItems.Add(Special, Item);
+		InventoryComponent->AddEquippedItems(Special, Item);
 		break;
 	default:
 		break;

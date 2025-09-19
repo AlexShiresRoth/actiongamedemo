@@ -71,7 +71,7 @@ float APlayerCharacter::GetDamage()
 	bool bIsCrit = false;
 	if (StatsComp)
 	{
-		BaseDamage += StatsComp->Stats[Strength] * FMath::RandRange(.6f, 1.f);
+		BaseDamage += StatsComp->Stats[Strength] * FMath::RandRange(.5f, 1.2f);
 
 		float Roll = FMath::FRand();
 		if (Roll <= StatsComp->Stats[CritChance])

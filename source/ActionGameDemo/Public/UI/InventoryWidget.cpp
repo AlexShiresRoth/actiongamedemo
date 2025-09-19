@@ -7,6 +7,7 @@
 #include "Characters/InventoryComponent.h"
 #include "Characters/PlayerCharacter.h"
 #include "Characters/StatsComponent.h"
+#include "combat/EquipmentComponent.h"
 #include "Interactable/Item.h"
 
 void UInventoryWidget::NativeConstruct()
@@ -20,6 +21,7 @@ void UInventoryWidget::NativeConstruct()
 	if (PC && PlayerRef)
 	{
 		InventoryComponent = PlayerRef->FindComponentByClass<UInventoryComponent>();
+		EquipmentComponent = PlayerRef->FindComponentByClass<UEquipmentComponent>();
 
 		if (InventoryComponent)
 		{
@@ -33,6 +35,31 @@ void UInventoryWidget::NativeConstruct()
 			// Items will show in different inventory areas based on their type
 			RenderItemsToWidget(ItemsContainer, InventoryItems);
 			RenderItemsToWidget(EquipmentContainer, EquipmentItems);
+		}
+
+		if (EquipmentComponent)
+		{
+			FItemData* Sword = EquipmentComponent->Equipment.Find(EEQuipmentSlot::Sword);
+			FItemData* Armor = EquipmentComponent->Equipment.Find(EEQuipmentSlot::Armor);
+			FItemData* Shield = EquipmentComponent->Equipment.Find(EEQuipmentSlot::Shield);
+			FItemData* Special = EquipmentComponent->Equipment.Find(EEQuipmentSlot::Special);
+
+			if (Sword)
+			{
+				EquippedSword = *Sword;
+			}
+			if (Armor)
+			{
+				EquippedArmor = *Armor;
+			}
+			if (Shield)
+			{
+				EquippedShield = *Shield;
+			}
+			if (Special)
+			{
+				EquippedSpecial = *Special;
+			}
 		}
 	}
 }
@@ -108,15 +135,19 @@ void UInventoryWidget::EquipItem(FItemData Item)
 	{
 	case ArmorType:
 		InventoryComponent->AddEquippedItems(Armor, Item);
+		EquippedArmor = Item;
 		break;
 	case WeaponType:
 		InventoryComponent->AddEquippedItems(Sword, Item);
+		EquippedSword = Item;
 		break;
 	case ShieldType:
 		InventoryComponent->AddEquippedItems(Shield, Item);
+		EquippedShield = Item;
 		break;
 	case SpecialType:
 		InventoryComponent->AddEquippedItems(Special, Item);
+		EquippedSpecial = Item;
 		break;
 	default:
 		break;

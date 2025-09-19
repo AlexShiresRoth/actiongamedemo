@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/ScrollBox.h"
-#include "Enums/EEQuipmentSlot.h"
 #include "Interactable/Item.h"
 #include "Structs/ItemData.h"
 #include "InventoryWidget.generated.h"
@@ -39,6 +38,7 @@ protected:
 public:
 	UPROPERTY()
 	class UInventoryComponent* InventoryComponent;
+	class UEquipmentComponent* EquipmentComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
 	TArray<class AItem*> InventoryItems;
@@ -54,6 +54,18 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UItemWidget> ItemWidgetClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FItemData EquippedSword;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FItemData EquippedShield;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FItemData EquippedArmor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FItemData EquippedSpecial;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FItemData SelectedItem;

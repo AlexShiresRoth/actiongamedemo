@@ -51,6 +51,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Inventory")
 	class UInventoryComponent* InventoryComp;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Equipment")
+	class UEquipmentComponent* EquipmentComp;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -72,6 +75,9 @@ public:
 	virtual void EndLockonWithActor(class AActor* Actor) override;
 
 	virtual bool CanTakeDamage(AActor* Opponent) override;
+
+	UFUNCTION(BlueprintCallable)
+	void GetEquipment();
 
 	UFUNCTION(BlueprintCallable, Category = "Death")
 	void HandleDeath();

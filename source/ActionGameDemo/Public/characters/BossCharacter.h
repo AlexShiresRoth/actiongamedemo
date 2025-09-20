@@ -7,10 +7,13 @@
 #include "Interfaces/Enemy.h"
 #include "Interfaces/Fighter.h"
 #include "EEnemyState.h"
+#include "GenericTeamAgentInterface.h"
+#include "combat/CombatManager.h"
 #include "BossCharacter.generated.h"
 
 UCLASS()
-class ACTIONGAMEDEMO_API ABossCharacter : public ACharacter, public IEnemy, public IFighter
+class ACTIONGAMEDEMO_API ABossCharacter : public ACharacter, public IEnemy, public IFighter,
+                                          public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -24,6 +27,8 @@ class ACTIONGAMEDEMO_API ABossCharacter : public ACharacter, public IEnemy, publ
 
 	class AAIController* ControllerRef;
 
+	ACombatManager* CombatManager;
+
 public:
 	// Sets default values for this character's properties
 	ABossCharacter();
@@ -36,6 +41,10 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsDead{false};
+
+	uint8 TeamID = 1;
+
+	virtual FGenericTeamId GetGenericTeamId() const override { return FGenericTeamId(TeamID); }
 
 protected:
 	// Called when the game starts or when spawned

@@ -10,6 +10,7 @@
 #include "combat/Lockon_Component.h"
 #include "PlayerActionsComponent.h"
 #include "Animations/PlayerAnimInstance_USE.h"
+#include "combat/EquipmentComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -31,6 +32,8 @@ APlayerCharacter::APlayerCharacter()
 	PlayerActionsComp = CreateDefaultSubobject<UPlayerActionsComponent>(TEXT("Player Actions Comp"));
 
 	InventoryComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory Component"));
+
+	EquipmentComp = CreateDefaultSubobject<UEquipmentComponent>(TEXT("Equipment Component"));
 }
 
 // Called when the game starts or when spawned
@@ -55,7 +58,40 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 float APlayerCharacter::GetDamage()
 {
-	return StatsComp->Stats[Strength];
+	float BaseDamage = 0;
+
+	if (EquipmentComp)
+	{
+		if (FItemData* SwordItem = EquipmentComp->Equipment.Find(Sword))
+		{
+			BaseDamage += SwordItem->TypePair.TypeValue;
+		}
+	}
+
+	bool bIsCrit = false;
+	if (StatsComp)
+	{
+		BaseDamage += StatsComp->Stats[Strength] * FMath::RandRange(.5f, 1.2f);
+
+		float Roll = FMath::FRand();
+		if (Roll <= StatsComp->Stats[CritChance])
+		{
+			bIsCrit = true;
+			BaseDamage *= StatsComp->Stats[CritMultiplier];
+		}
+	}
+
+	if (bIsCrit)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Critical Hit! %f"), BaseDamage);
+		return BaseDamage;
+	}
+
+	float Damage = FMath::RandRange(StatsComp->Stats[Strength], BaseDamage);
+
+	UE_LOG(LogTemp, Warning, TEXT("Damage: %f"), Damage);
+
+	return Damage;
 }
 
 bool APlayerCharacter::HasEnoughStamina(const float Amount)
@@ -88,6 +124,21 @@ bool APlayerCharacter::CanTakeDamage(AActor* Opponent)
 	}
 
 	return true;
+}
+
+void APlayerCharacter::GetEquipment()
+{
+	if (InventoryComp)
+	{
+		const TMap<TEnumAsByte<EEQuipmentSlot>, FItemData>& Equipped = InventoryComp->GetEquippedItems();
+
+		for (const auto& Pair : Equipped)
+		{
+			FString SlotName = UEnum::GetValueAsString(Pair.Key);
+			FString ItemID = Pair.Value.ID; // Assuming FItemData has an ID field
+			UE_LOG(LogTemp, Warning, TEXT("Equipped -> Slot: %s | Item: %s"), *SlotName, *ItemID);
+		}
+	}
 }
 
 void APlayerCharacter::PlayHurtAnim(TSubclassOf<class UCameraShakeBase> CameraShakeTemplate)

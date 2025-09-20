@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/Texture2D.h"
+#include "Enums/EItemTypeMacro.h"
 #include "Enums/ItemTypes.h"
 #include "ItemData.generated.h"
 
@@ -35,6 +36,9 @@ struct FItemData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UTexture2D* ItemIcon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TEnumAsByte<EItemTypeMacro> ItemTypeMacro;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FItemTypeKVPair TypePair;

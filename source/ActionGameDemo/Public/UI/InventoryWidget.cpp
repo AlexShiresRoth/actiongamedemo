@@ -7,11 +7,9 @@
 #include "Characters/InventoryComponent.h"
 #include "Characters/PlayerCharacter.h"
 #include "Characters/StatsComponent.h"
+#include "combat/EquipmentComponent.h"
 #include "Interactable/Item.h"
 
-// TODO refactor this function
-// TODO Items in the inventory should have different functionality than that in an items container
-// Weshould probably pop up a menu when clicking on an item
 void UInventoryWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -23,6 +21,7 @@ void UInventoryWidget::NativeConstruct()
 	if (PC && PlayerRef)
 	{
 		InventoryComponent = PlayerRef->FindComponentByClass<UInventoryComponent>();
+		EquipmentComponent = PlayerRef->FindComponentByClass<UEquipmentComponent>();
 
 		if (InventoryComponent)
 		{
@@ -31,24 +30,35 @@ void UInventoryWidget::NativeConstruct()
 			// PC->SetInputMode(FInputModeUIOnly());
 			// Get items stored on user inventory in order to create widgets
 			InventoryItems = InventoryComponent->GetInventoryItems();
+			EquipmentItems = InventoryComponent->GetEquipmentItems();
 
-			if (InventoryItems.Num() > 0)
+			// Items will show in different inventory areas based on their type
+			RenderItemsToWidget(ItemsContainer, InventoryItems);
+			RenderItemsToWidget(EquipmentContainer, EquipmentItems);
+		}
+
+		if (EquipmentComponent)
+		{
+			FItemData* Sword = EquipmentComponent->Equipment.Find(EEQuipmentSlot::Sword);
+			FItemData* Armor = EquipmentComponent->Equipment.Find(EEQuipmentSlot::Armor);
+			FItemData* Shield = EquipmentComponent->Equipment.Find(EEQuipmentSlot::Shield);
+			FItemData* Special = EquipmentComponent->Equipment.Find(EEQuipmentSlot::Special);
+
+			if (Sword)
 			{
-				for (const AItem* Item : InventoryItems)
-				{
-					if (ItemsContainer)
-					{
-						if (UItemWidget* ItemWidget = CreateWidget<UItemWidget>(this, ItemWidgetClass))
-						{
-							ItemWidget->ItemLocation = Inventory;
-							ItemWidget->ItemData = Item->ItemData;
-							ItemWidget->OnItemActionsMenuDelegate.
-							            AddDynamic(this, &UInventoryWidget::HandleItemActions);
-							ItemsContainer->AddChild(ItemWidget);
-							ItemWidgets.Add(ItemWidget);
-						}
-					}
-				}
+				EquippedSword = *Sword;
+			}
+			if (Armor)
+			{
+				EquippedArmor = *Armor;
+			}
+			if (Shield)
+			{
+				EquippedShield = *Shield;
+			}
+			if (Special)
+			{
+				EquippedSpecial = *Special;
 			}
 		}
 	}
@@ -62,6 +72,28 @@ void UInventoryWidget::NativeDestruct()
 	{
 		PC->bShowMouseCursor = false;
 		PC->SetInputMode(FInputModeGameOnly());
+	}
+}
+
+void UInventoryWidget::RenderItemsToWidget(UScrollBox* Container, TArray<AItem*>& Items)
+{
+	if (Items.Num() > 0)
+	{
+		for (const AItem* Item : Items)
+		{
+			if (Container)
+			{
+				if (UItemWidget* ItemWidget = CreateWidget<UItemWidget>(this, ItemWidgetClass))
+				{
+					ItemWidget->ItemLocation = Inventory;
+					ItemWidget->ItemData = Item->ItemData;
+					ItemWidget->OnItemActionsMenuDelegate.
+					            AddDynamic(this, &UInventoryWidget::HandleItemActions);
+					Container->AddChild(ItemWidget);
+					ItemWidgets.Add(ItemWidget);
+				}
+			}
+		}
 	}
 }
 
@@ -87,6 +119,39 @@ void UInventoryWidget::HandleItemActions(FItemData Item)
 
 	SelectedItem = Item;
 	SelectedItemCategory = UEnum::GetValueAsString(Item.TypePair.ItemType.GetValue());
+}
+
+
+void UInventoryWidget::EquipItem(FItemData Item)
+{
+	if (Item.ID.IsEmpty())
+	{
+		return;
+	}
+
+	EquippedItems.Add(Item.TypePair.ItemType, Item);
+
+	switch (Item.TypePair.ItemType)
+	{
+	case ArmorType:
+		InventoryComponent->AddEquippedItems(Armor, Item);
+		EquippedArmor = Item;
+		break;
+	case WeaponType:
+		InventoryComponent->AddEquippedItems(Sword, Item);
+		EquippedSword = Item;
+		break;
+	case ShieldType:
+		InventoryComponent->AddEquippedItems(Shield, Item);
+		EquippedShield = Item;
+		break;
+	case SpecialType:
+		InventoryComponent->AddEquippedItems(Special, Item);
+		EquippedSpecial = Item;
+		break;
+	default:
+		break;
+	}
 }
 
 void UInventoryWidget::UseItem(FItemData Item)

@@ -25,6 +25,8 @@ public:
 	// virtual tells c++ this function can be overridden
 	virtual float GetDamage() { return 0.0f; };
 
+	virtual float GetDefense() { return 0.f; };
+
 	virtual void Attack()
 	{
 	}

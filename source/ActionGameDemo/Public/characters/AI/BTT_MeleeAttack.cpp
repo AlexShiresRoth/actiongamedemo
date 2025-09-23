@@ -8,7 +8,7 @@
 #include "GameFramework/Character.h"
 #include "Characters/EEnemyState.h"
 #include "Interfaces/Enemy.h"
-
+// TODO I want the sword enemy to attack quicker, maybe this needs a refactor
 EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	bIsFinished = false;

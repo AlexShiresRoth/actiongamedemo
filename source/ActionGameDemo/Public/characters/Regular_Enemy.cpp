@@ -234,6 +234,8 @@ float ARegular_Enemy::GetMeleeRange()
 	return StatsComp->Stats[MeleeRange];
 }
 
+// TODD - should we create dynamic damage for enemy?
+// TODO - should we make these enemies block?
 float ARegular_Enemy::GetDamage()
 {
 	return StatsComp->Stats[Strength];

@@ -12,6 +12,7 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Regular_Enemy.generated.h"
 
+// TODO can we set these enemies with the ability to block or dodge, or should that just be reserved for bossed?
 UCLASS()
 class ACTIONGAMEDEMO_API ARegular_Enemy : public ACharacter, public IEnemy, public IFighter,
                                           public IGenericTeamAgentInterface

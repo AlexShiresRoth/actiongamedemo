@@ -5,9 +5,6 @@
 #include "StatsComponent.h"
 #include "EStat.h"
 #include "combat/CombatComponent.h"
-#include "combat/TraceComponent.h"
-#include "combat/BlockComponent.h"
-#include "PlayerActionsComponent.h"
 #include "AIController.h"
 #include "BrainComponent.h"
 #include "PlayerCharacter.h"
@@ -15,7 +12,6 @@
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Interfaces/MainPlayer.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -56,6 +52,28 @@ void ARegular_Enemy::Knockback(AActor* Attacker)
 	FVector LaunchVelocity = KnockbackDirection * KnockbackStrength + FVector(0, 0, 250);
 
 	EnemyRef->LaunchCharacter(LaunchVelocity, true, true);
+}
+
+void ARegular_Enemy::StartUltimate()
+{
+	if (UltimateStartParticle)
+	{
+		ACharacter *EnemyRef = ControllerRef->GetCharacter();
+		FVector Loc = EnemyRef->GetActorLocation();
+		FRotator Rotator = EnemyRef->GetActorRotation();
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), UltimateStartParticle, Loc, Rotator);
+	}
+}
+
+void ARegular_Enemy::FinishUltimate()
+{
+	if (UltimateFinishParticle)
+	{
+		ACharacter *EnemyRef = ControllerRef->GetCharacter();
+		FVector Loc = EnemyRef->GetActorLocation();
+		FRotator Rotator = EnemyRef->GetActorRotation();
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), UltimateFinishParticle, Loc, Rotator);
+	}
 }
 
 // Called when the game starts or when spawned

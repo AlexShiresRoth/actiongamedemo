@@ -144,7 +144,6 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 		                        TargetAttackedEvent,
 		                        GetOwner()->GetInstigatorController(),
 		                        GetOwner());
-		UE_LOG(LogTemp, Display, TEXT("Enemy char damage %f"), CharacterDamage);
 
 		TargetsToIgnore.AddUnique(TargetActor);
 

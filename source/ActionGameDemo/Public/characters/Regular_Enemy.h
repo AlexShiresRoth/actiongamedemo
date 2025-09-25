@@ -12,6 +12,9 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Regular_Enemy.generated.h"
 
+// TODO can we set these enemies with the ability to block or dodge, or should that just be reserved for bossed?
+// TODO set root animation for the ultimate ability in order to allow movement for ultimate attacks
+// TODO setup GAS to use the special ability 
 UCLASS()
 class ACTIONGAMEDEMO_API ARegular_Enemy : public ACharacter, public IEnemy, public IFighter,
                                           public IGenericTeamAgentInterface
@@ -28,6 +31,12 @@ class ACTIONGAMEDEMO_API ARegular_Enemy : public ACharacter, public IEnemy, publ
 
 	UPROPERTY(EditAnywhere, Category = "Hurt Animation")
 	UAnimMontage* HurtAnimMontage;
+
+	UPROPERTY(EditAnywhere, Category = Particle)
+	UParticleSystem* UltimateStartParticle;
+
+	UPROPERTY(EditAnywhere, Category = Particle)
+	UParticleSystem* UltimateFinishParticle;
 
 	AAIController* ControllerRef;
 
@@ -61,6 +70,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = AI)
 	UAIPerceptionComponent* AIPerceptionComp;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Combat)
+	bool bCanBlock{false};
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Sense Config")
 	float LoseSightDelay{5.f};
@@ -99,6 +111,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Knockback(AActor* Attacker);
+
+	UFUNCTION(BlueprintCallable)
+	void StartUltimate();
+
+	UFUNCTION(BlueprintCallable)
+	void FinishUltimate();
 
 	virtual float GetMeleeRange() override;
 

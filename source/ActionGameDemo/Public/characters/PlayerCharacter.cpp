@@ -34,6 +34,8 @@ APlayerCharacter::APlayerCharacter()
 	InventoryComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory Component"));
 
 	EquipmentComp = CreateDefaultSubobject<UEquipmentComponent>(TEXT("Equipment Component"));
+
+	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 }
 
 // Called when the game starts or when spawned
@@ -42,6 +44,14 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	PlayerAnimInstance = Cast<UPlayerAnimInstance_USE>(GetMesh()->GetAnimInstance());
+
+	AbilitySystemComponent = GetAbilitySystemComponent();
+
+	if (AbilitySystemComponent)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Player Ability System Component"));
+		StatsAttributes = AbilitySystemComponent->GetSet<UStatsAttributesSet>();
+	}
 }
 
 // Called every frame
@@ -124,6 +134,11 @@ bool APlayerCharacter::CanTakeDamage(AActor* Opponent)
 	}
 
 	return true;
+}
+
+UAbilitySystemComponent* APlayerCharacter::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
 }
 
 void APlayerCharacter::GetEquipment()

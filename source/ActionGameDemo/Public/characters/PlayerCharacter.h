@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GenericTeamAgentInterface.h"
+#include "AbilitySystemInterface.h"
+#include "AbilitySystemComponent.h"
+#include "Attributes/StatsAttributesSet.h"
 #include "GameFramework/Character.h"
 #include "Interfaces/MainPlayer.h"
 #include "Interfaces/Fighter.h"
@@ -11,7 +14,7 @@
 
 UCLASS()
 class ACTIONGAMEDEMO_API APlayerCharacter : public ACharacter, public IMainPlayer, public IFighter,
-                                            public IGenericTeamAgentInterface
+                                            public IGenericTeamAgentInterface, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -54,6 +57,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Equipment")
 	class UEquipmentComponent* EquipmentComp;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Abilities")
+	UAbilitySystemComponent* AbilitySystemComponent;
+
+	UPROPERTY()
+	const UStatsAttributesSet* StatsAttributes;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -75,6 +84,8 @@ public:
 	virtual void EndLockonWithActor(class AActor* Actor) override;
 
 	virtual bool CanTakeDamage(AActor* Opponent) override;
+
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	UFUNCTION(BlueprintCallable)
 	void GetEquipment();

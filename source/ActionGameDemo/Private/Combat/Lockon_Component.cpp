@@ -75,7 +75,7 @@ void ULockon_Component::StartLockon(float InRadius)
 	CharacterMovementRef->bOrientRotationToMovement = false;
 	CharacterMovementRef->bUseControllerDesiredRotation = true;
 
-	SpringArmComponent->TargetOffset = FVector{-400.f, 100.f, 100.0f};
+	SpringArmComponent->TargetOffset = LockonLocation;
 
 	IEnemy::Execute_OnSelect(CurrentTargetActor);
 

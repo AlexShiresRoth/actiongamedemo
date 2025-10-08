@@ -15,22 +15,21 @@ class ACTIONGAMEDEMO_API ULockon_Component : public UActorComponent
 {
 	GENERATED_BODY()
 
-private:
-	ACharacter *OwnerRef;
+	ACharacter* OwnerRef;
 
-	APlayerController *PlayerControllerRef;
+	APlayerController* PlayerControllerRef;
 
-	class UCharacterMovementComponent *CharacterMovementRef;
+	class UCharacterMovementComponent* CharacterMovementRef;
 
-	FRotator *RotationResult;
+	FRotator* RotationResult;
 
-	class USpringArmComponent *SpringArmComponent;
+	class USpringArmComponent* SpringArmComponent;
 
 public:
 	// Sets default values for this component's properties
 	ULockon_Component();
 
-	AActor *CurrentTargetActor;
+	AActor* CurrentTargetActor;
 
 	UPROPERTY(BlueprintAssignable, Category = "Lockon")
 	FOnUpdatedTargetSignature OnUpdatedTargetDelegate;
@@ -40,16 +39,19 @@ protected:
 	virtual void BeginPlay() override;
 
 	void StartLockon(float InRadius = 750.f);
-	
+
 	UFUNCTION(BlueprintCallable, Category = "Lockon")
 	void ToggleLockon(float Radius = 750.f);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lockon")
 	double BreakDistance{1000.0};
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lockon")
+	FVector LockonLocation{0.f, 100.f, 50.f};
+
 public:
 	void StopLockon();
 	// Called every frame
 	virtual void
-	TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
+	TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 };

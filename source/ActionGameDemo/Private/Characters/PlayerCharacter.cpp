@@ -1,15 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "PlayerCharacter.h"
-#include "StatsComponent.h"
-#include "EStat.h"
-#include "InventoryComponent.h"
+#include "Characters/PlayerCharacter.h"
 #include "combat/CombatComponent.h"
 #include "combat/TraceComponent.h"
 #include "combat/BlockComponent.h"
 #include "combat/Lockon_Component.h"
-#include "PlayerActionsComponent.h"
 #include "Animations/PlayerAnimInstance_USE.h"
+#include "Characters/InventoryComponent.h"
+#include "Characters/PlayerActionsComponent.h"
+#include "Characters/StatsComponent.h"
 #include "combat/EquipmentComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -124,6 +123,16 @@ bool APlayerCharacter::CanTakeDamage(AActor* Opponent)
 	}
 
 	return true;
+}
+
+void APlayerCharacter::ReceiveHitFromAOE(const FAttackData& Data)
+{
+	bIsLaunched = true;
+	LaunchCharacter(Data.LaunchVelocity, true, true);
+	// TODO play launch anim montage
+	// TODO disable input while flying thru air
+	// TODO need to make ultimate a new BTTask instead of charge attack
+	float Duration{PlayAnimMontage(DeathAnim)};
 }
 
 void APlayerCharacter::GetEquipment()

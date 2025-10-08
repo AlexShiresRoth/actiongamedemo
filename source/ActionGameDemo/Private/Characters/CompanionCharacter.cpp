@@ -3,14 +3,14 @@
 
 #include "Characters/CompanionCharacter.h"
 
-#include "StatsComponent.h"
 #include "combat/CombatComponent.h"
 #include "AIController.h"
 #include "BrainComponent.h"
-#include "PlayerCharacter.h"
 #include "Animations/CompanionAnimInstance.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Characters/PlayerCharacter.h"
+#include "Characters/StatsComponent.h"
 #include "combat/CombatManager.h"
 #include "Kismet/GameplayStatics.h"
 

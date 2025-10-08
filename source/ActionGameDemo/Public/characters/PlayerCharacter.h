@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "Interfaces/MainPlayer.h"
 #include "Interfaces/Fighter.h"
+#include "Structs/FAttackData.h"
 #include "PlayerCharacter.generated.h"
 
 UCLASS()
@@ -54,6 +55,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Equipment")
 	class UEquipmentComponent* EquipmentComp;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Equipment")
+	bool bIsLaunched{false};
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -75,6 +79,9 @@ public:
 	virtual void EndLockonWithActor(class AActor* Actor) override;
 
 	virtual bool CanTakeDamage(AActor* Opponent) override;
+
+	UFUNCTION(BlueprintCallable)
+	void ReceiveHitFromAOE(const FAttackData& Data);
 
 	UFUNCTION(BlueprintCallable)
 	void GetEquipment();

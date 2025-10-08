@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "PlayerActionsComponent.h"
+#include "../Public/Characters/PlayerActionsComponent.h"
 #include "GameFramework/Character.h"
 #include "Interfaces/MainPlayer.h"
 #include "GameFramework/CharacterMovementComponent.h"

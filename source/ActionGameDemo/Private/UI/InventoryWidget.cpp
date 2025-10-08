@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "InventoryWidget.h"
+#include "UI/InventoryWidget.h"
 
-#include "ItemWidget.h"
+#include "UI/ItemWidget.h"
 #include "Characters/InventoryComponent.h"
 #include "Characters/PlayerCharacter.h"
 #include "Characters/StatsComponent.h"

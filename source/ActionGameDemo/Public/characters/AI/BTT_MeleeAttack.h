@@ -28,6 +28,8 @@ class ACTIONGAMEDEMO_API UBTT_MeleeAttack : public UBTTaskNode
 
 	FScriptDelegate MoveDelegate;
 
+	void AbortMeleeAttack(AAIController* AIRef, UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory);
+
 protected:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 

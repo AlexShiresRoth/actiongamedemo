@@ -4,7 +4,7 @@
 #include "UI/ItemsContainer.h"
 
 #include "IDetailTreeNode.h"
-#include "ItemWidget.h"
+#include "UI/ItemWidget.h"
 #include "Interactable/Item.h"
 
 

@@ -13,5 +13,6 @@ enum EEnemyState
 	Melee UMETA(DisplayName = "Melee"),
 	Death UMETA(DisplayName = "Death"),
 	GameOver UMETA(DisplayName = "Game Over"),
+	Ultimate UMETA(DisplayName = "Ultimate"),
 	ReturnToStart UMETA(DisplayName = "Return to Start")
 };

@@ -29,8 +29,18 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	bool bIsDead{false};
 
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsInUltimateState{false};
+
+	UFUNCTION()
+	void SetIsUltimateState(bool bIsUltimate)
+	{
+		bIsInUltimateState = bIsUltimate;
+	} 
+
 	virtual void SetIsCharging_Implementation(bool bCharging) override
 	{
 		bIsCharging = bCharging;
 	}
+	
 };

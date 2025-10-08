@@ -7,7 +7,23 @@
 #include "Interfaces/Fighter.h"
 #include "GameFramework/Character.h"
 #include "Characters/EEnemyState.h"
-#include "Interfaces/Enemy.h"
+#include "Interfaces/IChargeAttack.h"
+#include "Interfaces/RangeAttack.h"
+#include "Interfaces/UltimateAttack.h"
+
+void UBTT_MeleeAttack::AbortMeleeAttack(AAIController* AIRef, UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+{
+	AbortTask(OwnerComp, NodeMemory);
+
+	FinishLatentTask(OwnerComp, EBTNodeResult::Aborted);
+
+	AIRef->StopMovement();
+
+	AIRef->ClearFocus(EAIFocusPriority::Gameplay);
+
+	AIRef->ReceiveMoveCompleted.Remove(MoveDelegate);
+}
+
 // TODO I want the sword enemy to attack quicker, maybe this needs a refactor
 EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
@@ -19,7 +35,7 @@ EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 	};
 
 	AAIController* AIRef{OwnerComp.GetAIOwner()};
-
+	APawn* EnemyPawn{AIRef->GetPawn()};
 	if (Distance > AttackRadius)
 	{
 		APawn* PlayerRef{GetWorld()->GetFirstPlayerController()->GetPawn()};
@@ -41,7 +57,26 @@ EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 				AIRef->GetCharacter())
 		};
 
-		UE_LOG(LogTemp, Error, TEXT("Attacking!!!!!!! %f"), Distance);
+
+		bool bCanUseUltimate = OwnerComp.GetBlackboardComponent()->GetValueAsBool("CanUseUltimate");
+
+		// TODO can we improve this?
+		// Random chance to turn on ultimate attack while in melee
+		if (EnemyPawn->GetClass()->ImplementsInterface(UUltimateAttack::StaticClass()) && bCanUseUltimate)
+		{
+			float Chance = FMath::FRandRange(0.f, 1.f);
+
+			if (Chance > 0.5f)
+			{
+				OwnerComp.GetBlackboardComponent()->SetValueAsEnum(
+					TEXT("CurrentState"),
+					Ultimate);
+			}
+
+			return EBTNodeResult::Aborted;
+		}
+
+
 		FighterRef->Attack();
 
 		FTimerHandle AttackTimerHandle;
@@ -64,7 +99,7 @@ void UBTT_MeleeAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 	};
 
 	AAIController* AIRef{OwnerComp.GetAIOwner()};
-
+	APawn* EnemyPawn{AIRef->GetPawn()};
 	IFighter* FighterRef{
 		Cast<IFighter>(
 			AIRef->GetCharacter())
@@ -74,27 +109,28 @@ void UBTT_MeleeAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 
 	if (Distance > FighterRef->GetMeleeRange())
 	{
-		OwnerComp.GetBlackboardComponent()->SetValueAsEnum(
-			TEXT("CurrentState"),
-			Range);
+		if (EnemyPawn->GetClass()->ImplementsInterface(URangeAttack::StaticClass()))
+		{
+			OwnerComp.GetBlackboardComponent()->SetValueAsEnum(
+				TEXT("CurrentState"),
+				Range);
+			AbortMeleeAttack(AIRef, OwnerComp, NodeMemory);
+		}
 
-		AbortTask(OwnerComp, NodeMemory);
+		if (EnemyPawn->GetClass()->ImplementsInterface(UIChargeAttack::StaticClass()))
+		{
+			OwnerComp.GetBlackboardComponent()->SetValueAsEnum(
+				TEXT("CurrentState"),
+				Charge);
 
-		FinishLatentTask(OwnerComp, EBTNodeResult::Aborted);
-
-		AIRef->StopMovement();
-
-		AIRef->ClearFocus(EAIFocusPriority::Gameplay);
-
-		AIRef->ReceiveMoveCompleted.Remove(MoveDelegate);
+			AbortMeleeAttack(AIRef, OwnerComp, NodeMemory);
+		}
 	}
-
 
 	if (!bIsFinished)
 	{
 		return;
 	}
-
 
 	OwnerComp.GetAIOwner()->ReceiveMoveCompleted.Remove(MoveDelegate);
 

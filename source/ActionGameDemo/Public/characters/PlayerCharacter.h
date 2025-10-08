@@ -16,11 +16,17 @@ class ACTIONGAMEDEMO_API APlayerCharacter : public ACharacter, public IMainPlaye
 {
 	GENERATED_BODY()
 
+	APlayerController* PlayerController;
+	ACharacter* Character;
+
 	UPROPERTY(EditAnywhere, Category = "Player Animation")
 	UAnimMontage* DeathAnim;
 
 	UPROPERTY(EditAnywhere, Category = "Player Animation")
 	UAnimMontage* HurtAnimMontage;
+
+	UPROPERTY(EditAnywhere, Category = "Player Animation")
+	UAnimMontage* GetUpMontage;
 
 public:
 	virtual FGenericTeamId GetGenericTeamId() const override

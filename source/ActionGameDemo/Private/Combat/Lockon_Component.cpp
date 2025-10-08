@@ -53,7 +53,7 @@ void ULockon_Component::StartLockon(float InRadius)
 			CurrentLocation,
 			FQuat::Identity,
 			// @note we can find the name of customn channels in the default engine.ini file ie search "Fighter"
-			ECollisionChannel::ECC_GameTraceChannel1,
+			ECC_GameTraceChannel1,
 			Sphere,
 			IgnoreParams),
 	};
@@ -75,7 +75,7 @@ void ULockon_Component::StartLockon(float InRadius)
 	CharacterMovementRef->bOrientRotationToMovement = false;
 	CharacterMovementRef->bUseControllerDesiredRotation = true;
 
-	SpringArmComponent->TargetOffset = FVector{0.f, 100.f, 100.0f};
+	SpringArmComponent->TargetOffset = FVector{-400.f, 100.f, 100.0f};
 
 	IEnemy::Execute_OnSelect(CurrentTargetActor);
 
@@ -84,7 +84,6 @@ void ULockon_Component::StartLockon(float InRadius)
 
 void ULockon_Component::StopLockon()
 {
-
 	IEnemy::Execute_OnDeselect(CurrentTargetActor);
 
 	CurrentTargetActor = nullptr;
@@ -111,7 +110,8 @@ void ULockon_Component::ToggleLockon(float Radius)
 }
 
 // Called every frame
-void ULockon_Component::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
+void ULockon_Component::TickComponent(float DeltaTime, ELevelTick TickType,
+                                      FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 

@@ -72,8 +72,7 @@ EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 					TEXT("CurrentState"),
 					Ultimate);
 			}
-
-			return EBTNodeResult::Aborted;
+			return EBTNodeResult::Succeeded;
 		}
 
 

@@ -10,6 +10,7 @@
 #include "Characters/PlayerActionsComponent.h"
 #include "Characters/StatsComponent.h"
 #include "combat/EquipmentComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -40,6 +41,8 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	PlayerController = Cast<APlayerController>(GetController());
+	Character = Cast<ACharacter>(PlayerController->GetCharacter());
 	PlayerAnimInstance = Cast<UPlayerAnimInstance_USE>(GetMesh()->GetAnimInstance());
 }
 
@@ -47,6 +50,23 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	// Reenable after falling from being hit by ultimate attack
+	if (bIsLaunched)
+	{
+		if (!Character->GetCharacterMovement()->IsFalling())
+		{
+			bIsLaunched = false;
+			if (PlayerController)
+			{
+				PlayerController->EnableInput(PlayerController);
+				if (GetUpMontage)
+				{
+					PlayAnimMontage(GetUpMontage);
+				}
+			}
+		}
+	}
 }
 
 // Called to bind functionality to input
@@ -129,10 +149,15 @@ void APlayerCharacter::ReceiveHitFromAOE(const FAttackData& Data)
 {
 	bIsLaunched = true;
 	LaunchCharacter(Data.LaunchVelocity, true, true);
-	// TODO play launch anim montage
-	// TODO disable input while flying thru air
-	// TODO need to make ultimate a new BTTask instead of charge attack
-	float Duration{PlayAnimMontage(DeathAnim)};
+
+	if (!PlayerController && !Character)
+	{
+		return;
+	}
+
+	PlayerController->DisableInput(PlayerController);
+
+	PlayAnimMontage(DeathAnim);
 }
 
 void APlayerCharacter::GetEquipment()
@@ -167,8 +192,6 @@ void APlayerCharacter::FocusOnUI(UUserWidget* WidgetToFocus)
 		return;
 	}
 
-	APlayerController* PlayerController = Cast<APlayerController>(GetController<APlayerController>());
-
 	if (!PlayerController)
 	{
 		return;
@@ -187,8 +210,6 @@ void APlayerCharacter::FocusOnUI(UUserWidget* WidgetToFocus)
 
 void APlayerCharacter::RestoreGameInput()
 {
-	APlayerController* PlayerController = Cast<APlayerController>(GetController<APlayerController>());
-
 	if (!PlayerController)
 	{
 		return;

@@ -84,7 +84,7 @@ public:
 
 	virtual void EndLockonWithActor(class AActor* Actor) override;
 
-	virtual bool CanTakeDamage(AActor* Opponent) override;
+	virtual bool CanTakeDamage(AActor* Opponent, UDamageType* DamageType) override;
 
 	UFUNCTION(BlueprintCallable)
 	void ReceiveHitFromAOE(const FAttackData& Data);

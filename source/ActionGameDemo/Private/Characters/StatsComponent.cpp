@@ -14,11 +14,11 @@ UStatsComponent::UStatsComponent()
 	// ...
 }
 
-void UStatsComponent::ReduceHealth(const float Damage, AActor* Opponent)
+void UStatsComponent::ReduceHealth(const float Damage, AActor* Opponent, UDamageType* DamageType)
 {
 	IFighter* FighterRef{GetOwner<IFighter>()};
 
-	if (!FighterRef->CanTakeDamage(Opponent))
+	if (!FighterRef->CanTakeDamage(Opponent, DamageType))
 	{
 		return;
 	}

@@ -18,8 +18,6 @@ class ACTIONGAMEDEMO_API UBTTask_UltimateAttack : public UBTTaskNode
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* UltimateAttackMontage;
 
-	void ChangeState();
-
 public:
 	virtual EBTNodeResult::Type
 	ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;

@@ -10,6 +10,7 @@
 #include "Characters/PlayerActionsComponent.h"
 #include "Characters/StatsComponent.h"
 #include "combat/EquipmentComponent.h"
+#include "DamageTypes/UnblockableDamage.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -130,8 +131,13 @@ void APlayerCharacter::EndLockonWithActor(class AActor* Actor)
 	}
 }
 
-bool APlayerCharacter::CanTakeDamage(AActor* Opponent)
+bool APlayerCharacter::CanTakeDamage(AActor* Opponent, UDamageType* DamageType)
 {
+	if (DamageType->IsA(UUnblockableDamage::StaticClass()))
+	{
+		return true;
+	}
+
 	if (PlayerAnimInstance->bIsBlocking)
 	{
 		return BlockComp->Check(Opponent);
@@ -147,15 +153,16 @@ bool APlayerCharacter::CanTakeDamage(AActor* Opponent)
 
 void APlayerCharacter::ReceiveHitFromAOE(const FAttackData& Data)
 {
-	bIsLaunched = true;
-	LaunchCharacter(Data.LaunchVelocity, true, true);
-
 	if (!PlayerController && !Character)
 	{
 		return;
 	}
 
 	PlayerController->DisableInput(PlayerController);
+
+	bIsLaunched = true;
+
+	LaunchCharacter(Data.LaunchVelocity, true, true);
 
 	PlayAnimMontage(DeathAnim);
 }

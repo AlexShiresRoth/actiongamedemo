@@ -9,11 +9,7 @@
 #include "GameFramework/Character.h"
 #include "Interfaces/UltimateAttack.h"
 
-void UBTTask_UltimateAttack::ChangeState()
-{
-}
 
-// TODO - this is a bit buggy at the moment	seems like while charging it breaks?
 EBTNodeResult::Type UBTTask_UltimateAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	AAIController* AIController{OwnerComp.GetAIOwner()};

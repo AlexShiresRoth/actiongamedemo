@@ -7,6 +7,7 @@
 #include "Animations/EnemyAnimInstance.h"
 #include "Characters/PlayerCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "DamageTypes/UnblockableDamage.h"
 #include "Kismet/GameplayStatics.h"
 
 void ASword_Enemy::SpawnAOECollision(FVector Location)
@@ -35,11 +36,9 @@ void ASword_Enemy::SpawnAOECollision(FVector Location)
 			AActor* HitActor = Res.GetActor();
 			if (HitActor && HitActor != this)
 			{
-				FDamageEvent DamageEvent;
-
 				HitActor->TakeDamage(
 					UltimateAOEDamage,
-					DamageEvent,
+					FDamageEvent(UUnblockableDamage::StaticClass()),
 					this->GetInstigatorController(),
 					this
 				);

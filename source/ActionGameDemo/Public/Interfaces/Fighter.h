@@ -35,5 +35,6 @@ public:
 
 	virtual float GetMeleeRange() { return 0.0f; };
 
-	virtual bool CanTakeDamage(AActor* Opponent) { return true; };
+	// TODO I think I need to add the damage type here
+	virtual bool CanTakeDamage(AActor* Opponent, UDamageType* DamageType) { return true; };
 };

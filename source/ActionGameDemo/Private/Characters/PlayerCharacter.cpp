@@ -1,16 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "PlayerCharacter.h"
-#include "StatsComponent.h"
-#include "EStat.h"
-#include "InventoryComponent.h"
+#include "Characters/PlayerCharacter.h"
 #include "combat/CombatComponent.h"
 #include "combat/TraceComponent.h"
 #include "combat/BlockComponent.h"
 #include "combat/Lockon_Component.h"
-#include "PlayerActionsComponent.h"
 #include "Animations/PlayerAnimInstance_USE.h"
+#include "Characters/InventoryComponent.h"
+#include "Characters/PlayerActionsComponent.h"
+#include "Characters/StatsComponent.h"
 #include "combat/EquipmentComponent.h"
+#include "DamageTypes/UnblockableDamage.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -41,6 +42,8 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	PlayerController = Cast<APlayerController>(GetController());
+	Character = Cast<ACharacter>(PlayerController->GetCharacter());
 	PlayerAnimInstance = Cast<UPlayerAnimInstance_USE>(GetMesh()->GetAnimInstance());
 }
 
@@ -48,6 +51,23 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	// Reenable after falling from being hit by ultimate attack
+	if (bIsLaunched)
+	{
+		if (!Character->GetCharacterMovement()->IsFalling())
+		{
+			bIsLaunched = false;
+			if (PlayerController)
+			{
+				PlayerController->EnableInput(PlayerController);
+				if (GetUpMontage)
+				{
+					PlayAnimMontage(GetUpMontage);
+				}
+			}
+		}
+	}
 }
 
 // Called to bind functionality to input
@@ -111,8 +131,13 @@ void APlayerCharacter::EndLockonWithActor(class AActor* Actor)
 	}
 }
 
-bool APlayerCharacter::CanTakeDamage(AActor* Opponent)
+bool APlayerCharacter::CanTakeDamage(AActor* Opponent, UDamageType* DamageType)
 {
+	if (DamageType->IsA(UUnblockableDamage::StaticClass()))
+	{
+		return true;
+	}
+
 	if (PlayerAnimInstance->bIsBlocking)
 	{
 		return BlockComp->Check(Opponent);
@@ -124,6 +149,22 @@ bool APlayerCharacter::CanTakeDamage(AActor* Opponent)
 	}
 
 	return true;
+}
+
+void APlayerCharacter::ReceiveHitFromAOE(const FAttackData& Data)
+{
+	if (!PlayerController && !Character)
+	{
+		return;
+	}
+
+	PlayerController->DisableInput(PlayerController);
+
+	bIsLaunched = true;
+
+	LaunchCharacter(Data.LaunchVelocity, true, true);
+
+	PlayAnimMontage(DeathAnim);
 }
 
 void APlayerCharacter::GetEquipment()
@@ -158,8 +199,6 @@ void APlayerCharacter::FocusOnUI(UUserWidget* WidgetToFocus)
 		return;
 	}
 
-	APlayerController* PlayerController = Cast<APlayerController>(GetController<APlayerController>());
-
 	if (!PlayerController)
 	{
 		return;
@@ -178,8 +217,6 @@ void APlayerCharacter::FocusOnUI(UUserWidget* WidgetToFocus)
 
 void APlayerCharacter::RestoreGameInput()
 {
-	APlayerController* PlayerController = Cast<APlayerController>(GetController<APlayerController>());
-
 	if (!PlayerController)
 	{
 		return;

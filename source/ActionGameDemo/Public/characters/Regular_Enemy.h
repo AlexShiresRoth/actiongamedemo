@@ -24,21 +24,16 @@ class ACTIONGAMEDEMO_API ARegular_Enemy : public ACharacter, public IEnemy, publ
 	UPROPERTY(EditAnywhere, Category = AI)
 	TEnumAsByte<EEnemyState> InitialState;
 
-	UBlackboardComponent* BlackboardComp;
-
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* DeathAnim;
 
 	UPROPERTY(EditAnywhere, Category = "Hurt Animation")
 	UAnimMontage* HurtAnimMontage;
 
-	UPROPERTY(EditAnywhere, Category = Particle)
-	UParticleSystem* UltimateStartParticle;
-
-	UPROPERTY(EditAnywhere, Category = Particle)
-	UParticleSystem* UltimateFinishParticle;
-
+protected:
 	AAIController* ControllerRef;
+
+	UBlackboardComponent* BlackboardComp;
 
 	ACombatManager* CombatManager;
 
@@ -98,9 +93,6 @@ public:
 	void HandlePlayerDeath();
 
 	UFUNCTION(BlueprintCallable)
-	void DetectPlayer(class AActor* ActorDetected, class APawn* OtherPawn);
-
-	UFUNCTION(BlueprintCallable)
 	void LosePlayer(AActor* LostActor);
 
 	UFUNCTION(BlueprintCallable, Category= "Enemy Death")
@@ -111,12 +103,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Knockback(AActor* Attacker);
-
-	UFUNCTION(BlueprintCallable)
-	void StartUltimate();
-
-	UFUNCTION(BlueprintCallable)
-	void FinishUltimate();
 
 	virtual float GetMeleeRange() override;
 

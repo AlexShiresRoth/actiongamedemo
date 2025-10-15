@@ -8,7 +8,6 @@
 #include "Navigation/PathFollowingComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Characters/EEnemyState.h"
-#include "Interfaces/Enemy.h"
 
 UBTT_ChargeAttack::UBTT_ChargeAttack()
 {

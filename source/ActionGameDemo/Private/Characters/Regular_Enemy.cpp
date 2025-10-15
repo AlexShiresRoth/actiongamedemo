@@ -2,15 +2,14 @@
 
 
 #include "Characters/Regular_Enemy.h"
-#include "StatsComponent.h"
-#include "EStat.h"
 #include "combat/CombatComponent.h"
 #include "AIController.h"
 #include "BrainComponent.h"
-#include "PlayerCharacter.h"
 #include "Animations/EnemyAnimInstance.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Characters/PlayerCharacter.h"
+#include "Characters/StatsComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Interfaces/MainPlayer.h"
 #include "Kismet/GameplayStatics.h"
@@ -54,27 +53,6 @@ void ARegular_Enemy::Knockback(AActor* Attacker)
 	EnemyRef->LaunchCharacter(LaunchVelocity, true, true);
 }
 
-void ARegular_Enemy::StartUltimate()
-{
-	if (UltimateStartParticle)
-	{
-		ACharacter *EnemyRef = ControllerRef->GetCharacter();
-		FVector Loc = EnemyRef->GetActorLocation();
-		FRotator Rotator = EnemyRef->GetActorRotation();
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), UltimateStartParticle, Loc, Rotator);
-	}
-}
-
-void ARegular_Enemy::FinishUltimate()
-{
-	if (UltimateFinishParticle)
-	{
-		ACharacter *EnemyRef = ControllerRef->GetCharacter();
-		FVector Loc = EnemyRef->GetActorLocation();
-		FRotator Rotator = EnemyRef->GetActorRotation();
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), UltimateFinishParticle, Loc, Rotator);
-	}
-}
 
 // Called when the game starts or when spawned
 void ARegular_Enemy::BeginPlay()
@@ -136,35 +114,6 @@ void ARegular_Enemy::HandlePlayerDeath()
 		GameOver);
 }
 
-
-void ARegular_Enemy::DetectPlayer(class AActor* ActorDetected, class APawn* OtherPawn)
-{
-	const APawn* DetectedPawn = Cast<APawn>(ActorDetected);
-	const AActor* MainPlayer = GetWorld()->GetFirstPlayerController()->GetCharacter();
-	// detect only player
-	if (DetectedPawn != OtherPawn)
-	{
-		return;
-	}
-	if (bIsDead || DetectedPawn != MainPlayer) { return; }
-
-	EEnemyState CurrentState{
-		static_cast<EEnemyState>(BlackboardComp->GetValueAsEnum(TEXT("CurrentState")))
-	};
-
-	// TODO idk if we need this variable still
-	bCanSeePlayer = true;
-
-	if (CombatManager)
-	{
-		CombatManager->AddCombatTarget(ControllerRef->GetCharacter());
-	}
-
-
-	BlackboardComp->SetValueAsBool(TEXT("IsPlayerVisible"), true);
-
-	BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), Range);
-}
 
 void ARegular_Enemy::LosePlayer(AActor* LostActor)
 {

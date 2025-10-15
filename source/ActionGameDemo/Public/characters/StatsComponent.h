@@ -41,7 +41,7 @@ public:
 	TMap<TEnumAsByte<EStat>, float> Stats;
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-	void ReduceHealth(const float Damage, AActor* Opponent);
+	void ReduceHealth(const float Damage, AActor* Opponent, UDamageType* DamageType);
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 	void AddHealth(const float HealAmt);
@@ -74,5 +74,6 @@ protected:
 
 public:
 	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
+	                           FActorComponentTickFunction* ThisTickFunction) override;
 };

@@ -1,5 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-#include "StatsComponent.h"
+#include "Characters/StatsComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Interfaces/Fighter.h"
@@ -14,11 +14,11 @@ UStatsComponent::UStatsComponent()
 	// ...
 }
 
-void UStatsComponent::ReduceHealth(const float Damage, AActor* Opponent)
+void UStatsComponent::ReduceHealth(const float Damage, AActor* Opponent, UDamageType* DamageType)
 {
 	IFighter* FighterRef{GetOwner<IFighter>()};
 
-	if (!FighterRef->CanTakeDamage(Opponent))
+	if (!FighterRef->CanTakeDamage(Opponent, DamageType))
 	{
 		return;
 	}

@@ -30,6 +30,21 @@ class ACTIONGAMEDEMO_API ARegular_Enemy : public ACharacter, public IEnemy, publ
 	UPROPERTY(EditAnywhere, Category = "Hurt Animation")
 	UAnimMontage* HurtAnimMontage;
 
+	UPROPERTY(EditAnywhere, Category = "Stun Animation")
+	float StunTime{2.f};
+
+	UPROPERTY(EditAnywhere, Category = "Stun Animation")
+	bool bShouldBeStunned{false};
+
+	UPROPERTY(EditAnywhere, Category = "Stun Animation")
+	TEnumAsByte<EEnemyState> StunWhenThisState;
+
+	UPROPERTY(EditAnywhere, Category = "Stun Animation")
+	TEnumAsByte<EEnemyState> ReturnAfterStun;
+
+	UPROPERTY(EditAnywhere, Category = "Stun Animation")
+	TEnumAsByte<EEnemyState> InterruptedState;
+
 protected:
 	AAIController* ControllerRef;
 
@@ -103,6 +118,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Knockback(AActor* Attacker);
+
+	UFUNCTION(BlueprintCallable)
+	void HandleEnemyInterrupted();
 
 	virtual float GetMeleeRange() override;
 

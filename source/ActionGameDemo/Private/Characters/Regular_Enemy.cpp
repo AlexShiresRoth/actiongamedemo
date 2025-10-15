@@ -53,6 +53,38 @@ void ARegular_Enemy::Knockback(AActor* Attacker)
 	EnemyRef->LaunchCharacter(LaunchVelocity, true, true);
 }
 
+void ARegular_Enemy::HandleEnemyInterrupted()
+{
+	if (BlackboardComp)
+	{
+		EEnemyState CurrentState = static_cast<EEnemyState>(
+			BlackboardComp->GetValueAsEnum("CurrentState"));
+
+		if (CurrentState == StunWhenThisState)
+		{
+			// If the actor shouldn't be stunned just change the state
+			if (bShouldBeStunned)
+			{
+				BlackboardComp->SetValueAsEnum("CurrentState", ReturnAfterStun);
+				return;
+			}
+
+			BlackboardComp->SetValueAsEnum("CurrentState", InterruptedState);
+
+			FTimerHandle TimerHandle;
+
+			GetWorldTimerManager().SetTimer(
+				TimerHandle,
+				FTimerDelegate::CreateLambda([this, CurrentState]()
+				{
+					BlackboardComp->SetValueAsEnum("CurrentState", ReturnAfterStun);
+				}),
+				StunTime,
+				false
+			);
+		}
+	}
+}
 
 // Called when the game starts or when spawned
 void ARegular_Enemy::BeginPlay()

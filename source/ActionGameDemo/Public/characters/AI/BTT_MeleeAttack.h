@@ -24,6 +24,9 @@ class ACTIONGAMEDEMO_API UBTT_MeleeAttack : public UBTTaskNode
 	UPROPERTY(EditAnywhere)
 	float MeleeSpeed{1000.f};
 
+	UPROPERTY(EditAnywhere)
+	float MeleeOrbitDistance{20.f};
+
 	bool bIsFinished{false};
 
 	FScriptDelegate MoveDelegate;

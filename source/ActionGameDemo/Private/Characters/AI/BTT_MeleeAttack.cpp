@@ -24,7 +24,6 @@ void UBTT_MeleeAttack::AbortMeleeAttack(AAIController* AIRef, UBehaviorTreeCompo
 	AIRef->ReceiveMoveCompleted.Remove(MoveDelegate);
 }
 
-// TODO I want the sword enemy to attack quicker, maybe this needs a refactor
 EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	bIsFinished = false;
@@ -36,10 +35,10 @@ EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 
 	AAIController* AIRef{OwnerComp.GetAIOwner()};
 	APawn* EnemyPawn{AIRef->GetPawn()};
+	APawn* PlayerRef{GetWorld()->GetFirstPlayerController()->GetPawn()};
+
 	if (Distance > AttackRadius)
 	{
-		APawn* PlayerRef{GetWorld()->GetFirstPlayerController()->GetPawn()};
-
 		FAIMoveRequest MoveRequest{PlayerRef};
 		MoveRequest.SetUsePathfinding(true);
 		MoveRequest.SetAcceptanceRadius(AcceptableRadius);
@@ -57,13 +56,12 @@ EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 				AIRef->GetCharacter())
 		};
 
-
 		bool bCanUseUltimate = OwnerComp.GetBlackboardComponent()->GetValueAsBool("CanUseUltimate");
 
-		// TODO can we improve this?
 		// Random chance to turn on ultimate attack while in melee
 		if (EnemyPawn->GetClass()->ImplementsInterface(UUltimateAttack::StaticClass()) && bCanUseUltimate)
 		{
+			float Count = 0.f;
 			float Chance = FMath::FRandRange(0.f, 1.f);
 
 			if (Chance > 0.5f)
@@ -71,10 +69,15 @@ EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 				OwnerComp.GetBlackboardComponent()->SetValueAsEnum(
 					TEXT("CurrentState"),
 					Ultimate);
+				Count = 0;
 			}
+			else
+			{
+				Count += 0.1f;
+			}
+
 			return EBTNodeResult::Succeeded;
 		}
-
 
 		FighterRef->Attack();
 
@@ -99,6 +102,7 @@ void UBTT_MeleeAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 
 	AAIController* AIRef{OwnerComp.GetAIOwner()};
 	APawn* EnemyPawn{AIRef->GetPawn()};
+	ACharacter* PlayerRef = GetWorld()->GetFirstPlayerController()->GetCharacter();
 	IFighter* FighterRef{
 		Cast<IFighter>(
 			AIRef->GetCharacter())
@@ -125,6 +129,7 @@ void UBTT_MeleeAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 			AbortMeleeAttack(AIRef, OwnerComp, NodeMemory);
 		}
 	}
+
 
 	if (!bIsFinished)
 	{

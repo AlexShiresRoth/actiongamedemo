@@ -131,6 +131,21 @@ void ASword_Enemy::FinishUltimateCooldown()
 	BlackboardComp->SetValueAsBool("CanUseUltimate", true);
 }
 
+// TODO - this is not correct it doesn't change back to melee state it just keeps blocking
+void ASword_Enemy::HandleBlocking()
+{
+	if (bIsBlocking)
+	{
+		bIsBlocking = false;
+		return;
+	}
+	if (BlockMontage)
+	{
+		PlayAnimMontage(BlockMontage);
+		bIsBlocking = true;
+	}
+}
+
 void ASword_Enemy::DetectPlayer(class AActor* ActorDetected, class APawn* OtherPawn)
 {
 	const APawn* DetectedPawn = Cast<APawn>(ActorDetected);

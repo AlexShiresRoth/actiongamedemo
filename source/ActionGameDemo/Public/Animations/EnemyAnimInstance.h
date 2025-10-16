@@ -32,15 +32,15 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	bool bIsInUltimateState{false};
 
+
 	UFUNCTION()
-	void SetIsUltimateState(bool bIsUltimate)
+	void SetIsUltimateState(const bool bIsUltimate)
 	{
 		bIsInUltimateState = bIsUltimate;
-	} 
+	}
 
-	virtual void SetIsCharging_Implementation(bool bCharging) override
+	virtual void SetIsCharging_Implementation(const bool bCharging) override
 	{
 		bIsCharging = bCharging;
 	}
-	
 };

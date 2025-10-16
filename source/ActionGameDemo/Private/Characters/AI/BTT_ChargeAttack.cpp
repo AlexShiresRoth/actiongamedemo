@@ -59,7 +59,6 @@ void UBTT_ChargeAttack::ChargeAtPlayer()
 
 	ControllerRef->ReceiveMoveCompleted.AddUnique(
 		MoveCompletedDelegate);
-
 	// Set charge speed
 	OriginalWalkSpeed = CharacterRef->GetCharacterMovement()->MaxWalkSpeed;
 	CharacterRef->GetCharacterMovement()->MaxWalkSpeed = ChargeWalkSpeed;

@@ -22,6 +22,9 @@ class ACTIONGAMEDEMO_API ASword_Enemy : public ARegular_Enemy, public IUltimateA
 	UPROPERTY(EditAnywhere, Category = Particle)
 	UParticleSystem* UltimateFinishParticle;
 
+	UPROPERTY(EditAnywhere, Category = Animation)
+	UAnimMontage* BlockMontage;
+
 	UPROPERTY(EditAnywhere, Category = Particle)
 	float UltimateAOERadius{400.f};
 
@@ -43,6 +46,9 @@ class ACTIONGAMEDEMO_API ASword_Enemy : public ARegular_Enemy, public IUltimateA
 	bool bCanUseUltimate{true};
 
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Blocking)
+	bool bIsBlocking{false};
+
 	UFUNCTION(BlueprintCallable)
 	void StartUltimate();
 
@@ -54,6 +60,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void FinishUltimateCooldown();
+
+	UFUNCTION(BlueprintCallable)
+	void HandleBlocking();
 
 	UFUNCTION(BlueprintCallable)
 	void DetectPlayer(class AActor* ActorDetected, class APawn* OtherPawn);

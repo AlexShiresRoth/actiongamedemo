@@ -37,6 +37,8 @@ EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 	APawn* EnemyPawn{AIRef->GetPawn()};
 	APawn* PlayerRef{GetWorld()->GetFirstPlayerController()->GetPawn()};
 
+	AIRef->SetFocus(PlayerRef);
+
 	if (Distance > AttackRadius)
 	{
 		FAIMoveRequest MoveRequest{PlayerRef};
@@ -47,7 +49,6 @@ EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 			MoveDelegate);
 
 		AIRef->MoveTo(MoveRequest);
-		AIRef->SetFocus(PlayerRef);
 	}
 	else
 	{

@@ -4,6 +4,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "AIController.h"
+#include "Animations/EnemyAnimInstance.h"
 #include "Interfaces/Fighter.h"
 #include "GameFramework/Character.h"
 #include "Characters/EEnemyState.h"
@@ -36,8 +37,31 @@ EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 	AAIController* AIRef{OwnerComp.GetAIOwner()};
 	APawn* EnemyPawn{AIRef->GetPawn()};
 	APawn* PlayerRef{GetWorld()->GetFirstPlayerController()->GetPawn()};
-
 	AIRef->SetFocus(PlayerRef);
+
+	IFighter* FighterRef{
+		Cast<IFighter>(
+			AIRef->GetCharacter())
+	};
+
+	// TODO need to add this to the other tasks that could follow
+	if (USkeletalMeshComponent* Mesh = AIRef->GetCharacter()->GetMesh())
+	{
+		if (Mesh)
+		{
+			if (UAnimInstance* AnimInstance = Mesh->GetAnimInstance())
+			{
+				if (UEnemyAnimInstance* EnemyAnim = Cast<UEnemyAnimInstance>(AnimInstance))
+				{
+					if (EnemyAnim->bIsBlocking)
+					{
+						// End blocking
+						EnemyAnim->SetIsBlocking(false);
+					}
+				}
+			}
+		}
+	}
 
 	if (Distance > AttackRadius)
 	{
@@ -52,11 +76,6 @@ EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 	}
 	else
 	{
-		IFighter* FighterRef{
-			Cast<IFighter>(
-				AIRef->GetCharacter())
-		};
-
 		bool bCanUseUltimate = OwnerComp.GetBlackboardComponent()->GetValueAsBool("CanUseUltimate");
 
 		// Random chance to turn on ultimate attack while in melee
@@ -80,6 +99,7 @@ EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 			return EBTNodeResult::Succeeded;
 		}
 
+		// TODO maybe I can add a combo attack so it's not just one sword swing
 		FighterRef->Attack();
 
 		FTimerHandle AttackTimerHandle;
@@ -130,7 +150,6 @@ void UBTT_MeleeAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 			AbortMeleeAttack(AIRef, OwnerComp, NodeMemory);
 		}
 	}
-
 
 	if (!bIsFinished)
 	{

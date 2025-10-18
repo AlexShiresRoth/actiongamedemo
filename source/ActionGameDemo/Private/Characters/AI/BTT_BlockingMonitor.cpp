@@ -4,6 +4,8 @@
 #include "Characters/AI/BTT_BlockingMonitor.h"
 
 #include "AIController.h"
+#include "Animations/EnemyAnimInstance.h"
+#include "Characters/Regular_Enemy.h"
 #include "Characters/Sword_Enemy.h"
 #include "GameFramework/Character.h"
 
@@ -17,9 +19,25 @@ EBTNodeResult::Type UBTT_BlockingMonitor::ExecuteTask(UBehaviorTreeComponent& Ow
 		return EBTNodeResult::Failed;
 	}
 
-	if (ASword_Enemy* EnemyRef = Cast<ASword_Enemy>(Char))
+	if (USkeletalMeshComponent* Mesh = Char->GetMesh())
 	{
-		EnemyRef->HandleBlocking();
+		if (!Mesh)
+		{
+			return EBTNodeResult::Failed;
+		}
+
+		if (UAnimInstance* Anim = Mesh->GetAnimInstance())
+		{
+			if (!Anim)
+			{
+				return EBTNodeResult::Failed;
+			}
+
+			if (UEnemyAnimInstance* EnemyAnim = Cast<UEnemyAnimInstance>(Anim))
+			{
+				EnemyAnim->SetIsBlocking(bIsBlocking);
+			}
+		}
 	}
 
 	return EBTNodeResult::InProgress;

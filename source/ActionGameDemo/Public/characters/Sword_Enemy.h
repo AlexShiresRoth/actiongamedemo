@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Animations/EnemyAnimInstance.h"
 #include "Characters/Regular_Enemy.h"
 #include "Interfaces/IChargeAttack.h"
 #include "Interfaces/UltimateAttack.h"
@@ -21,9 +22,6 @@ class ACTIONGAMEDEMO_API ASword_Enemy : public ARegular_Enemy, public IUltimateA
 
 	UPROPERTY(EditAnywhere, Category = Particle)
 	UParticleSystem* UltimateFinishParticle;
-
-	UPROPERTY(EditAnywhere, Category = Animation)
-	UAnimMontage* BlockMontage;
 
 	UPROPERTY(EditAnywhere, Category = Particle)
 	float UltimateAOERadius{400.f};
@@ -46,9 +44,6 @@ class ACTIONGAMEDEMO_API ASword_Enemy : public ARegular_Enemy, public IUltimateA
 	bool bCanUseUltimate{true};
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Blocking)
-	bool bIsBlocking{false};
-
 	UFUNCTION(BlueprintCallable)
 	void StartUltimate();
 
@@ -62,8 +57,7 @@ public:
 	void FinishUltimateCooldown();
 
 	UFUNCTION(BlueprintCallable)
-	void HandleBlocking();
-
-	UFUNCTION(BlueprintCallable)
 	void DetectPlayer(class AActor* ActorDetected, class APawn* OtherPawn);
+
+	virtual bool CanTakeDamage(AActor* Opponent, UDamageType* DamageType) override;
 };

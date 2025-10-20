@@ -3,6 +3,8 @@
 
 #include "combat/BlockComponent.h"
 #include "GameFramework/Character.h"
+#include "Interfaces/BlockAbility.h"
+#include "Interfaces/Fighter.h"
 #include "Interfaces/MainPlayer.h"
 // Sets default values for this component's properties
 UBlockComponent::UBlockComponent()
@@ -21,7 +23,6 @@ void UBlockComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
 }
 
 
@@ -35,7 +36,7 @@ void UBlockComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
 bool UBlockComponent::Check(AActor* Opponent)
 {
-	ACharacter *CharacterRef{GetOwner<ACharacter>()};
+	ACharacter* CharacterRef{GetOwner<ACharacter>()};
 
 	// true means we can't block damage
 	if (!CharacterRef->Implements<UMainPlayer>())
@@ -43,13 +44,13 @@ bool UBlockComponent::Check(AActor* Opponent)
 		return true;
 	}
 
-	IMainPlayer *PlayerRef{Cast<IMainPlayer>(CharacterRef)};
+	IMainPlayer* PlayerRef{Cast<IMainPlayer>(CharacterRef)};
 
-	FVector OpponentForward{Opponent->GetActorForwardVector() };
+	FVector OpponentForward{Opponent->GetActorForwardVector()};
 
-	FVector PlayerForward{CharacterRef->GetActorForwardVector() };
+	FVector PlayerForward{CharacterRef->GetActorForwardVector()};
 
-	double Result{ FVector::DotProduct(OpponentForward, PlayerForward)};
+	double Result{FVector::DotProduct(OpponentForward, PlayerForward)};
 
 	// if result is greater than 0 that means they are not looking at each other
 	if (Result > 0 || !PlayerRef->HasEnoughStamina(StaminaCost))
@@ -60,8 +61,33 @@ bool UBlockComponent::Check(AActor* Opponent)
 	CharacterRef->PlayAnimMontage(BlockAnimMontage);
 
 	OnBlockDelegate.Broadcast(StaminaCost);
-	
+
 	// false will mean we can
 	return false;
 }
 
+bool UBlockComponent::CheckEnemy(AActor* Opponent)
+{
+	ACharacter* CharacterRef{GetOwner<ACharacter>()};
+
+	// true means we can't block damage
+	if (!CharacterRef->Implements<UBlockAbility>())
+	{
+		return true;
+	}
+
+	IFighter* EnemyRef{Cast<IFighter>(CharacterRef)};
+
+	FVector OpponentForward{Opponent->GetActorForwardVector()};
+
+	FVector EnemyForward{CharacterRef->GetActorForwardVector()};
+
+	double Result{FVector::DotProduct(OpponentForward, EnemyForward)};
+
+	if (Result > 0)
+	{
+		return true;
+	}
+
+	return false;
+}

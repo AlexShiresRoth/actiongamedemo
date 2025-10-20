@@ -70,6 +70,12 @@ void ASword_Enemy::LaunchActorsInWake(AActor* HitActor) const
 	}
 }
 
+ASword_Enemy::ASword_Enemy()
+{
+	BlockComp = CreateDefaultSubobject<UBlockComponent>(TEXT("BlockComp"));
+}
+
+
 void ASword_Enemy::StartUltimate()
 {
 	if (UltimateStartParticle)
@@ -168,7 +174,6 @@ bool ASword_Enemy::CanTakeDamage(AActor* Opponent, UDamageType* DamageType)
 	// TODO this needs refactor-there might be an anim instance on the enemy already and this is just extra
 	// TODO we also need to make blocking less active
 	// TODO need a block impact particle hit
-	// TODO and a combo attack
 	if (USkeletalMeshComponent* EnemyMesh = ControllerRef->GetCharacter()->GetMesh())
 	{
 		if (EnemyMesh)
@@ -179,8 +184,7 @@ bool ASword_Enemy::CanTakeDamage(AActor* Opponent, UDamageType* DamageType)
 				{
 					if (EnemyAnim->GetIsBlocking())
 					{
-						// TODO need to set up a check for block component like on main player but for enemies
-						return false;
+						return BlockComp->CheckEnemy(Opponent);
 					}
 				}
 			}

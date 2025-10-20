@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GenericTeamAgentInterface.h"
 #include "GameFramework/Character.h"
+#include "Interfaces/BlockAbility.h"
 #include "Interfaces/MainPlayer.h"
 #include "Interfaces/Fighter.h"
 #include "Structs/FAttackData.h"

@@ -37,7 +37,7 @@ EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 	AAIController* AIRef{OwnerComp.GetAIOwner()};
 	APawn* EnemyPawn{AIRef->GetPawn()};
 	APawn* PlayerRef{GetWorld()->GetFirstPlayerController()->GetPawn()};
-	AIRef->SetFocus(PlayerRef);
+
 
 	IFighter* FighterRef{
 		Cast<IFighter>(
@@ -73,6 +73,7 @@ EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 			MoveDelegate);
 
 		AIRef->MoveTo(MoveRequest);
+		AIRef->SetFocus(PlayerRef);
 	}
 	else
 	{

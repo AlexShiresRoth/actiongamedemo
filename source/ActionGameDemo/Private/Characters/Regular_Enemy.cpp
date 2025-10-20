@@ -10,6 +10,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/PlayerCharacter.h"
 #include "Characters/StatsComponent.h"
+#include "combat/BlockComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Interfaces/MainPlayer.h"
 #include "Kismet/GameplayStatics.h"
@@ -41,6 +42,8 @@ void ARegular_Enemy::Knockback(AActor* Attacker)
 	if (!Attacker) { return; }
 	ACharacter* EnemyRef = ControllerRef->GetCharacter();
 	if (!EnemyRef) { return; }
+	if (!bCanBeKnockedBack) { return; }
+
 
 	FVector KnockbackDirection = EnemyRef->GetActorLocation() - Attacker->GetActorLocation();
 	KnockbackDirection.Z = 0.f;

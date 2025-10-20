@@ -17,6 +17,9 @@ class ACTIONGAMEDEMO_API UBTT_BlockingMonitor : public UBTTaskNode
 	UPROPERTY(EditAnywhere)
 	bool bIsBlocking = false;
 
+	UPROPERTY(EditAnywhere)
+	float BlockingDistance{300.f};
+
 public:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 

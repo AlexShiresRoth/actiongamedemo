@@ -28,6 +28,9 @@ class ACTIONGAMEDEMO_API UTraceComponent : public UActorComponent
 	UPROPERTY(EditAnywhere, Category = "Emitter")
 	UParticleSystem* HitParticleTemplate;
 
+	UPROPERTY(EditAnywhere, Category = "Emitter")
+	UParticleSystem* BlockParticleTemplate;
+
 public:
 	// Sets default values for this component's properties
 	UTraceComponent();

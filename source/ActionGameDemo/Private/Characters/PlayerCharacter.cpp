@@ -230,6 +230,8 @@ void APlayerCharacter::RestoreGameInput()
 	UGameplayStatics::SetGamePaused(GetWorld(), false);
 }
 
+// TODO - death animation stopped working?
+// Maybe just change to a dead state machine instead of montage
 void APlayerCharacter::HandleDeath()
 {
 	PlayAnimMontage(DeathAnim);

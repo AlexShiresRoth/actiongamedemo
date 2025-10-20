@@ -60,6 +60,9 @@ public:
 
 	virtual FGenericTeamId GetGenericTeamId() const override { return FGenericTeamId(TeamID); }
 
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	bool bCanBeKnockedBack{true};
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Stats Component")
 	class UStatsComponent* StatsComp;
 

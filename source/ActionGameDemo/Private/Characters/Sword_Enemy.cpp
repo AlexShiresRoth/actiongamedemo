@@ -7,6 +7,7 @@
 #include "Animations/EnemyAnimInstance.h"
 #include "Characters/PlayerCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "combat/CharacterAudioComponent.h"
 #include "DamageTypes/UnblockableDamage.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -171,9 +172,6 @@ void ASword_Enemy::DetectPlayer(class AActor* ActorDetected, class APawn* OtherP
 
 bool ASword_Enemy::CanTakeDamage(AActor* Opponent, UDamageType* DamageType)
 {
-	// TODO this needs refactor-there might be an anim instance on the enemy already and this is just extra
-	// TODO we also need to make blocking less active
-	// TODO need a block impact particle hit
 	if (USkeletalMeshComponent* EnemyMesh = ControllerRef->GetCharacter()->GetMesh())
 	{
 		if (EnemyMesh)
@@ -184,7 +182,13 @@ bool ASword_Enemy::CanTakeDamage(AActor* Opponent, UDamageType* DamageType)
 				{
 					if (EnemyAnim->GetIsBlocking())
 					{
-						return BlockComp->CheckEnemy(Opponent);
+						if (BlockComp->CheckEnemy(Opponent))
+						{
+							AudioComp->PlayDamageAudio();
+							return true;
+						}
+						AudioComp->PlayBlockAudio();
+						return false;
 					}
 				}
 			}

@@ -86,7 +86,6 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 		}
 
 		// ECC_GameTraceChannel4
-
 		bool bHasFoundTargets{
 			GetWorld()->SweepMultiByChannel(
 				OutResults,

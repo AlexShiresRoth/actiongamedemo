@@ -62,6 +62,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Equipment")
 	class UEquipmentComponent* EquipmentComp;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Audio")
+	class UCharacterAudioComponent* AudioComp;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Equipment")
 	bool bIsLaunched{false};
 

@@ -70,6 +70,9 @@ public:
 	class UCombatComponent* CombatComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UCharacterAudioComponent* AudioComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsDead{false};
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -83,6 +86,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = AI)
 	UAIPerceptionComponent* AIPerceptionComp;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Combat)
+	float Force{600.f};
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Combat)
 	bool bCanBlock{false};

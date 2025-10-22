@@ -9,6 +9,7 @@
 #include "Characters/InventoryComponent.h"
 #include "Characters/PlayerActionsComponent.h"
 #include "Characters/StatsComponent.h"
+#include "combat/CharacterAudioComponent.h"
 #include "combat/EquipmentComponent.h"
 #include "DamageTypes/UnblockableDamage.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -35,6 +36,8 @@ APlayerCharacter::APlayerCharacter()
 	InventoryComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory Component"));
 
 	EquipmentComp = CreateDefaultSubobject<UEquipmentComponent>(TEXT("Equipment Component"));
+
+	AudioComp = CreateDefaultSubobject<UCharacterAudioComponent>(TEXT("Audio Component"));
 }
 
 // Called when the game starts or when spawned
@@ -109,7 +112,6 @@ float APlayerCharacter::GetDamage()
 
 	float Damage = FMath::RandRange(StatsComp->Stats[Strength], BaseDamage);
 
-	UE_LOG(LogTemp, Warning, TEXT("Damage: %f"), Damage);
 
 	return Damage;
 }
@@ -135,12 +137,20 @@ bool APlayerCharacter::CanTakeDamage(AActor* Opponent, UDamageType* DamageType)
 {
 	if (DamageType->IsA(UUnblockableDamage::StaticClass()))
 	{
+		AudioComp->PlayDamageAudio();
 		return true;
 	}
 
 	if (PlayerAnimInstance->bIsBlocking)
 	{
-		return BlockComp->Check(Opponent);
+		if (BlockComp->Check(Opponent))
+		{
+			AudioComp->PlayDamageAudio();
+			return true;
+		}
+
+		AudioComp->PlayBlockAudio();
+		return false;
 	}
 
 	if (PlayerActionsComp->bIsRollActive)
@@ -164,6 +174,7 @@ void APlayerCharacter::ReceiveHitFromAOE(const FAttackData& Data)
 
 	LaunchCharacter(Data.LaunchVelocity, true, true);
 
+	// TODO should this change the anim state machine instead of montage?
 	PlayAnimMontage(DeathAnim);
 }
 
@@ -185,6 +196,7 @@ void APlayerCharacter::GetEquipment()
 void APlayerCharacter::PlayHurtAnim(TSubclassOf<class UCameraShakeBase> CameraShakeTemplate)
 {
 	PlayAnimMontage(HurtAnimMontage);
+
 
 	if (CameraShakeTemplate)
 	{
@@ -225,15 +237,12 @@ void APlayerCharacter::RestoreGameInput()
 	PlayerController->bShowMouseCursor = false;
 	PlayerController->SetInputMode(FInputModeGameOnly());
 
-	UE_LOG(LogTemp, Warning, TEXT("Game unpaused"));
-
 	UGameplayStatics::SetGamePaused(GetWorld(), false);
 }
 
-// TODO - death animation stopped working?
-// Maybe just change to a dead state machine instead of montage
 void APlayerCharacter::HandleDeath()
 {
-	PlayAnimMontage(DeathAnim);
+	PlayerAnimInstance->SetIsPlayerDead(true);
+	AudioComp->PlayDeathAudio();
 	DisableInput(GetController<APlayerController>());
 }

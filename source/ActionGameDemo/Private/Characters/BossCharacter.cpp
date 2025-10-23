@@ -13,7 +13,6 @@
 #include "Interfaces/MainPlayer.h"
 #include "Kismet/GameplayStatics.h"
 
-// TODO need to handle lost sight of player for Boss
 // Sets default values
 ABossCharacter::ABossCharacter()
 {
@@ -22,6 +21,8 @@ ABossCharacter::ABossCharacter()
 
 	StatsComp = CreateDefaultSubobject<UStatsComponent>(TEXT("Stats Component"));
 	CombatComp = CreateDefaultSubobject<UCombatComponent>(TEXT("Combat Component"));
+	AIPerceptionComp = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AI Perception Component"));
+	CharacterAudioComp = CreateDefaultSubobject<UCharacterAudioComponent>(TEXT("Audio Component"));
 }
 
 // Called when the game starts or when spawned
@@ -56,14 +57,14 @@ void ABossCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-void ABossCharacter::DetectPawn(class APawn* PawnDetected, class APawn* OtherPawn)
+void ABossCharacter::DetectPlayer(class AActor* ActorDetected, class AActor* OtherActor)
 {
 	EEnemyState CurrentState{
 		static_cast<EEnemyState>(BlackboardComp->GetValueAsEnum(
 			TEXT("CurrentState")))
 	};
 
-	if (PawnDetected != OtherPawn || CurrentState != Idle)
+	if (ActorDetected != OtherActor || CurrentState != Idle)
 	{
 		return;
 	}
@@ -86,6 +87,7 @@ float ABossCharacter::GetDamage()
 void ABossCharacter::Attack()
 {
 	CombatComp->RandomAttack();
+	CharacterAudioComp->PlayAttackAudio();
 }
 
 float ABossCharacter::GetAnimDuration()
@@ -135,6 +137,8 @@ void ABossCharacter::HandleDeath()
 	PlayerRef->EndLockonWithActor(this);
 
 	bIsDead = true;
+
+	CharacterAudioComp->PlayDeathAudio();
 }
 
 void ABossCharacter::FinishDeathAnim()

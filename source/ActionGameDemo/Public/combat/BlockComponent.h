@@ -30,7 +30,7 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnBlockSignature OnBlockDelegate;
-	
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -41,5 +41,6 @@ public:
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
 	bool Check(AActor* Opponent);
-	
+
+	bool CheckEnemy(AActor* Opponent);
 };

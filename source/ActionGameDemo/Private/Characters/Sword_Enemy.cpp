@@ -7,6 +7,7 @@
 #include "Animations/EnemyAnimInstance.h"
 #include "Characters/PlayerCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "combat/CharacterAudioComponent.h"
 #include "DamageTypes/UnblockableDamage.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -70,6 +71,12 @@ void ASword_Enemy::LaunchActorsInWake(AActor* HitActor) const
 	}
 }
 
+ASword_Enemy::ASword_Enemy()
+{
+	BlockComp = CreateDefaultSubobject<UBlockComponent>(TEXT("BlockComp"));
+}
+
+
 void ASword_Enemy::StartUltimate()
 {
 	if (UltimateStartParticle)
@@ -131,6 +138,7 @@ void ASword_Enemy::FinishUltimateCooldown()
 	BlackboardComp->SetValueAsBool("CanUseUltimate", true);
 }
 
+
 void ASword_Enemy::DetectPlayer(class AActor* ActorDetected, class APawn* OtherPawn)
 {
 	const APawn* DetectedPawn = Cast<APawn>(ActorDetected);
@@ -160,4 +168,31 @@ void ASword_Enemy::DetectPlayer(class AActor* ActorDetected, class APawn* OtherP
 
 		BlackboardComp->SetValueAsEnum(TEXT("CurrentState"), Charge);
 	}
+}
+
+bool ASword_Enemy::CanTakeDamage(AActor* Opponent, UDamageType* DamageType)
+{
+	if (USkeletalMeshComponent* EnemyMesh = ControllerRef->GetCharacter()->GetMesh())
+	{
+		if (EnemyMesh)
+		{
+			if (EnemyMesh->GetAnimInstance())
+			{
+				if (UEnemyAnimInstance* EnemyAnim = Cast<UEnemyAnimInstance>(EnemyMesh->GetAnimInstance()))
+				{
+					if (EnemyAnim->GetIsBlocking())
+					{
+						if (BlockComp->CheckEnemy(Opponent))
+						{
+							AudioComp->PlayDamageAudio();
+							return true;
+						}
+						AudioComp->PlayBlockAudio();
+						return false;
+					}
+				}
+			}
+		}
+	}
+	return true;
 }

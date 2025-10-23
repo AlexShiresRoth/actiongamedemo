@@ -35,18 +35,7 @@ void ULookAtPlayerComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	}
 
 	AActor* OwnerRef{GetOwner()};
-
-	// TODO this worked momentarily, probably because I added the notify state for can rotate
-	if (OwnerRef->GetClass()->ImplementsInterface(UEnemy::StaticClass()))
-	{
-		// TODO this is never reached
-		if (IEnemy::Execute_IsDead(OwnerRef))
-		{
-			return;
-		}
-	}
-
-
+	
 	FVector OwnerLocation{OwnerRef->GetActorLocation()};
 
 	APlayerController* PlayerController{GetWorld()->GetFirstPlayerController()};
@@ -70,6 +59,8 @@ void ULookAtPlayerComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 		NewRotation.Yaw,
 		CurrentRotation.Roll
 	};
+
+	UE_LOG(LogTemp, Warning, TEXT("LookAtPlayerComponent::TickComponent %s"), *OwnerRef->GetName());
 
 	OwnerRef->SetActorRotation(NewYawOnlyRotation);
 };

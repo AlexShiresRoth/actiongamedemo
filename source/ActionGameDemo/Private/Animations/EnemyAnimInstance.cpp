@@ -16,7 +16,6 @@ void UEnemyAnimInstance::UpdateSpeed()
 	{
 		return;
 	}
-
 	// curly braces only work with newly declared variables
 	FVector Velocity{PawnRef->GetVelocity()};
 	// explicit casting is not required but is good practice

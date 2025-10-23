@@ -56,10 +56,9 @@ void UBTT_ChargeAttack::ChargeAtPlayer()
 	MoveRequest.SetAcceptanceRadius(AcceptableRadius);
 
 	ControllerRef->MoveTo(MoveRequest);
-	ControllerRef->SetFocus(PlayerRef);
+
 	ControllerRef->ReceiveMoveCompleted.AddUnique(
 		MoveCompletedDelegate);
-
 	// Set charge speed
 	OriginalWalkSpeed = CharacterRef->GetCharacterMovement()->MaxWalkSpeed;
 	CharacterRef->GetCharacterMovement()->MaxWalkSpeed = ChargeWalkSpeed;

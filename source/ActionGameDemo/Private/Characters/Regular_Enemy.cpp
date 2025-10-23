@@ -10,6 +10,8 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/PlayerCharacter.h"
 #include "Characters/StatsComponent.h"
+#include "combat/BlockComponent.h"
+#include "combat/CharacterAudioComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Interfaces/MainPlayer.h"
 #include "Kismet/GameplayStatics.h"
@@ -22,6 +24,7 @@ ARegular_Enemy::ARegular_Enemy()
 
 	StatsComp = CreateDefaultSubobject<UStatsComponent>(TEXT("StatsComponent"));
 	CombatComp = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
+	AudioComp = CreateDefaultSubobject<UCharacterAudioComponent>(TEXT("AudioComponent"));
 
 	AIPerceptionComp = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerceptionComponent"));
 
@@ -41,18 +44,52 @@ void ARegular_Enemy::Knockback(AActor* Attacker)
 	if (!Attacker) { return; }
 	ACharacter* EnemyRef = ControllerRef->GetCharacter();
 	if (!EnemyRef) { return; }
+	if (!bCanBeKnockedBack) { return; }
 
 	FVector KnockbackDirection = EnemyRef->GetActorLocation() - Attacker->GetActorLocation();
 	KnockbackDirection.Z = 0.f;
 	KnockbackDirection.Normalize();
 
-	float KnockbackStrength = 600.f; // TODO might want to make this a uprop
+	// TODO - This should come from the attacker
+	float KnockbackStrength = Force;
 
 	FVector LaunchVelocity = KnockbackDirection * KnockbackStrength + FVector(0, 0, 250);
 
 	EnemyRef->LaunchCharacter(LaunchVelocity, true, true);
 }
 
+void ARegular_Enemy::HandleEnemyInterrupted()
+{
+	if (BlackboardComp)
+	{
+		EEnemyState CurrentState = static_cast<EEnemyState>(
+			BlackboardComp->GetValueAsEnum("CurrentState"));
+
+		if (CurrentState == StunWhenThisState)
+		{
+			// If the actor shouldn't be stunned just change the state
+			if (bShouldBeStunned)
+			{
+				BlackboardComp->SetValueAsEnum("CurrentState", ReturnAfterStun);
+				return;
+			}
+
+			BlackboardComp->SetValueAsEnum("CurrentState", InterruptedState);
+
+			FTimerHandle TimerHandle;
+
+			GetWorldTimerManager().SetTimer(
+				TimerHandle,
+				FTimerDelegate::CreateLambda([this, CurrentState]()
+				{
+					BlackboardComp->SetValueAsEnum("CurrentState", ReturnAfterStun);
+				}),
+				StunTime,
+				false
+			);
+		}
+	}
+}
 
 // Called when the game starts or when spawned
 void ARegular_Enemy::BeginPlay()
@@ -156,6 +193,7 @@ void ARegular_Enemy::HandleDeath()
 
 	ControllerRef->ClearFocus(EAIFocusPriority::Gameplay);
 
+	AudioComp->PlayDeathAudio();
 
 	if (UBehaviorTreeComponent* BTComp = Cast<UBehaviorTreeComponent>(ControllerRef->BrainComponent))
 	{
@@ -170,7 +208,6 @@ void ARegular_Enemy::HandleDeath()
 		if (UEnemyAnimInstance* EnemyAnim = Cast<UEnemyAnimInstance>(EnemyMesh->GetAnimInstance()))
 		{
 			EnemyAnim->bIsDead = true;
-			UE_LOG(LogTemp, Display, TEXT("Dead"));
 		}
 	}
 
@@ -211,6 +248,7 @@ float ARegular_Enemy::GetDamage()
 void ARegular_Enemy::Attack()
 {
 	CombatComp->RandomAttack();
+	AudioComp->PlayAttackAudio();
 }
 
 float ARegular_Enemy::GetAnimDuration()

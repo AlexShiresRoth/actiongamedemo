@@ -29,11 +29,32 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Player Anim Instance")
-	void HandleUpdatedTarget(AActor *NewTargetActorRef);
+	void HandleUpdatedTarget(AActor* NewTargetActorRef);
 
 	UFUNCTION(BlueprintCallable, Category = "Player Anim Instance")
 	void UpdateDirection();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Anim Instance")
-	bool bIsBlocking {false};
+	bool bIsBlocking{false};
+
+	UPROPERTY(BlueprintReadWrite, Category = "Player Anim Instance")
+	bool bIsPlayerDead{false};
+
+	UFUNCTION()
+	bool GetIsBlocking() const
+	{
+		return bIsBlocking;
+	}
+
+	UFUNCTION()
+	bool GetIsPlayerDead() const
+	{
+		return bIsPlayerDead;
+	}
+
+	UFUNCTION()
+	void SetIsPlayerDead(const bool bIsDead)
+	{
+		bIsPlayerDead = bIsDead;
+	}
 };

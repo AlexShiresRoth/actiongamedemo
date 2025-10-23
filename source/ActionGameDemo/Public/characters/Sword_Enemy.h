@@ -3,7 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Animations/EnemyAnimInstance.h"
 #include "Characters/Regular_Enemy.h"
+#include "combat/BlockComponent.h"
+#include "Interfaces/BlockAbility.h"
 #include "Interfaces/IChargeAttack.h"
 #include "Interfaces/UltimateAttack.h"
 #include "Sword_Enemy.generated.h"
@@ -12,9 +15,13 @@
  * 
  */
 UCLASS()
-class ACTIONGAMEDEMO_API ASword_Enemy : public ARegular_Enemy, public IUltimateAttack, public IIChargeAttack
+class ACTIONGAMEDEMO_API ASword_Enemy : public ARegular_Enemy, public IUltimateAttack, public IIChargeAttack,
+                                        public IBlockAbility
 {
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, Category = Components)
+	UBlockComponent* BlockComp;
 
 	UPROPERTY(EditAnywhere, Category = Particle)
 	UParticleSystem* UltimateStartParticle;
@@ -43,6 +50,8 @@ class ACTIONGAMEDEMO_API ASword_Enemy : public ARegular_Enemy, public IUltimateA
 	bool bCanUseUltimate{true};
 
 public:
+	ASword_Enemy();
+	
 	UFUNCTION(BlueprintCallable)
 	void StartUltimate();
 
@@ -57,4 +66,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void DetectPlayer(class AActor* ActorDetected, class APawn* OtherPawn);
+
+	virtual bool CanTakeDamage(AActor* Opponent, UDamageType* DamageType) override;
 };

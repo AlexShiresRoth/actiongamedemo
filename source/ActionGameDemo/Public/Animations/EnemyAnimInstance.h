@@ -32,15 +32,30 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	bool bIsInUltimateState{false};
 
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsBlocking{false};
+
 	UFUNCTION()
-	void SetIsUltimateState(bool bIsUltimate)
+	void SetIsBlocking(const bool bIsBlockingState)
+	{
+		UE_LOG(LogTemp, Error, TEXT("SetIsBlocking"));
+		bIsBlocking = bIsBlockingState;
+	}
+
+	UFUNCTION()
+	bool GetIsBlocking() const
+	{
+		return bIsBlocking;
+	}
+
+	UFUNCTION()
+	void SetIsUltimateState(const bool bIsUltimate)
 	{
 		bIsInUltimateState = bIsUltimate;
-	} 
+	}
 
-	virtual void SetIsCharging_Implementation(bool bCharging) override
+	virtual void SetIsCharging_Implementation(const bool bCharging) override
 	{
 		bIsCharging = bCharging;
 	}
-	
 };

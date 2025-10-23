@@ -30,6 +30,21 @@ class ACTIONGAMEDEMO_API ARegular_Enemy : public ACharacter, public IEnemy, publ
 	UPROPERTY(EditAnywhere, Category = "Hurt Animation")
 	UAnimMontage* HurtAnimMontage;
 
+	UPROPERTY(EditAnywhere, Category = "Stun Animation")
+	float StunTime{2.f};
+
+	UPROPERTY(EditAnywhere, Category = "Stun Animation")
+	bool bShouldBeStunned{false};
+
+	UPROPERTY(EditAnywhere, Category = "Stun Animation")
+	TEnumAsByte<EEnemyState> StunWhenThisState;
+
+	UPROPERTY(EditAnywhere, Category = "Stun Animation")
+	TEnumAsByte<EEnemyState> ReturnAfterStun;
+
+	UPROPERTY(EditAnywhere, Category = "Stun Animation")
+	TEnumAsByte<EEnemyState> InterruptedState;
+
 protected:
 	AAIController* ControllerRef;
 
@@ -45,11 +60,17 @@ public:
 
 	virtual FGenericTeamId GetGenericTeamId() const override { return FGenericTeamId(TeamID); }
 
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	bool bCanBeKnockedBack{true};
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Stats Component")
 	class UStatsComponent* StatsComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UCombatComponent* CombatComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UCharacterAudioComponent* AudioComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsDead{false};
@@ -65,6 +86,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = AI)
 	UAIPerceptionComponent* AIPerceptionComp;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Combat)
+	float Force{600.f};
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Combat)
 	bool bCanBlock{false};
@@ -103,6 +127,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Knockback(AActor* Attacker);
+
+	UFUNCTION(BlueprintCallable)
+	void HandleEnemyInterrupted();
 
 	virtual float GetMeleeRange() override;
 

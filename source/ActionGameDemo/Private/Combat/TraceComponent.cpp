@@ -1,10 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "combat/TraceComponent.h"
+
+#include "Animations/EnemyAnimInstance.h"
+#include "Animations/PlayerAnimInstance_USE.h"
+#include "Characters/PlayerCharacter.h"
+#include "combat/BlockComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Interfaces/Fighter.h"
 #include "Engine/DamageEvents.h"
+#include "Interfaces/BlockAbility.h"
 #include "Interfaces/Enemy.h"
+#include "Interfaces/MainPlayer.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -79,7 +86,6 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 		}
 
 		// ECC_GameTraceChannel4
-
 		bool bHasFoundTargets{
 			GetWorld()->SweepMultiByChannel(
 				OutResults,
@@ -147,6 +153,48 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 
 		TargetsToIgnore.AddUnique(TargetActor);
 
+		if (!BlockParticleTemplate || !HitParticleTemplate)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Missing particle templates on %s"), *GetOwner()->GetName());
+			return;
+		}
+
+		ACharacter* PlayerOrEnemy = Cast<ACharacter>(TargetActor);
+		UAnimInstance* AnimInst = PlayerOrEnemy->GetMesh()->GetAnimInstance();
+
+		if (!PlayerOrEnemy || !AnimInst)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Something went horribly wrong, or theres no anim instance"));
+		}
+
+		if (UBlockComponent* BlockComponent = TargetActor->FindComponentByClass<UBlockComponent>())
+		{
+			// If Target is Player
+			if (UPlayerAnimInstance_USE* PlayerAnim = Cast<UPlayerAnimInstance_USE>(AnimInst))
+			{
+				if (!BlockComponent->Check(GetOwner()) && PlayerAnim->GetIsBlocking())
+				{
+					UE_LOG(LogTemp, Error, TEXT("Player is blocking"));
+					UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BlockParticleTemplate, Hit.ImpactPoint);
+					return;
+				}
+			}
+			// If Target is Enemy
+			if (TargetActor->Implements<UBlockAbility>())
+			{
+				if (UEnemyAnimInstance* EnemyAnimInstance = Cast<UEnemyAnimInstance>(AnimInst))
+				{
+					if (!BlockComponent->CheckEnemy(GetOwner()) && EnemyAnimInstance->GetIsBlocking())
+					{
+						UE_LOG(LogTemp, Error, TEXT("enemy is blocking"));
+						UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BlockParticleTemplate, Hit.ImpactPoint);
+						return;
+					}
+				}
+			}
+		}
+
+		UE_LOG(LogTemp, Error, TEXT("No one blocked"));
 		UGameplayStatics::SpawnEmitterAtLocation(
 			GetWorld(),
 			HitParticleTemplate,

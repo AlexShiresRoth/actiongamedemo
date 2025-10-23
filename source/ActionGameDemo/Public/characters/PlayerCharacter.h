@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GenericTeamAgentInterface.h"
 #include "GameFramework/Character.h"
+#include "Interfaces/BlockAbility.h"
 #include "Interfaces/MainPlayer.h"
 #include "Interfaces/Fighter.h"
 #include "Structs/FAttackData.h"
@@ -60,6 +61,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Equipment")
 	class UEquipmentComponent* EquipmentComp;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Audio")
+	class UCharacterAudioComponent* AudioComp;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Equipment")
 	bool bIsLaunched{false};

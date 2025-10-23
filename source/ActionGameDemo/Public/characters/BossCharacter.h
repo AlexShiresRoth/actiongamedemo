@@ -8,7 +8,9 @@
 #include "Interfaces/Fighter.h"
 #include "EEnemyState.h"
 #include "GenericTeamAgentInterface.h"
+#include "combat/CharacterAudioComponent.h"
 #include "combat/CombatManager.h"
+#include "Perception/AIPerceptionComponent.h"
 #include "BossCharacter.generated.h"
 
 UCLASS()
@@ -39,6 +41,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UCombatComponent* CombatComp;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = AI)
+	UAIPerceptionComponent* AIPerceptionComp;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = AI)
+	UCharacterAudioComponent* CharacterAudioComp;
+
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsDead{false};
 
@@ -58,7 +66,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Boss Character")
-	void DetectPawn(class APawn* PawnDetected, class APawn* OtherPawn);
+	void DetectPlayer(class AActor* ActorDetected, class AActor* OtherActor);
 
 	virtual float GetDamage() override;
 

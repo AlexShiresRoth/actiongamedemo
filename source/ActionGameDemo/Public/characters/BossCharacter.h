@@ -35,6 +35,9 @@ public:
 	// Sets default values for this character's properties
 	ABossCharacter();
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = BossName)
+	FString BossName;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Stats Component")
 	class UStatsComponent* StatsComp;
 

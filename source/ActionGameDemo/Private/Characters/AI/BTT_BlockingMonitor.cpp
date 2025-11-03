@@ -4,6 +4,7 @@
 #include "Characters/AI/BTT_BlockingMonitor.h"
 
 #include "AIController.h"
+#include "Animations/BossAnimInstance.h"
 #include "Animations/EnemyAnimInstance.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/Regular_Enemy.h"
@@ -15,6 +16,7 @@ EBTNodeResult::Type UBTT_BlockingMonitor::ExecuteTask(UBehaviorTreeComponent& Ow
 	AAIController* AI{OwnerComp.GetAIOwner()};
 	ACharacter* Char{AI->GetCharacter()};
 	UBlackboardComponent* BlackboardComp = AI->GetBlackboardComponent();
+
 	if (!BlackboardComp)
 	{
 		return EBTNodeResult::Failed;
@@ -40,16 +42,22 @@ EBTNodeResult::Type UBTT_BlockingMonitor::ExecuteTask(UBehaviorTreeComponent& Ow
 			return EBTNodeResult::Failed;
 		}
 
+
 		if (UAnimInstance* Anim = Mesh->GetAnimInstance())
 		{
 			if (!Anim)
 			{
 				return EBTNodeResult::Failed;
 			}
-
+			// TODO - need a shared anim instance to call setisblocking from- I think we need an interface for it
 			if (UEnemyAnimInstance* EnemyAnim = Cast<UEnemyAnimInstance>(Anim))
 			{
 				EnemyAnim->SetIsBlocking(bIsBlocking);
+			}
+			else if (UBossAnimInstance* BossAnim = Cast<UBossAnimInstance>(Anim))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("BossAnimInstance::is blocking"));
+				BossAnim->SetIsBlocking(bIsBlocking);
 			}
 		}
 	}

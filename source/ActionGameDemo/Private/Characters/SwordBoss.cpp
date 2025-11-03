@@ -6,6 +6,7 @@
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
+// TODO - need a parent anim instance,to share setisblocking
 void ASwordBoss::BeginPlay()
 {
 	Super::BeginPlay();
@@ -24,4 +25,13 @@ ASwordBoss::ASwordBoss()
 	{
 		BossBlackboardComponent = AIControllerRef->GetBlackboardComponent();
 	}
+
+	BlockComponent = CreateDefaultSubobject<UBlockComponent>(TEXT("BlockComponent"));
+}
+
+void ASwordBoss::PlayHurtAnimation()
+{
+	if (!HurtMontage || bIsDead) { return; }
+
+	float AnimDuration{PlayAnimMontage(HurtMontage)};
 }

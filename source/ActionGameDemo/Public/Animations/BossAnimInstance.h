@@ -26,8 +26,27 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss Anim Instance")
 	bool bIsCharging{false};
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss Anim Instance")
+	bool bIsDead{false};
+
+
 	virtual void SetIsCharging_Implementation(bool bCharging) override
 	{
 		bIsCharging = bCharging;
+	}
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsBlocking{false};
+
+	UFUNCTION()
+	void SetIsBlocking(const bool bIsBlockingState)
+	{
+		bIsBlocking = bIsBlockingState;
+	}
+
+	UFUNCTION()
+	bool GetIsBlocking() const
+	{
+		return bIsBlocking;
 	}
 };

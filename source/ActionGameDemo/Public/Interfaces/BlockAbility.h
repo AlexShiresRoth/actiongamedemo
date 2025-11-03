@@ -22,4 +22,6 @@ class ACTIONGAMEDEMO_API IBlockAbility
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	// TODO need to use this in enemy and boss classes
+	virtual void SetIsBlocking(const bool bIsBlockingState);
 };

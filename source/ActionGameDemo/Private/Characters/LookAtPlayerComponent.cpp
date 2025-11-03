@@ -60,7 +60,5 @@ void ULookAtPlayerComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 		CurrentRotation.Roll
 	};
 
-	UE_LOG(LogTemp, Warning, TEXT("LookAtPlayerComponent::TickComponent %s"), *OwnerRef->GetName());
-
 	OwnerRef->SetActorRotation(NewYawOnlyRotation);
 };

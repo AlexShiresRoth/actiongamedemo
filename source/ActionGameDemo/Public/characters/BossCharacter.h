@@ -51,6 +51,12 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = AI)
 	UCharacterAudioComponent* CharacterAudioComp;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Location)
+	FVector OriginalLocation;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Location)
+	FRotator OriginalRotation;
+	
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsDead{false};
 

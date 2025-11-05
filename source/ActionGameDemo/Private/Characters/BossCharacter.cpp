@@ -39,6 +39,16 @@ void ABossCharacter::BeginPlay()
 		InitialState);
 
 	CombatManager = Cast<ACombatManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACombatManager::StaticClass()));
+	
+	OriginalLocation = GetActorLocation();
+	OriginalRotation = GetActorRotation();
+
+	BlackboardComp->SetValueAsEnum(
+		TEXT("CurrentState"),
+		InitialState);
+
+	BlackboardComp->SetValueAsVector("StartLocation", OriginalLocation);
+	BlackboardComp->SetValueAsRotator("StartRotation", OriginalRotation);
 
 	GetWorld()->GetFirstPlayerController()->GetPawn<APlayerCharacter>()->StatsComp->OnZeroHealthDelegate.AddDynamic(
 		this,

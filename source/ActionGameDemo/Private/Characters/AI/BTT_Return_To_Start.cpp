@@ -39,7 +39,7 @@ EBTNodeResult::Type UBTT_Return_To_Start::ExecuteTask(UBehaviorTreeComponent& Ow
 	FAIMoveRequest MoveRequest;
 	MoveRequest.SetGoalLocation(StartLocation);
 	MoveRequest.SetAcceptanceRadius(AcceptableDistance);
-
+	
 	FNavPathSharedPtr NavPath;
 	AIController->MoveTo(MoveRequest, &NavPath);
 
@@ -47,7 +47,7 @@ EBTNodeResult::Type UBTT_Return_To_Start::ExecuteTask(UBehaviorTreeComponent& Ow
 	{
 		AIPawn->SetActorRotation(StartRotation);
 	}
-
+	
 	OwnerComp.GetBlackboardComponent()->SetValueAsEnum(TEXT("CurrentState"), Idle);
 
 	return EBTNodeResult::Succeeded;
@@ -62,6 +62,6 @@ void UBTT_Return_To_Start::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* No
 	bool bIsPlayerVisible{OwnerComp.GetBlackboardComponent()->GetValueAsBool(TEXT("IsPlayerVisible"))};
 
 	if (bIsPlayerVisible) { return FinishLatentTask(OwnerComp, EBTNodeResult::Aborted); }
-
-	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+	FinishLatentTask(OwnerComp, EBTNodeResult::InProgress);
+	
 }

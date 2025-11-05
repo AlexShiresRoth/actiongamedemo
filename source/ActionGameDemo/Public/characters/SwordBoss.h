@@ -39,4 +39,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = Boss)
 	void PlayHurtAnimation();
+
+	virtual bool CanTakeDamage(AActor* Opponent, UDamageType* DamageType) override;
 };

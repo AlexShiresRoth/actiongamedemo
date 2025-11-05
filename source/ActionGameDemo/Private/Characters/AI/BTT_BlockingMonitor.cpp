@@ -41,23 +41,16 @@ EBTNodeResult::Type UBTT_BlockingMonitor::ExecuteTask(UBehaviorTreeComponent& Ow
 		{
 			return EBTNodeResult::Failed;
 		}
-
-
 		if (UAnimInstance* Anim = Mesh->GetAnimInstance())
 		{
 			if (!Anim)
 			{
 				return EBTNodeResult::Failed;
 			}
-			// TODO - need a shared anim instance to call setisblocking from- I think we need an interface for it
-			if (UEnemyAnimInstance* EnemyAnim = Cast<UEnemyAnimInstance>(Anim))
+			if (Anim->GetClass()->ImplementsInterface(UBlockAbility::StaticClass()))
 			{
-				EnemyAnim->SetIsBlocking(bIsBlocking);
-			}
-			else if (UBossAnimInstance* BossAnim = Cast<UBossAnimInstance>(Anim))
-			{
-				UE_LOG(LogTemp, Warning, TEXT("BossAnimInstance::is blocking"));
-				BossAnim->SetIsBlocking(bIsBlocking);
+				float ShouldBlockRange = FMath::FRandRange(0.f, 1.f);
+				IBlockAbility::Execute_SetIsBlocking(Anim, ShouldBlockRange >= 0.5f);
 			}
 		}
 	}

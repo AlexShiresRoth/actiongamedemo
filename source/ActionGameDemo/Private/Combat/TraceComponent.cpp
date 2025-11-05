@@ -182,11 +182,11 @@ void UTraceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 			// If Target is Enemy
 			if (TargetActor->Implements<UBlockAbility>())
 			{
-				if (UEnemyAnimInstance* EnemyAnimInstance = Cast<UEnemyAnimInstance>(AnimInst))
+				if (AnimInst->GetClass()->ImplementsInterface(UBlockAbility::StaticClass()))
 				{
-					if (!BlockComponent->CheckEnemy(GetOwner()) && EnemyAnimInstance->GetIsBlocking())
+					if (!BlockComponent->CheckEnemy(GetOwner()))
 					{
-						UE_LOG(LogTemp, Error, TEXT("enemy is blocking"));
+						UE_LOG(LogTemp, Error, TEXT("%s is blocking"), *GetOwner()->GetName());
 						UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BlockParticleTemplate, Hit.ImpactPoint);
 						return;
 					}

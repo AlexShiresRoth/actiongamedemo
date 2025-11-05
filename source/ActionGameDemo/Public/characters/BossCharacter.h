@@ -27,9 +27,10 @@ class ACTIONGAMEDEMO_API ABossCharacter : public ACharacter, public IEnemy, publ
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* DeathAnim;
 
-	class AAIController* ControllerRef;
-
 	ACombatManager* CombatManager;
+
+protected:
+	class AAIController* ControllerRef;
 
 public:
 	// Sets default values for this character's properties

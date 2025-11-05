@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "Interfaces/BlockAbility.h"
 #include "Interfaces/IChargeAttack.h"
 #include "BossAnimInstance.generated.h"
 
@@ -11,7 +12,7 @@
  *
  */
 UCLASS()
-class ACTIONGAMEDEMO_API UBossAnimInstance : public UAnimInstance, public IIChargeAttack
+class ACTIONGAMEDEMO_API UBossAnimInstance : public UAnimInstance, public IIChargeAttack, public IBlockAbility
 {
 	GENERATED_BODY()
 
@@ -38,8 +39,7 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	bool bIsBlocking{false};
 
-	UFUNCTION()
-	void SetIsBlocking(const bool bIsBlockingState)
+	virtual void SetIsBlocking_Implementation(const bool bIsBlockingState) override
 	{
 		bIsBlocking = bIsBlockingState;
 	}

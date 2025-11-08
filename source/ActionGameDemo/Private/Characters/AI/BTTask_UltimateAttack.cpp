@@ -9,7 +9,7 @@
 #include "GameFramework/Character.h"
 #include "Interfaces/UltimateAttack.h"
 
-
+// TODO - boss ultimate attack is not triggering
 EBTNodeResult::Type UBTTask_UltimateAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	AAIController* AIController{OwnerComp.GetAIOwner()};
@@ -25,7 +25,7 @@ EBTNodeResult::Type UBTTask_UltimateAttack::ExecuteTask(UBehaviorTreeComponent& 
 		return EBTNodeResult::Aborted;
 	}
 
-	bool bCanUseUltimate = OwnerComp.GetBlackboardComponent()->GetValueAsBool("CanUseUltimate");
+	bCanUseUltimate = OwnerComp.GetBlackboardComponent()->GetValueAsBool("CanUseUltimate");
 
 	if (!bCanUseUltimate)
 	{
@@ -50,9 +50,11 @@ EBTNodeResult::Type UBTTask_UltimateAttack::ExecuteTask(UBehaviorTreeComponent& 
 			return EBTNodeResult::Failed;
 		}
 
-		if (auto* EnemyAnimInstance = Cast<UEnemyAnimInstance>(AnimInstance))
+		if (AnimInstance->GetClass()->ImplementsInterface(UUltimateAttack::StaticClass()))
 		{
-			EnemyAnimInstance->SetIsUltimateState(true);
+			UE_LOG(LogTemp, Warning, TEXT("%s Can use ultimate attack & implements interface"),
+			       *CharacterRef->GetName());
+			IUltimateAttack::Execute_SetIsUltimateState(AnimInstance, true);
 		}
 	}
 

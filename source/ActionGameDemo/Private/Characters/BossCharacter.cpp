@@ -32,14 +32,18 @@ void ABossCharacter::BeginPlay()
 
 	ControllerRef = GetController<AAIController>();
 
+	ACharacter* MainPlayer = GetWorld()->GetFirstPlayerController()->GetCharacter();
+
 	BlackboardComp = ControllerRef->GetBlackboardComponent();
 
 	BlackboardComp->SetValueAsEnum(
 		TEXT("CurrentState"),
 		InitialState);
 
+	BlackboardComp->SetValueAsObject("PlayerRef", MainPlayer);
+
 	CombatManager = Cast<ACombatManager>(UGameplayStatics::GetActorOfClass(GetWorld(), ACombatManager::StaticClass()));
-	
+
 	OriginalLocation = GetActorLocation();
 	OriginalRotation = GetActorRotation();
 

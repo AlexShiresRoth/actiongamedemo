@@ -20,9 +20,7 @@ class ACTIONGAMEDEMO_API IBlockAbility
 {
 	GENERATED_BODY()
 
-	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	// TODO need to use this in enemy and boss classes
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "BlockAbility")
 	void SetIsBlocking(const bool bIsBlockingState);
 };

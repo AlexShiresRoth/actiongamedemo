@@ -6,13 +6,15 @@
 #include "Animation/AnimInstance.h"
 #include "Interfaces/BlockAbility.h"
 #include "Interfaces/IChargeAttack.h"
+#include "Interfaces/UltimateAttack.h"
 #include "BossAnimInstance.generated.h"
 
 /**
  *
  */
 UCLASS()
-class ACTIONGAMEDEMO_API UBossAnimInstance : public UAnimInstance, public IIChargeAttack, public IBlockAbility
+class ACTIONGAMEDEMO_API UBossAnimInstance : public UAnimInstance, public IIChargeAttack, public IBlockAbility,
+                                             public IUltimateAttack
 {
 	GENERATED_BODY()
 
@@ -30,14 +32,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss Anim Instance")
 	bool bIsDead{false};
 
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsInUltimateState{false};
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsBlocking{false};
 
 	virtual void SetIsCharging_Implementation(bool bCharging) override
 	{
 		bIsCharging = bCharging;
 	}
-
-	UPROPERTY(BlueprintReadOnly)
-	bool bIsBlocking{false};
 
 	virtual void SetIsBlocking_Implementation(const bool bIsBlockingState) override
 	{
@@ -48,5 +52,11 @@ public:
 	bool GetIsBlocking() const
 	{
 		return bIsBlocking;
+	}
+
+	UFUNCTION()
+	virtual void SetIsUltimateState_Implementation(const bool bIsUltimate) override
+	{
+		bIsInUltimateState = bIsUltimate;
 	}
 };

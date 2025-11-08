@@ -8,6 +8,7 @@
 #include "Animations/EnemyAnimInstance.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Characters/LookAtPlayerComponent.h"
 #include "Characters/PlayerCharacter.h"
 #include "Characters/StatsComponent.h"
 #include "combat/BlockComponent.h"
@@ -194,6 +195,11 @@ void ARegular_Enemy::HandleDeath()
 	ControllerRef->ClearFocus(EAIFocusPriority::Gameplay);
 
 	AudioComp->PlayDeathAudio();
+
+	if (ULookAtPlayerComponent* LAPC = Cast<ULookAtPlayerComponent>(ControllerRef->GetCharacter()))
+	{
+		LAPC->bCanRotate = false;
+	}
 
 	if (UBehaviorTreeComponent* BTComp = Cast<UBehaviorTreeComponent>(ControllerRef->BrainComponent))
 	{

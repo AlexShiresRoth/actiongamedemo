@@ -44,25 +44,6 @@ EBTNodeResult::Type UBTT_MeleeAttack::ExecuteTask(UBehaviorTreeComponent& OwnerC
 			AIRef->GetCharacter())
 	};
 
-	// TODO need to add this to the other tasks that could follow
-	if (USkeletalMeshComponent* Mesh = AIRef->GetCharacter()->GetMesh())
-	{
-		if (Mesh)
-		{
-			if (UAnimInstance* AnimInstance = Mesh->GetAnimInstance())
-			{
-				if (UEnemyAnimInstance* EnemyAnim = Cast<UEnemyAnimInstance>(AnimInstance))
-				{
-					if (EnemyAnim->bIsBlocking)
-					{
-						// End blocking
-						EnemyAnim->SetIsBlocking(false);
-					}
-				}
-			}
-		}
-	}
-
 	if (Distance > AttackRadius)
 	{
 		FAIMoveRequest MoveRequest{PlayerRef};

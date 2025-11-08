@@ -6,13 +6,15 @@
 #include "Animation/AnimInstance.h"
 #include "Interfaces/BlockAbility.h"
 #include "Interfaces/IChargeAttack.h"
+#include "Interfaces/UltimateAttack.h"
 #include "EnemyAnimInstance.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ACTIONGAMEDEMO_API UEnemyAnimInstance : public UAnimInstance, public IIChargeAttack, public IBlockAbility
+class ACTIONGAMEDEMO_API UEnemyAnimInstance : public UAnimInstance, public IIChargeAttack, public IBlockAbility,
+                                              public IUltimateAttack
 {
 	GENERATED_BODY()
 
@@ -48,7 +50,7 @@ public:
 	}
 
 	UFUNCTION()
-	void SetIsUltimateState(const bool bIsUltimate)
+	virtual void SetIsUltimateState_Implementation(const bool bIsUltimate) override
 	{
 		bIsInUltimateState = bIsUltimate;
 	}

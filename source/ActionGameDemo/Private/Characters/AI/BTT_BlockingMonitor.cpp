@@ -7,6 +7,7 @@
 #include "Animations/BossAnimInstance.h"
 #include "Animations/EnemyAnimInstance.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Characters/LookAtPlayerComponent.h"
 #include "Characters/Regular_Enemy.h"
 #include "Characters/Sword_Enemy.h"
 #include "GameFramework/Character.h"
@@ -16,6 +17,11 @@ EBTNodeResult::Type UBTT_BlockingMonitor::ExecuteTask(UBehaviorTreeComponent& Ow
 	AAIController* AI{OwnerComp.GetAIOwner()};
 	ACharacter* Char{AI->GetCharacter()};
 	UBlackboardComponent* BlackboardComp = AI->GetBlackboardComponent();
+
+	if (ULookAtPlayerComponent* LookAtPlayerComponent = Char->FindComponentByClass<ULookAtPlayerComponent>())
+	{
+		LookAtPlayerComponent->bCanRotate = true;
+	}
 
 	if (!BlackboardComp)
 	{

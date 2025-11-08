@@ -24,6 +24,32 @@ class ACTIONGAMEDEMO_API ASwordBoss : public ABossCharacter, public IUltimateAtt
 
 	class UBlackboardComponent* BossBlackboardComponent;
 
+	bool bCanUseUltimate{false};
+
+	UPROPERTY(EditAnywhere, Category = Particle)
+	UParticleSystem* UltimateStartParticle;
+
+	UPROPERTY(EditAnywhere, Category = Particle)
+	UParticleSystem* UltimateFinishParticle;
+
+	UPROPERTY(EditAnywhere, Category = Particle)
+	float UltimateAOERadius{400.f};
+
+	UPROPERTY(EditAnywhere, Category = Particle)
+	float UltimateAOEDamage{1000.f};
+
+	UPROPERTY(EditAnywhere, Category = Particle)
+	float LaunchVelocityMultiplier{3000.f};
+
+	UPROPERTY(EditAnywhere, Category = Particle)
+	float LaunchZ{300.f};
+
+	UPROPERTY(EditAnywhere, Category = Ultimate)
+	float UltimateCooldown{30.f};
+
+	void SpawnAOECollision(FVector Location);
+	void LaunchActorsInWake(AActor* HitActor) const;
+
 public:
 	ASwordBoss();
 
@@ -39,6 +65,18 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = Boss)
 	void PlayHurtAnimation();
+
+	UFUNCTION(BlueprintCallable)
+	void StartUltimate();
+
+	UFUNCTION(BlueprintCallable)
+	void FinishUltimate();
+
+	UFUNCTION(BlueprintCallable)
+	void StartUltimateCooldown();
+
+	UFUNCTION(BlueprintCallable)
+	void FinishUltimateCooldown();
 
 	virtual bool CanTakeDamage(AActor* Opponent, UDamageType* DamageType) override;
 };

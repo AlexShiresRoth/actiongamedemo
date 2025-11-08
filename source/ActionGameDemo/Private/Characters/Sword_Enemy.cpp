@@ -115,7 +115,7 @@ void ASword_Enemy::StartUltimateCooldown()
 
 	if (UEnemyAnimInstance* EnemyAnim = Cast<UEnemyAnimInstance>(AnimInstance))
 	{
-		EnemyAnim->SetIsUltimateState(false);
+		Execute_SetIsUltimateState(EnemyAnim, false);
 	}
 
 	bCanUseUltimate = false;

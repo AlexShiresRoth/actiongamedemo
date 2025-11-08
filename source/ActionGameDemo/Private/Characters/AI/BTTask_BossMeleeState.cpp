@@ -5,6 +5,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "AIController.h"
+#include "Animations/BossAnimInstance.h"
 #include "Animations/EnemyAnimInstance.h"
 #include "Interfaces/Fighter.h"
 #include "GameFramework/Character.h"
@@ -115,25 +116,6 @@ EBTNodeResult::Type UBTTask_BossMeleeState::ExecuteTask(UBehaviorTreeComponent& 
 			AIRef->GetCharacter())
 	};
 
-	// TODO change this to boss anim instance
-	// if (USkeletalMeshComponent* Mesh = AIRef->GetCharacter()->GetMesh())
-	// {
-	// 	if (Mesh)
-	// 	{
-	// 		if (UAnimInstance* AnimInstance = Mesh->GetAnimInstance())
-	// 		{
-	// 			if (UEnemyAnimInstance* EnemyAnim = Cast<UEnemyAnimInstance>(AnimInstance))
-	// 			{
-	// 				if (EnemyAnim->bIsBlocking)
-	// 				{
-	// 					// End blocking
-	// 					EnemyAnim->SetIsBlocking(false);
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// }
-
 	if (Distance > AttackRadius)
 	{
 		FAIMoveRequest MoveRequest{PlayerRef};
@@ -157,7 +139,6 @@ EBTNodeResult::Type UBTTask_BossMeleeState::ExecuteTask(UBehaviorTreeComponent& 
 		LookAtPlayerComponent->bCanRotate = true;
 		// TODO maybe I can add a combo attack so it's not just one sword swing
 		FighterRef->Attack();
-		UE_LOG(LogTemp, Warning, TEXT("boss attacking!!!"))
 		FTimerHandle AttackTimerHandle;
 
 		AIRef->GetCharacter()->GetWorldTimerManager().SetTimer(

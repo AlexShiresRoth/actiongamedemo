@@ -35,13 +35,18 @@ void ULookAtPlayerComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	}
 
 	AActor* OwnerRef{GetOwner()};
-	
+
 	FVector OwnerLocation{OwnerRef->GetActorLocation()};
 
 	APlayerController* PlayerController{GetWorld()->GetFirstPlayerController()};
 
-	APawn* PlayerPawn{PlayerController->GetPawn()};
+	if (!PlayerController)
+	{
+		return;
+	}
 
+	APawn* PlayerPawn{PlayerController->GetPawn()};
+	
 	FVector PlayerLocation{PlayerPawn->GetActorLocation()};
 
 	FRotator DesiredRotation{

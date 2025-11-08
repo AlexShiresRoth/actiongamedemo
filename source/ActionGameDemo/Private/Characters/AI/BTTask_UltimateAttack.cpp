@@ -9,7 +9,8 @@
 #include "GameFramework/Character.h"
 #include "Interfaces/UltimateAttack.h"
 
-// TODO - boss ultimate attack is not triggering
+// TODO - boss ultimate gets canceled if player is too close
+// TODO I think boss should be invulnerable during ultimate
 EBTNodeResult::Type UBTTask_UltimateAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	AAIController* AIController{OwnerComp.GetAIOwner()};

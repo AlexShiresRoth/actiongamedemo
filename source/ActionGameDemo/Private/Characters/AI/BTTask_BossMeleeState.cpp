@@ -137,9 +137,20 @@ EBTNodeResult::Type UBTTask_BossMeleeState::ExecuteTask(UBehaviorTreeComponent& 
 		if (!BossCharacter || !LookAtPlayerComponent) { return EBTNodeResult::Failed; }
 
 		LookAtPlayerComponent->bCanRotate = true;
-		// TODO maybe I can add a combo attack so it's not just one sword swing
 		FighterRef->Attack();
 		FTimerHandle AttackTimerHandle;
+
+		float goIntoUltimateCounter = FMath::FRandRange(0.f, 1.f);
+
+		//TODO - idk if this is the best idea, I hate changing state based on different task
+		if (goIntoUltimateCounter > 0.5f)
+		{
+			OwnerComp.GetBlackboardComponent()->SetValueAsBool(TEXT("CanUseUltimate"), true);
+			OwnerComp.GetBlackboardComponent()->SetValueAsEnum(TEXT("CurrentState"), Ultimate);
+			FinishAttackTask();
+			return EBTNodeResult::Succeeded;
+		}
+
 
 		AIRef->GetCharacter()->GetWorldTimerManager().SetTimer(
 			AttackTimerHandle,

@@ -38,6 +38,19 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	bool bIsBlocking{false};
 
+	UPROPERTY(BlueprintReadWrite, Category=Ultimate)
+	bool bIsUltimateFinished{false};
+
+	virtual bool GetIsUltimateFinished_Implementation() override
+	{
+		return bIsUltimateFinished;
+	}
+
+	virtual void SetIsUltimateFinished_Implementation(bool val) override
+	{
+		bIsUltimateFinished = val;
+	}
+
 	virtual void SetIsCharging_Implementation(bool bCharging) override
 	{
 		bIsCharging = bCharging;
@@ -48,13 +61,11 @@ public:
 		bIsBlocking = bIsBlockingState;
 	}
 
-	UFUNCTION()
 	bool GetIsBlocking() const
 	{
 		return bIsBlocking;
 	}
 
-	UFUNCTION()
 	virtual void SetIsUltimateState_Implementation(const bool bIsUltimate) override
 	{
 		bIsInUltimateState = bIsUltimate;

@@ -17,8 +17,8 @@ void ASwordBoss::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AAIController* AIController = Cast<AAIController>(GetController());
-	BossBlackboardComponent = AIController->GetBlackboardComponent();
+	BossAI = Cast<AAIController>(GetController());
+	BossBlackboardComponent = BossAI->GetBlackboardComponent();
 
 	if (BossBlackboardComponent)
 	{
@@ -107,9 +107,9 @@ void ASwordBoss::StartUltimate()
 {
 	if (UltimateStartParticle)
 	{
-		ACharacter* EnemyRef = ControllerRef->GetCharacter();
-		FVector Loc = EnemyRef->GetActorLocation();
-		FRotator Rotator = EnemyRef->GetActorRotation();
+		ACharacter* BossRef = ControllerRef->GetCharacter();
+		FVector Loc = BossRef->GetActorLocation();
+		FRotator Rotator = BossRef->GetActorRotation();
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), UltimateStartParticle, Loc, Rotator);
 	}
 }
@@ -118,9 +118,9 @@ void ASwordBoss::FinishUltimate()
 {
 	if (UltimateFinishParticle)
 	{
-		ACharacter* EnemyRef = ControllerRef->GetCharacter();
-		FVector Loc = EnemyRef->GetActorLocation();
-		FRotator Rotator = EnemyRef->GetActorRotation();
+		ACharacter* BossRef = ControllerRef->GetCharacter();
+		FVector Loc = BossRef->GetActorLocation();
+		FRotator Rotator = BossRef->GetActorRotation();
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), UltimateFinishParticle, Loc, Rotator);
 
 		SpawnAOECollision(Loc);
@@ -136,27 +136,27 @@ void ASwordBoss::StartUltimateCooldown()
 		BossBlackboardComponent->SetValueAsBool("CanUseUltimate", false);
 	}
 
-	if (!ControllerRef)
+	if (!BossAI)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ASwordBoss::StartUltimateCooldown — ControllerRef is null"));
+		UE_LOG(LogTemp, Warning, TEXT("ASwordBoss::StartUltimateCooldown — BossAI is null"));
 		return;
 	}
 
-	ACharacter* EnemyRef = ControllerRef->GetCharacter();
-	if (!EnemyRef)
+	ACharacter* BossRef = BossAI->GetCharacter();
+	if (!BossRef)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ASwordBoss::StartUltimateCooldown — EnemyRef is null"));
+		UE_LOG(LogTemp, Warning, TEXT("ASwordBoss::StartUltimateCooldown — BossRef is null"));
 		return;
 	}
 
-	USkeletalMeshComponent* EnemyMesh = EnemyRef->GetMesh();
-	if (!EnemyMesh)
+	USkeletalMeshComponent* BossMesh = BossRef->GetMesh();
+	if (!BossMesh)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ASwordBoss::StartUltimateCooldown — EnemyMesh is null"));
+		UE_LOG(LogTemp, Warning, TEXT("ASwordBoss::StartUltimateCooldown — BossMesh is null"));
 		return;
 	}
 
-	UAnimInstance* AnimInstance = EnemyMesh->GetAnimInstance();
+	UAnimInstance* AnimInstance = BossMesh->GetAnimInstance();
 	if (!AnimInstance)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ASwordBoss::StartUltimateCooldown — AnimInstance is null"));
@@ -166,6 +166,7 @@ void ASwordBoss::StartUltimateCooldown()
 	if (UBossAnimInstance* BossAnim = Cast<UBossAnimInstance>(AnimInstance))
 	{
 		Execute_SetIsUltimateState(BossAnim, false);
+		Execute_SetIsUltimateFinished(BossAnim, true);
 	}
 
 	FTimerHandle TimerHandle;
@@ -187,7 +188,7 @@ void ASwordBoss::FinishUltimateCooldown()
 
 bool ASwordBoss::CanTakeDamage(AActor* Opponent, UDamageType* DamageType)
 {
-	if (USkeletalMeshComponent* BossMesh = ControllerRef->GetCharacter()->GetMesh())
+	if (USkeletalMeshComponent* BossMesh = BossAI->GetCharacter()->GetMesh())
 	{
 		if (BossMesh)
 		{

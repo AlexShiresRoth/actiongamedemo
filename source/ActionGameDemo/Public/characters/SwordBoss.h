@@ -23,6 +23,7 @@ class ACTIONGAMEDEMO_API ASwordBoss : public ABossCharacter, public IUltimateAtt
 	virtual void BeginPlay() override;
 
 	class UBlackboardComponent* BossBlackboardComponent;
+	class AAIController* BossAI;
 
 	bool bCanUseUltimate{false};
 

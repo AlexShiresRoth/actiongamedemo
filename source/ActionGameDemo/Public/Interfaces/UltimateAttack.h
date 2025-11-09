@@ -24,4 +24,10 @@ class ACTIONGAMEDEMO_API IUltimateAttack
 public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void SetIsUltimateState(const bool bIsUltimateState);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SetIsUltimateFinished(const bool bIsUltimateFinished);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	bool GetIsUltimateFinished();
 };

@@ -151,7 +151,6 @@ EBTNodeResult::Type UBTTask_BossMeleeState::ExecuteTask(UBehaviorTreeComponent& 
 			return EBTNodeResult::Succeeded;
 		}
 
-
 		AIRef->GetCharacter()->GetWorldTimerManager().SetTimer(
 			AttackTimerHandle,
 			this,

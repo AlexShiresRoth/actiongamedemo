@@ -7,6 +7,7 @@
 #include "Animations/BossAnimInstance.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/PlayerCharacter.h"
+#include "Characters/StatsComponent.h"
 #include "DamageTypes/UnblockableDamage.h"
 #include "Engine/DamageEvents.h"
 #include "Kismet/GameplayStatics.h"
@@ -184,6 +185,27 @@ void ASwordBoss::FinishUltimateCooldown()
 {
 	bCanUseUltimate = true;
 	BossBlackboardComponent->SetValueAsBool("CanUseUltimate", true);
+}
+
+void ASwordBoss::CheckFightStage()
+{
+	EFightStages Stage = static_cast<EFightStages>(
+		BossBlackboardComponent->GetValueAsEnum("FightStages")
+	);
+
+	if (Stage == Stage1)
+	{
+		if (StatsComp)
+		{
+			const float HealthPercent = StatsComp->GetStatPercentage(Health, MaxHealth);
+			if (HealthPercent <= .5f)
+			{
+				BossBlackboardComponent->SetValueAsEnum("FightStages", Stage2);
+				bIsInvulnerable = true;
+				StatsComp->ResetHealth();
+			}
+		}
+	}
 }
 
 bool ASwordBoss::CanTakeDamage(AActor* Opponent, UDamageType* DamageType)

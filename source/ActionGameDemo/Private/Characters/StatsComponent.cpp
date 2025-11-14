@@ -96,6 +96,16 @@ void UStatsComponent::RegenStamina()
 	OnStaminaPercentUpdateDelegate.Broadcast(GetStatPercentage(Stamina, MaxStamina));
 }
 
+void UStatsComponent::ResetHealth()
+{
+	Stats[Health] = UKismetMathLibrary::FInterpTo_Constant(
+		Stats[Health],
+		Stats[MaxHealth],
+		GetWorld()->DeltaTimeSeconds,
+		HealthRegenRate
+	);
+}
+
 void UStatsComponent::EnableRegen()
 {
 	bCanRegen = true;

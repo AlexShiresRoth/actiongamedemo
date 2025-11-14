@@ -27,6 +27,9 @@ class ACTIONGAMEDEMO_API UStatsComponent : public UActorComponent
 	UPROPERTY(EditAnywhere, Category = "Stats")
 	double StaminaRegenRate{10.0};
 
+	UPROPERTY(EditAnywhere, Category = "Stats")
+	double HealthRegenRate{100.0};
+	
 	UPROPERTY(VisibleAnywhere, Category = "Stats")
 	bool bCanRegen{true};
 
@@ -51,6 +54,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 	void RegenStamina();
+
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+	void ResetHealth();
 
 	UFUNCTION()
 	void EnableRegen();

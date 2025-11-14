@@ -27,6 +27,7 @@ class ACTIONGAMEDEMO_API ASwordBoss : public ABossCharacter, public IUltimateAtt
 
 	bool bCanUseUltimate{false};
 
+
 	UPROPERTY(EditAnywhere, Category = Particle)
 	UParticleSystem* UltimateStartParticle;
 
@@ -48,6 +49,7 @@ class ACTIONGAMEDEMO_API ASwordBoss : public ABossCharacter, public IUltimateAtt
 	UPROPERTY(EditAnywhere, Category = Ultimate)
 	float UltimateCooldown{30.f};
 
+
 	void SpawnAOECollision(FVector Location);
 	void LaunchActorsInWake(AActor* HitActor) const;
 
@@ -64,6 +66,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Boss)
 	UAnimMontage* HurtMontage;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = State)
+	bool bIsInvulnerable{false};
+
 	UFUNCTION(BlueprintCallable, Category = Boss)
 	void PlayHurtAnimation();
 
@@ -78,6 +83,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void FinishUltimateCooldown();
+
+	UFUNCTION(BlueprintCallable)
+	void CheckFightStage();
 
 	virtual bool CanTakeDamage(AActor* Opponent, UDamageType* DamageType) override;
 };

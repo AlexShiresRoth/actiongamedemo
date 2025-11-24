@@ -98,18 +98,43 @@ void UStatsComponent::RegenStamina()
 
 void UStatsComponent::ResetHealth()
 {
-	Stats[Health] = UKismetMathLibrary::FInterpTo_Constant(
-		Stats[Health],
-		Stats[MaxHealth],
-		GetWorld()->DeltaTimeSeconds,
-		HealthRegenRate
+	GetWorld()->GetTimerManager().ClearTimer(HealthRegenTimer);
+
+	// Start a timer that ticks every frame to refill health
+	GetWorld()->GetTimerManager().SetTimer(
+		HealthRegenTimer,
+		this,
+		&UStatsComponent::UpdateHealthRegen,
+		0.016f,
+		true
 	);
+}
+
+void UStatsComponent::UpdateHealthRegen()
+{
+	if (Stats[Health] < Stats[MaxHealth])
+	{
+		Stats[Health] = UKismetMathLibrary::FInterpTo_Constant(
+			Stats[Health],
+			Stats[MaxHealth],
+			GetWorld()->DeltaTimeSeconds,
+			HealthRegenRate
+		);
+
+
+		OnHealthPercentUpdateDelegate.Broadcast(GetStatPercentage(Health, MaxHealth));
+	}
+	else
+	{
+		GetWorld()->GetTimerManager().ClearTimer(HealthRegenTimer);
+	}
 }
 
 void UStatsComponent::EnableRegen()
 {
 	bCanRegen = true;
 }
+
 
 float UStatsComponent::GetStatPercentage(EStat Current, EStat Max)
 {

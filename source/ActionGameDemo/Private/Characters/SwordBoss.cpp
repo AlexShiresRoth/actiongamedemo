@@ -187,6 +187,10 @@ void ASwordBoss::FinishUltimateCooldown()
 	BossBlackboardComponent->SetValueAsBool("CanUseUltimate", true);
 }
 
+void ASwordBoss::SpawnRegenParticle()
+{
+}
+
 void ASwordBoss::CheckFightStage()
 {
 	EFightStages Stage = static_cast<EFightStages>(

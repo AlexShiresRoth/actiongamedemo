@@ -24,12 +24,14 @@ class ACTIONGAMEDEMO_API UStatsComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
+	FTimerHandle HealthRegenTimer;
+
 	UPROPERTY(EditAnywhere, Category = "Stats")
 	double StaminaRegenRate{10.0};
 
 	UPROPERTY(EditAnywhere, Category = "Stats")
-	double HealthRegenRate{100.0};
-	
+	double HealthRegenRate{300.0};
+
 	UPROPERTY(VisibleAnywhere, Category = "Stats")
 	bool bCanRegen{true};
 
@@ -60,6 +62,9 @@ public:
 
 	UFUNCTION()
 	void EnableRegen();
+
+	UFUNCTION()
+	void UpdateHealthRegen();
 
 	// Blueprintpure do not have execution pins and everything is read only within the function
 	UFUNCTION(BlueprintPure)

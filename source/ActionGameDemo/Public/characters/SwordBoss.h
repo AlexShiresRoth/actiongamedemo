@@ -35,6 +35,9 @@ class ACTIONGAMEDEMO_API ASwordBoss : public ABossCharacter, public IUltimateAtt
 	UParticleSystem* UltimateFinishParticle;
 
 	UPROPERTY(EditAnywhere, Category = Particle)
+	UParticleSystem *RegenParticle;
+
+	UPROPERTY(EditAnywhere, Category = Particle)
 	float UltimateAOERadius{400.f};
 
 	UPROPERTY(EditAnywhere, Category = Particle)
@@ -83,6 +86,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void FinishUltimateCooldown();
+
+	UFUNCTION(BlueprintCallable)
+	void SpawnRegenParticle();
 
 	UFUNCTION(BlueprintCallable)
 	void CheckFightStage();

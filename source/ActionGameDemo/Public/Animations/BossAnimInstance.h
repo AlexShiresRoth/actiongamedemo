@@ -6,6 +6,7 @@
 #include "Animation/AnimInstance.h"
 #include "Interfaces/BlockAbility.h"
 #include "Interfaces/IChargeAttack.h"
+#include "Interfaces/RegenerateAbility.h"
 #include "Interfaces/UltimateAttack.h"
 #include "BossAnimInstance.generated.h"
 
@@ -14,7 +15,7 @@
  */
 UCLASS()
 class ACTIONGAMEDEMO_API UBossAnimInstance : public UAnimInstance, public IIChargeAttack, public IBlockAbility,
-                                             public IUltimateAttack
+                                             public IUltimateAttack, public IRegenerateAbility
 {
 	GENERATED_BODY()
 
@@ -41,6 +42,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category=Ultimate)
 	bool bIsUltimateFinished{false};
 
+	UPROPERTY(BlueprintReadWrite, Category="Boss Fight State")
+	bool bIsRegenerating{false};
+	
 	virtual bool GetIsUltimateFinished_Implementation() override
 	{
 		return bIsUltimateFinished;
@@ -69,5 +73,10 @@ public:
 	virtual void SetIsUltimateState_Implementation(const bool bIsUltimate) override
 	{
 		bIsInUltimateState = bIsUltimate;
+	}
+
+	virtual void SetIsRegenerateAbilityState_Implementation(bool bShouldRegen) override
+	{
+		bIsRegenerating = bShouldRegen;
 	}
 };
